@@ -52,7 +52,7 @@
       display: block;
     }
 
-    /* 編集プレビュー専用。PNG/PDFには含まれません。 */
+    /* 編集プレビュー専用の方眼。PNG/PDFには含まれません。 */
     .grid-overlay {
       position: absolute;
       inset: 0;
@@ -225,7 +225,28 @@
           </div>
         </section>
 
-        <!-- 情報ボックスのスタイル設定 -->
+        <!-- ヘッダー背景・アクセント -->
+        <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
+          <h3 class="text-xs font-bold text-rose-400">ヘッダー背景・アクセント</h3>
+
+          <div class="grid grid-cols-2 gap-2">
+            <label class="text-[10px] text-slate-400">
+              ヘッダー背景色
+              <input id="headerBgColor" type="color" value="#0f172a"
+                class="mt-1 h-9 w-full rounded border border-slate-700 bg-slate-800 p-1">
+            </label>
+            <label class="text-[10px] text-slate-400">
+              アクセント色
+              <input id="headerAccentColor" type="color" value="#e11d48"
+                class="mt-1 h-9 w-full rounded border border-slate-700 bg-slate-800 p-1">
+            </label>
+          </div>
+          <p class="text-[10px] text-slate-500">
+            ヘッダー内の日時・イベント名、サークル名、スペース番号は下の設定で個別に編集できます。
+          </p>
+        </section>
+
+        <!-- ヘッダー情報の文字・背景設定 -->
         <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
           <h3 class="text-xs font-bold text-rose-400">
             情報ボックスの文字・背景設定
@@ -308,7 +329,21 @@
           </div>
         </section>
 
-        <!-- 頒布物入力 -->
+        <!-- 頒布物画像一括アップロード -->
+        <section class="space-y-2.5 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
+          <h3 class="text-xs font-bold text-rose-400 flex items-center gap-1">
+            <i data-lucide="images" class="w-3.5 h-3.5"></i>
+            頒布物画像 一括アップロード
+          </h3>
+          <label class="flex flex-col items-center justify-center w-full h-20 border-2 border-dashed border-rose-500/50 hover:border-rose-400 rounded-xl cursor-pointer bg-slate-800/40 hover:bg-slate-800 transition p-2">
+            <i data-lucide="upload-cloud" class="w-6 h-6 text-rose-400 mb-1"></i>
+            <span class="text-xs text-slate-200 font-bold">画像をまとめて選択（複数可）</span>
+            <span class="text-[10px] text-slate-400">選択順に頒布物へ割り当て</span>
+            <input type="file" id="batchImageInput" accept="image/*" multiple class="hidden">
+          </label>
+        </section>
+
+        <!-- 頒布物一覧 -->
         <section>
           <div class="flex justify-between items-center mb-2">
             <h3 class="text-xs font-bold text-rose-400 flex items-center gap-1">
@@ -317,25 +352,9 @@
             </h3>
             <button id="addItemBtn" type="button" class="bg-slate-700 hover:bg-slate-600 text-xs px-2.5 py-1.5 rounded-lg border border-slate-600 text-slate-200 flex items-center gap-1">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-              追加
+              頒布物を追加
             </button>
           </div>
-
-          <div class="mb-3 space-y-2 rounded-xl border border-slate-700 bg-slate-900/80 p-3">
-            <label for="bulkItemsInput" class="block text-[11px] font-bold text-slate-300">
-              頒布物情報をまとめて入力
-            </label>
-            <textarea id="bulkItemsInput" rows="5"
-              placeholder="新刊サンプル | 新刊 | ¥1,000 | 文庫サイズ / 120P | 全年齢&#10;既刊イラスト集 | 既刊 | ¥500 | B5 / 24P | 全年齢&#10;ペーパー | 無料配布 | | ご自由にお持ちください | 全年齢&#10;R18作品 | 新刊 | ¥1,000 | 成人向け | R18"
-              class="w-full resize-y rounded-lg border border-slate-700 bg-slate-800 px-2.5 py-2 text-xs text-slate-200"></textarea>
-            <p class="text-[10px] text-slate-400">
-              1行に1件。「タイトル | カテゴリ | 値段 | 説明 | 全年齢/R18」の順です。値段は無料配布なら空欄にできます。
-            </p>
-            <button id="applyBulkItemsBtn" type="button" class="w-full rounded-lg bg-rose-600 py-2 text-xs font-bold text-white hover:bg-rose-500">
-              一括入力を反映
-            </button>
-          </div>
-
           <div id="itemsContainer" class="space-y-3"></div>
         </section>
       </div>
@@ -393,7 +412,7 @@
     };
 
     /*
-      フォームサイズはプレビューカード自体のサイズと、
+      大・中・小はプレビューカードの面積と、
       カテゴリ・タイトル・価格の文字サイズに反映します。
     */
     const SIZE_PRESETS = {
@@ -779,6 +798,10 @@
       });
     }
 
+    /*
+      複数画像を選択順に頒布物へ割り当てます。
+      頒布物数を超えた画像がある場合は、フォームを自動追加します。
+    */
     async function handleBatchImageUpload(fileList) {
       const files = Array.from(fileList || []);
       if (files.length === 0) return;
@@ -810,7 +833,7 @@
     }
 
     function createPatternCanvas(patternStyle, colorHex) {
-      const size = 120;
+      const size = 240;
       const patternCanvas = document.createElement("canvas");
       const context = patternCanvas.getContext("2d");
 
@@ -829,28 +852,46 @@
       } else if (patternStyle === "stripes") {
         context.fillRect(0, 0, size / 2, size);
       } else if (patternStyle === "diagonal") {
+        /*
+          斜線のタイルをシームレスにするため、
+          240pxのタイルに対して回転後の周期を240/√2に設定します。
+          横・縦方向にタイルが繰り返されても斜線の位置がつながります。
+        */
+        const period = size / Math.sqrt(2);
+        const stripeWidth = period / 3;
+
         context.save();
         context.translate(size / 2, size / 2);
         context.rotate(Math.PI / 4);
-        context.fillRect(-size, -size / 2, size * 2, size / 2);
+        context.fillStyle = colorHex;
+
+        for (let x = -size * 2; x <= size * 2; x += period) {
+          context.fillRect(
+            x,
+            -size * 2,
+            stripeWidth,
+            size * 4
+          );
+        }
+
         context.restore();
       } else if (patternStyle === "border") {
         context.fillRect(0, 0, size, size / 2);
       } else if (patternStyle === "tartan") {
         context.globalAlpha = 0.72;
-        context.fillRect(20, 0, 32, size);
-        context.fillRect(76, 0, 12, size);
-        context.fillRect(0, 20, size, 32);
-        context.fillRect(0, 76, size, 12);
+        context.fillRect(36, 0, 48, size);
+        context.fillRect(156, 0, 20, size);
+        context.fillRect(0, 36, size, 48);
+        context.fillRect(0, 156, size, 20);
 
         context.globalAlpha = 0.42;
-        context.fillRect(0, 56, size, 8);
-        context.fillRect(56, 0, 8, size);
+        context.fillRect(0, 108, size, 12);
+        context.fillRect(108, 0, 12, size);
 
         context.globalAlpha = 0.28;
         context.fillStyle = "#334155";
-        context.fillRect(20, 0, 5, size);
-        context.fillRect(0, 20, size, 5);
+        context.fillRect(36, 0, 7, size);
+        context.fillRect(0, 36, size, 7);
         context.globalAlpha = 1;
       }
 
@@ -897,19 +938,22 @@
       });
     }
 
-    function getInfoBoxStyle(prefix, defaultSize, defaultColor, maxSize) {
+    function getInfoBoxStyle(prefix, defaultSize, defaultTextColor, maxSize) {
       const rawSize = Number.parseInt(
         document.getElementById(`${prefix}FontSize`).value,
         10
       );
-      const enabled = document.getElementById(`${prefix}BgEnabled`).checked;
+      const backgroundEnabled =
+        document.getElementById(`${prefix}BgEnabled`).checked;
 
       return {
         fontSize: Number.isFinite(rawSize)
           ? Math.max(12, Math.min(rawSize, maxSize))
           : defaultSize,
-        fill: document.getElementById(`${prefix}TextColor`).value || defaultColor,
-        backgroundColor: enabled
+        fill:
+          document.getElementById(`${prefix}TextColor`).value ||
+          defaultTextColor,
+        backgroundColor: backgroundEnabled
           ? document.getElementById(`${prefix}BgColor`).value
           : ""
       };
@@ -952,7 +996,7 @@
 
       const patternFill = applyBackground();
 
-      /* パターン背景はキャンバス全体の最背面オブジェクトとして描画 */
+      /* パターンを最背面のオブジェクトとして描画 */
       if (patternFill) {
         canvas.add(new fabric.Rect({
           left: 0,
@@ -971,6 +1015,12 @@
       const circleName = document.getElementById("circleName").value;
       const spaceNo = document.getElementById("spaceNo").value;
       const isLandscape = currentOrientation === "LANDSCAPE";
+
+      const headerColor =
+        document.getElementById("headerBgColor").value || "#0f172a";
+      const accentColor =
+        document.getElementById("headerAccentColor").value ||
+        selectedPresetColor.main;
 
       const eventInfoStyle = getInfoBoxStyle(
         "eventInfo",
@@ -999,7 +1049,7 @@
         top: 0,
         width: CANVAS_WIDTH,
         height: headerHeight,
-        fill: "#0f172a",
+        fill: headerColor,
         selectable: false,
         evented: false
       }));
@@ -1009,11 +1059,12 @@
         top: headerHeight - 12,
         width: CANVAS_WIDTH,
         height: 12,
-        fill: selectedPresetColor.main,
+        fill: accentColor,
         selectable: false,
         evented: false
       }));
 
+      // 日時・イベント名
       canvas.add(new fabric.Textbox(`${eventDate}  |  ${eventName}`, {
         left: 80,
         top: isLandscape ? 55 : 60,
@@ -1026,6 +1077,7 @@
         evented: false
       }));
 
+      // サークル名
       canvas.add(new fabric.Textbox(circleName, {
         left: 80,
         top: isLandscape ? 130 : 135,
@@ -1039,6 +1091,7 @@
         evented: false
       }));
 
+      // スペース番号
       if (spaceNo) {
         canvas.add(new fabric.Textbox(` ${spaceNo} `, {
           left: isLandscape ? CANVAS_WIDTH - 850 : 80,
@@ -1062,9 +1115,8 @@
       if (isLandscape) {
         if (itemCount <= 1) columns = 1;
         else if (itemCount > 4) columns = 3;
-      } else {
-        if (itemCount <= 3) columns = 1;
-        else columns = 2;
+      } else if (itemCount <= 3) {
+        columns = 1;
       }
 
       const rows = Math.ceil(itemCount / columns);
@@ -1088,7 +1140,7 @@
         const sizePreset =
           SIZE_PRESETS[item.displaySize] || SIZE_PRESETS.medium;
 
-        /* 大・中・小の選択をカード寸法に反映 */
+        /* 大・中・小をカードの寸法にも反映 */
         const cardWidth = slotWidth * sizePreset.scale;
         const cardHeight = slotHeight * sizePreset.scale;
         const posX = slotX + (slotWidth - cardWidth) / 2;
@@ -1109,8 +1161,8 @@
           evented: false
         }));
 
-        const isSingleColumnPortrait = !isLandscape && columns === 1;
-        const imageWidth = cardWidth * (isSingleColumnPortrait ? 0.36 : 0.38);
+        const singleColumnPortrait = !isLandscape && columns === 1;
+        const imageWidth = cardWidth * (singleColumnPortrait ? 0.36 : 0.38);
         const imageHeight = Math.max(100, cardHeight - padding * 2);
         const imageLeft = posX + padding;
         const imageTop = posY + padding;
@@ -1155,7 +1207,7 @@
         );
         let currentY = posY + padding + 8;
 
-        // カテゴリをカテゴリ別カラーで大きく表示
+        // カテゴリをカテゴリ別の色で大きく表示
         const categoryStyle = getCategoryStyle(item.category);
         const categoryBadge = new fabric.Textbox(
           ` ${item.category || "新刊"} `,
@@ -1203,7 +1255,7 @@
         canvas.add(ageBadge);
         currentY += ageBadge.height + 10;
 
-        // 大きなタイトル
+        // タイトルを大きく表示
         const title = new fabric.Textbox(item.title || "", {
           left: textX,
           top: currentY,
@@ -1219,7 +1271,7 @@
         canvas.add(title);
         currentY += title.height + 12;
 
-        // 大きな価格。無料配布は価格を表示しない。
+        // 無料配布以外は価格を大きく表示
         if (item.category !== "無料配布" && item.price) {
           const price = new fabric.Textbox(item.price, {
             left: textX,
@@ -1252,64 +1304,6 @@
       });
 
       canvas.renderAll();
-    }
-
-    function applyBulkItems() {
-      const textarea = document.getElementById("bulkItemsInput");
-      const lines = textarea.value
-        .split(/\r?\n/)
-        .map((line) => line.trim())
-        .filter(Boolean);
-
-      if (lines.length === 0) {
-        alert("頒布物情報を1件以上入力してください。");
-        return;
-      }
-
-      const validCategories = ["新刊", "既刊", "無料配布"];
-      const validAgeRatings = ["全年齢", "R18"];
-
-      const newItems = lines.map((line, index) => {
-        const fields = line.split("|").map((field) => field.trim());
-
-        if (fields.length < 2 || !fields[0]) {
-          throw new Error(
-            `${index + 1}行目: タイトルとカテゴリを入力してください。`
-          );
-        }
-
-        const category = fields[1];
-        if (!validCategories.includes(category)) {
-          throw new Error(
-            `${index + 1}行目: カテゴリは「新刊」「既刊」「無料配布」のいずれかにしてください。`
-          );
-        }
-
-        /*
-          5列目が全年齢/R18なら年齢区分として扱い、
-          4列目を説明として設定します。
-        */
-        const ageRating = fields[4] || "全年齢";
-        if (!validAgeRatings.includes(ageRating)) {
-          throw new Error(
-            `${index + 1}行目: 年齢区分は「全年齢」または「R18」にしてください。`
-          );
-        }
-
-        return {
-          title: fields[0],
-          category,
-          price: category === "無料配布" ? "" : (fields[2] || ""),
-          desc: fields[3] || "",
-          ageRating,
-          displaySize: "medium",
-          imageSrc: null
-        };
-      });
-
-      items = newItems;
-      renderFormItems();
-      generateOshinagaki();
     }
 
     function setupResponsiveScaler() {
@@ -1360,6 +1354,8 @@
       });
 
       [
+        "headerBgColor",
+        "headerAccentColor",
         "eventInfoFontSize",
         "eventInfoTextColor",
         "eventInfoBgEnabled",
@@ -1425,15 +1421,6 @@
 
       document.getElementById("addItemBtn")
         .addEventListener("click", addItem);
-
-      document.getElementById("applyBulkItemsBtn")
-        .addEventListener("click", () => {
-          try {
-            applyBulkItems();
-          } catch (error) {
-            alert(error.message);
-          }
-        });
 
       document.getElementById("toggleGrid").addEventListener("change", (event) => {
         document.getElementById("gridOverlay")
