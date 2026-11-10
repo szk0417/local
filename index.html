@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>同人おしながきジェネレーター</title>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,11 +11,7 @@
 
   <style>
     * { box-sizing: border-box; }
-
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
+    html, body { height: 100%; margin: 0; }
 
     body {
       display: flex;
@@ -41,13 +36,7 @@
       background: #1e293b;
     }
 
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      min-width: 0;
-    }
-
+    .brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
     .brand-icon {
       display: grid;
       width: 34px;
@@ -59,13 +48,7 @@
       color: #fff;
       font-size: 19px;
     }
-
-    .brand h1 {
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.3;
-    }
-
+    .brand h1 { margin: 0; font-size: 14px; line-height: 1.3; }
     .brand p {
       overflow: hidden;
       margin: 2px 0 0;
@@ -75,12 +58,7 @@
       white-space: nowrap;
     }
 
-    .top-actions {
-      display: flex;
-      flex: 0 0 auto;
-      gap: 6px;
-    }
-
+    .top-actions { display: flex; flex: 0 0 auto; gap: 6px; }
     .button {
       display: inline-flex;
       align-items: center;
@@ -92,17 +70,11 @@
       font-size: 11px;
       font-weight: 700;
     }
-
     .button-print { background: #475569; }
     .button-png { background: #059669; }
     .button-pdf { background: #e11d48; }
 
-    #mainLayout {
-      display: flex;
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow: hidden;
-    }
+    #mainLayout { display: flex; flex: 1 1 auto; min-height: 0; overflow: hidden; }
 
     #settingsPanel {
       display: flex;
@@ -125,7 +97,6 @@
       font-size: 12px;
       font-weight: 700;
     }
-
     .panel-heading small {
       border: 1px solid #166534;
       border-radius: 999px;
@@ -135,12 +106,7 @@
       font-size: 9px;
     }
 
-    #settingsContent {
-      flex: 1 1 auto;
-      overflow: auto;
-      padding: 14px;
-    }
-
+    #settingsContent { flex: 1 1 auto; overflow: auto; padding: 14px; }
     .section {
       margin-bottom: 12px;
       border: 1px solid #334155;
@@ -148,20 +114,8 @@
       padding: 12px;
       background: rgba(15, 23, 42, .65);
     }
-
-    .section h2 {
-      margin: 0 0 10px;
-      color: #fb7185;
-      font-size: 12px;
-    }
-
-    .field {
-      display: block;
-      margin-bottom: 9px;
-      color: #94a3b8;
-      font-size: 10px;
-    }
-
+    .section h2 { margin: 0 0 10px; color: #fb7185; font-size: 12px; }
+    .field { display: block; margin-bottom: 9px; color: #94a3b8; font-size: 10px; }
     .field:last-child { margin-bottom: 0; }
 
     .control {
@@ -175,7 +129,6 @@
       color: #e2e8f0;
       font-size: 11px;
     }
-
     .control:disabled { opacity: .5; }
 
     .color-control {
@@ -188,18 +141,8 @@
       background: #1e293b;
     }
 
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .palette {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 5px;
-      margin-top: 5px;
-    }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .palette { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin-top: 5px; }
 
     .palette button {
       display: flex;
@@ -213,9 +156,7 @@
       color: #cbd5e1;
       font-size: 9px;
     }
-
     .palette button.selected { outline: 2px solid #f43f5e; }
-
     .swatch {
       width: 13px;
       height: 13px;
@@ -232,7 +173,6 @@
       color: #94a3b8;
       font-size: 10px;
     }
-
     .check-row input[type="checkbox"] { accent-color: #f43f5e; }
 
     .upload-box {
@@ -245,20 +185,8 @@
       text-align: center;
       cursor: pointer;
     }
-
-    .upload-box span {
-      display: block;
-      margin-top: 4px;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .upload-box small {
-      display: block;
-      margin-top: 3px;
-      color: #94a3b8;
-      font-size: 9px;
-    }
+    .upload-box span { display: block; margin-top: 4px; font-size: 11px; font-weight: 700; }
+    .upload-box small { display: block; margin-top: 3px; color: #94a3b8; font-size: 9px; }
 
     .item-card {
       margin-bottom: 10px;
@@ -267,7 +195,6 @@
       padding: 10px;
       background: #0f172a;
     }
-
     .item-card-head {
       display: flex;
       align-items: center;
@@ -277,7 +204,6 @@
       font-size: 10px;
       font-weight: 700;
     }
-
     .item-card-head button {
       border: 0;
       border-radius: 5px;
@@ -286,10 +212,8 @@
       color: #e2e8f0;
       font-size: 10px;
     }
-
     .item-card-head button:disabled { opacity: .4; }
     .delete-item { margin-left: 4px; background: transparent !important; color: #fb7185 !important; }
-
     .add-item {
       width: 100%;
       border: 1px solid #475569;
@@ -330,30 +254,15 @@
       transform-origin: top left;
     }
 
-    #previewCanvas {
-      position: relative;
-      z-index: 1;
-      display: block;
-    }
+    #previewCanvas { display: block; }
 
-    #gridOverlay {
-      position: absolute;
-      z-index: 2;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(to right, rgba(15,23,42,.16) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(15,23,42,.16) 1px, transparent 1px);
-      background-size: 20px 20px;
-    }
-
+    /* 方眼ガイドは削除。印刷用の仕上がり・安全マージンガイドだけ表示する。 */
     .guide {
       position: absolute;
       z-index: 3;
       pointer-events: none;
       border: 1px dashed rgba(15, 23, 42, .85);
     }
-
     #trimGuide { outline: 1px solid rgba(255,255,255,.85); }
     #safeGuide { border-color: rgba(225, 29, 72, .95); }
     .hidden { display: none !important; }
@@ -386,7 +295,6 @@
       box-shadow: 0 6px 20px rgba(0, 0, 0, .35);
       font-size: 10px;
     }
-
     #previewToolbar button {
       border: 0;
       border-radius: 5px;
@@ -395,7 +303,6 @@
       color: #e2e8f0;
       font-size: 10px;
     }
-
     #previewToolbarDrag { cursor: grab; touch-action: none; }
 
     @media (max-width: 767px) {
@@ -405,17 +312,14 @@
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
       }
-
       #settingsPanel {
         width: 100%;
         max-height: none;
         overflow: visible;
         border-right: 0;
       }
-
       #settingsContent { overflow: visible; }
       #workspace { width: 100%; height: 75vh; min-height: 480px; }
-
       #previewToolbar {
         top: auto;
         right: 10px;
@@ -490,15 +394,13 @@
               <option value="color">単色カラー</option>
             </select>
           </label>
-
           <div class="field">
             CUDO推奨配色セットの色
             <div id="presetColorPalette" class="palette"></div>
             <small style="display:block;margin-top:5px;color:#64748b">
-              選択色は背景・パターン・ヘッダーに適用します。色名ラベルも併用しています。
+              初期配色は赤色ドットです。色名ラベルも併用しています。
             </small>
           </div>
-
           <div id="patternControls">
             <label class="field">パターン
               <select id="patternStyleSelect" class="control">
@@ -511,16 +413,14 @@
               </select>
             </label>
           </div>
-
           <div id="customBgControls" class="hidden">
             <label class="field">背景画像を選択
               <input id="customBgInput" type="file" accept="image/*" class="control">
             </label>
           </div>
-
           <div id="singleColorControls" class="hidden">
             <label class="field">背景色
-              <input id="bgColorPicker" type="color" value="#ffffcc" class="color-control">
+              <input id="bgColorPicker" type="color" value="#ffffff" class="color-control">
             </label>
           </div>
         </section>
@@ -539,6 +439,18 @@
             </label>
             <label class="field">スペース番号
               <input id="spaceNo" type="text" value="東7ホール あ-01a" class="control">
+            </label>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>ヘッダー配色</h2>
+          <div class="two-col">
+            <label class="field">背景色
+              <input id="headerBgColor" type="color" value="#333333" class="color-control">
+            </label>
+            <label class="field">アクセント色
+              <input id="headerAccentColor" type="color" value="#FF4B00" class="color-control">
             </label>
           </div>
         </section>
@@ -588,7 +500,7 @@
           <label class="check-row">
             スペース番号の背景色
             <input id="spaceInfoBgEnabled" type="checkbox" checked>
-            <input id="spaceInfoBgColor" type="color" value="#00AF55" class="color-control">
+            <input id="spaceInfoBgColor" type="color" value="#FF4B00" class="color-control">
           </label>
         </section>
 
@@ -618,18 +530,16 @@
       </div>
 
       <div id="previewToolbar">
-        <button id="previewToolbarDrag" type="button" aria-label="操作バーを移動" title="ドラッグして移動">↕</button>
+        <button id="previewToolbarDrag" type="button" aria-label="操作バーを移動">↕</button>
         <button id="fitCanvasBtn" type="button">全体表示</button>
         <label>倍率
           <input id="zoomSlider" type="range" min="1" max="200" value="100" style="width:70px;vertical-align:middle">
         </label>
-        <label><input id="toggleGrid" type="checkbox"> 方眼</label>
       </div>
 
       <div id="canvasContainer">
         <div id="canvasStage">
           <canvas id="previewCanvas"></canvas>
-          <div id="gridOverlay" class="hidden"></div>
           <div id="trimGuide" class="guide hidden"></div>
           <div id="safeGuide" class="guide hidden"></div>
         </div>
@@ -682,7 +592,8 @@
     const BLEED_MM = 3;
     const canvas = document.getElementById("previewCanvas");
 
-    let selectedPalette = PALETTES.find((palette) => palette.name === "緑");
+    // 初期設定: A3縦、赤色ドットパターン
+    let selectedPalette = PALETTES[0];
     let paper = "A3";
     let orientation = "PORTRAIT";
     let outputWidth = 0;
@@ -724,7 +635,6 @@
       }
     ];
 
-    // スクリプトがbody末尾にあるので、ここで初期化し初回プレビューを描く。
     initialize();
 
     function initialize() {
@@ -734,8 +644,14 @@
       updateLayout();
 
       if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(() => renderCanvas()).catch(() => {});
+        document.fonts.ready.then(renderCanvas).catch(() => {});
       }
+    }
+
+    function getEl(id) {
+      const element = document.getElementById(id);
+      if (!element) throw new Error(`必要なHTML要素がありません: #${id}`);
+      return element;
     }
 
     function getReadableTextColor(hex) {
@@ -743,27 +659,23 @@
       const r = parseInt(value.slice(0, 2), 16);
       const g = parseInt(value.slice(2, 4), 16);
       const b = parseInt(value.slice(4, 6), 16);
-
       const linear = (channel) => {
         const c = channel / 255;
         return c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4;
       };
-
       const luminance = .2126 * linear(r) + .7152 * linear(g) + .0722 * linear(b);
       return luminance > .179 ? "#111111" : "#ffffff";
     }
 
     function buildPalette() {
-      const root = document.getElementById("presetColorPalette");
+      const root = getEl("presetColorPalette");
       root.innerHTML = "";
 
       PALETTES.forEach((preset) => {
         const button = document.createElement("button");
         button.type = "button";
         button.title = `${preset.name}（CUDO推奨配色セット）`;
-        button.innerHTML =
-          `<span class="swatch" style="background:${preset.hex}"></span><span>${preset.name}</span>`;
-
+        button.innerHTML = `<span class="swatch" style="background:${preset.hex}"></span><span>${preset.name}</span>`;
         if (preset.name === selectedPalette.name) button.classList.add("selected");
 
         button.addEventListener("click", () => {
@@ -771,14 +683,14 @@
           root.querySelectorAll("button").forEach((el) => el.classList.remove("selected"));
           button.classList.add("selected");
 
-          if (document.getElementById("bgTypeSelect").value === "color") {
-            document.getElementById("bgColorPicker").value = preset.background;
+          if (getEl("bgTypeSelect").value === "color") {
+            getEl("bgColorPicker").value = preset.background;
           }
 
-          document.getElementById("headerBgColor").value = preset.header;
-          document.getElementById("headerAccentColor").value = preset.accent;
-          document.getElementById("spaceInfoBgColor").value = preset.space;
-          document.getElementById("spaceInfoTextColor").value = getReadableTextColor(preset.space);
+          getEl("headerBgColor").value = preset.header;
+          getEl("headerAccentColor").value = preset.accent;
+          getEl("spaceInfoBgColor").value = preset.space;
+          getEl("spaceInfoTextColor").value = getReadableTextColor(preset.space);
 
           renderCanvas();
         });
@@ -792,14 +704,14 @@
         ? { event:social.eventFont, circle:social.circleFont, space:social.spaceFont }
         : { event:60, circle:150, space:90 };
 
-      document.getElementById("eventInfoFontSize").value = sizes.event;
-      document.getElementById("circleInfoFontSize").value = sizes.circle;
-      document.getElementById("spaceInfoFontSize").value = sizes.space;
+      getEl("eventInfoFontSize").value = sizes.event;
+      getEl("circleInfoFontSize").value = sizes.circle;
+      getEl("spaceInfoFontSize").value = sizes.space;
     }
 
     function updateLayout() {
-      paper = document.getElementById("paperSizeSelect").value;
-      const orientationSelect = document.getElementById("orientationSelect");
+      paper = getEl("paperSizeSelect").value;
+      const orientationSelect = getEl("orientationSelect");
       const socialPreset = SOCIAL_PRESETS[paper];
 
       bleedLeft = 0;
@@ -811,7 +723,6 @@
         orientation = socialPreset.orientation;
         orientationSelect.value = orientation;
         orientationSelect.disabled = true;
-
         outputWidth = trimWidth = socialPreset.width;
         outputHeight = trimHeight = socialPreset.height;
       } else {
@@ -824,25 +735,23 @@
         outputWidth = landscape ? spec.heightPx : spec.widthPx;
         outputHeight = landscape ? spec.widthPx : spec.heightPx;
 
-        const outputWidthMm = landscape ? spec.heightMm : spec.widthMm;
-        const outputHeightMm = landscape ? spec.widthMm : spec.heightMm;
-        const trimWidthMm = landscape ? spec.trimHeightMm : spec.trimWidthMm;
-        const trimHeightMm = landscape ? spec.trimWidthMm : spec.trimHeightMm;
+        const outWmm = landscape ? spec.heightMm : spec.widthMm;
+        const outHmm = landscape ? spec.widthMm : spec.heightMm;
+        const trimWmm = landscape ? spec.trimHeightMm : spec.trimWidthMm;
+        const trimHmm = landscape ? spec.trimWidthMm : spec.trimHeightMm;
 
-        trimWidth = Math.round(trimWidthMm * outputWidth / outputWidthMm);
-        trimHeight = Math.round(trimHeightMm * outputHeight / outputHeightMm);
+        trimWidth = Math.round(trimWmm * outputWidth / outWmm);
+        trimHeight = Math.round(trimHmm * outputHeight / outHmm);
         bleedLeft = Math.floor((outputWidth - trimWidth) / 2);
         bleedTop = Math.floor((outputHeight - trimHeight) / 2);
-        safeX = Math.ceil(BLEED_MM * trimWidth / trimWidthMm);
-        safeY = Math.ceil(BLEED_MM * trimHeight / trimHeightMm);
+        safeX = Math.ceil(BLEED_MM * trimWidth / trimWmm);
+        safeY = Math.ceil(BLEED_MM * trimHeight / trimHmm);
       }
 
       canvas.width = outputWidth;
       canvas.height = outputHeight;
-
-      const stage = document.getElementById("canvasStage");
-      stage.style.width = `${outputWidth}px`;
-      stage.style.height = `${outputHeight}px`;
+      getEl("canvasStage").style.width = `${outputWidth}px`;
+      getEl("canvasStage").style.height = `${outputHeight}px`;
 
       applyHeaderDefaults(SOCIAL_LAYOUTS[paper]);
       updateGuides();
@@ -851,11 +760,11 @@
         ? `${socialPreset.label} (${outputWidth} × ${outputHeight}px)`
         : `${paper}${orientation === "LANDSCAPE" ? "横" : "縦"} 塗り足し込み ${outputWidth} × ${outputHeight}px`;
 
-      document.getElementById("paperSpecLabel").textContent = label;
-      document.getElementById("dimensionDisplay").textContent = label;
-      document.getElementById("layoutHelp").textContent = socialPreset
+      getEl("paperSpecLabel").textContent = label;
+      getEl("dimensionDisplay").textContent = label;
+      getEl("layoutHelp").textContent = socialPreset
         ? "SNS向けサイズ。印刷用の塗り足し・安全ガイドはありません。"
-        : "プレビュー全体が塗り足し込み。白線＝仕上がり範囲、赤点線＝安全マージンです。";
+        : "白線＝仕上がり範囲、赤点線＝3mm安全マージンです。";
 
       previewMode = "fit";
       fitPreview();
@@ -863,13 +772,12 @@
     }
 
     function updateGuides() {
-      const trimGuide = document.getElementById("trimGuide");
-      const safeGuide = document.getElementById("safeGuide");
+      const trimGuide = getEl("trimGuide");
+      const safeGuide = getEl("safeGuide");
       const isPrint = Boolean(PRINT_SPECS[paper]);
 
       trimGuide.classList.toggle("hidden", !isPrint);
       safeGuide.classList.toggle("hidden", !isPrint);
-
       if (!isPrint) return;
 
       trimGuide.style.left = `${bleedLeft}px`;
@@ -890,7 +798,7 @@
     }
 
     function renderItems() {
-      const root = document.getElementById("itemsContainer");
+      const root = getEl("itemsContainer");
       root.innerHTML = "";
 
       items.forEach((item, index) => {
@@ -989,7 +897,6 @@
 
           items[index].noImage = input.checked;
           const fileInput = root.querySelector(`[data-image="${index}"]`);
-
           if (fileInput) {
             fileInput.disabled = input.checked;
             if (input.checked) fileInput.value = "";
@@ -1057,12 +964,7 @@
       });
 
       const image = await loadImage(src);
-      return {
-        src,
-        image,
-        width:image.naturalWidth,
-        height:image.naturalHeight
-      };
+      return { src, image, width:image.naturalWidth, height:image.naturalHeight };
     }
 
     async function loadItemImage(index, file) {
@@ -1089,9 +991,8 @@
 
       try {
         const loaded = await Promise.all(selected.map(readImageFile));
-
         loaded.forEach((entry, index) => {
-          const imageData = {
+          const data = {
             image:entry.image,
             imageSrc:entry.src,
             imageWidth:entry.width,
@@ -1100,7 +1001,7 @@
           };
 
           if (index < items.length) {
-            Object.assign(items[index], imageData);
+            Object.assign(items[index], data);
           } else {
             items.push({
               category:"新刊",
@@ -1109,11 +1010,10 @@
               price:"¥ 500",
               desc:"",
               descriptionFontSize:38,
-              ...imageData
+              ...data
             });
           }
         });
-
         renderItems();
         renderCanvas();
       } catch (error) {
@@ -1145,9 +1045,7 @@
         pctx.translate(120, 120);
         pctx.rotate(Math.PI / 4);
         pctx.fillStyle = foreground;
-        for (let x = -360; x <= 360; x += 110) {
-          pctx.fillRect(x, -360, 36, 720);
-        }
+        for (let x = -360; x <= 360; x += 110) pctx.fillRect(x, -360, 36, 720);
         pctx.restore();
       } else if (style === "border") {
         pctx.fillStyle = foreground;
@@ -1165,10 +1063,10 @@
     }
 
     function drawBackground(context) {
-      const type = document.getElementById("bgTypeSelect").value;
+      const type = getEl("bgTypeSelect").value;
 
       if (type === "color") {
-        context.fillStyle = document.getElementById("bgColorPicker").value;
+        context.fillStyle = getEl("bgColorPicker").value;
         context.fillRect(0, 0, outputWidth, outputHeight);
         return;
       }
@@ -1179,22 +1077,20 @@
       }
 
       if (type === "pattern") {
-        const style = document.getElementById("patternStyleSelect").value;
+        const style = getEl("patternStyleSelect").value;
         const base = selectedPalette.background;
-
         context.fillStyle = base;
         context.fillRect(0, 0, outputWidth, outputHeight);
 
-        if (style === "solid") return;
-
-        const pattern = context.createPattern(
-          makePattern(style, selectedPalette.hex, base),
-          "repeat"
-        );
-
-        if (pattern) {
-          context.fillStyle = pattern;
-          context.fillRect(0, 0, outputWidth, outputHeight);
+        if (style !== "solid") {
+          const pattern = context.createPattern(
+            makePattern(style, selectedPalette.hex, base),
+            "repeat"
+          );
+          if (pattern) {
+            context.fillStyle = pattern;
+            context.fillRect(0, 0, outputWidth, outputHeight);
+          }
         }
         return;
       }
@@ -1204,24 +1100,18 @@
     }
 
     function getHeaderStyle(prefix, defaultSize, defaultColor) {
-      const rawSize = Number.parseInt(
-        document.getElementById(`${prefix}FontSize`).value,
-        10
-      );
-      const hasBackground = document.getElementById(`${prefix}BgEnabled`).checked;
+      const rawSize = Number.parseInt(getEl(`${prefix}FontSize`).value, 10);
+      const enabled = getEl(`${prefix}BgEnabled`).checked;
 
       return {
         size:Number.isFinite(rawSize) ? rawSize : defaultSize,
-        color:document.getElementById(`${prefix}TextColor`).value || defaultColor,
-        background:hasBackground
-          ? document.getElementById(`${prefix}BgColor`).value
-          : ""
+        color:getEl(`${prefix}TextColor`).value || defaultColor,
+        background:enabled ? getEl(`${prefix}BgColor`).value : ""
       };
     }
 
     function wrapLines(context, text, maxWidth) {
       const lines = [];
-
       String(text || "").split("\n").forEach((paragraph) => {
         let line = "";
         for (const char of Array.from(paragraph)) {
@@ -1235,7 +1125,6 @@
         }
         lines.push(line);
       });
-
       return lines.length ? lines : [""];
     }
 
@@ -1265,20 +1154,16 @@
         context.font = `${weight} ${minFont}px ${family}`;
         lines = wrapLines(context, text, width);
         const maxLines = Math.max(1, Math.floor(height / (minFont * lineHeightRatio)));
-
         if (lines.length > maxLines) {
           lines = lines.slice(0, maxLines);
           const chars = Array.from(lines[maxLines - 1] || "");
-          while (chars.length && context.measureText(`${chars.join("")}…`).width > width) {
-            chars.pop();
-          }
+          while (chars.length && context.measureText(`${chars.join("")}…`).width > width) chars.pop();
           lines[maxLines - 1] = `${chars.join("")}…`;
         }
       }
 
       const lineHeight = fontSize * lineHeightRatio;
-      const totalHeight = lines.length * lineHeight;
-      let y = box.y + Math.max(0, (height - totalHeight) / 2);
+      let y = box.y + Math.max(0, (height - lines.length * lineHeight) / 2);
 
       context.save();
       context.beginPath();
@@ -1297,21 +1182,18 @@
 
       const x = options.align === "center"
         ? box.x + width / 2
-        : options.align === "right"
-          ? box.x + width
-          : box.x;
+        : options.align === "right" ? box.x + width : box.x;
 
       lines.forEach((line) => {
         context.fillText(line, x, y, width);
         y += lineHeight;
       });
-
       context.restore();
     }
 
     function drawHeader(context, social, headerHeight, landscape, eventStyle, circleStyle, spaceStyle) {
       const margin = social ? social.marginX : safeX + 8;
-      const textWidth = Math.max(1, trimWidth - margin * 2);
+      const width = Math.max(1, trimWidth - margin * 2);
 
       if (social) {
         const compact = paper === "PICSQUARE";
@@ -1324,28 +1206,24 @@
         let y = top;
 
         fitText(context,
-          `${document.getElementById("eventDate").value} | ${document.getElementById("eventName").value}`,
-          { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:eventHeight },
+          `${getEl("eventDate").value} | ${getEl("eventName").value}`,
+          { x:bleedLeft + margin, y:bleedTop + y, width, height:eventHeight },
           { maxFont:eventStyle.size, minFont:7, color:eventStyle.color, background:eventStyle.background });
 
         y += eventHeight + gap;
-        fitText(context, document.getElementById("circleName").value,
-          { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:circleHeight },
+        fitText(context, getEl("circleName").value,
+          { x:bleedLeft + margin, y:bleedTop + y, width, height:circleHeight },
           { maxFont:circleStyle.size, minFont:8, weight:"700", color:circleStyle.color, background:circleStyle.background });
 
         y += circleHeight + gap;
-        const space = document.getElementById("spaceNo").value;
+        const space = getEl("spaceNo").value;
         if (space) {
           fitText(context, ` ${space} `,
-            { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:spaceHeight },
+            { x:bleedLeft + margin, y:bleedTop + y, width, height:spaceHeight },
             {
-              maxFont:spaceStyle.size,
-              minFont:7,
-              weight:"700",
+              maxFont:spaceStyle.size, minFont:7, weight:"700",
               family:'"M PLUS Rounded 1c", sans-serif',
-              color:spaceStyle.color,
-              background:spaceStyle.background,
-              align:"center"
+              color:spaceStyle.color, background:spaceStyle.background, align:"center"
             });
         }
         return;
@@ -1363,28 +1241,24 @@
       let y = top;
 
       fitText(context,
-        `${document.getElementById("eventDate").value} | ${document.getElementById("eventName").value}`,
-        { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:eventHeight },
+        `${getEl("eventDate").value} | ${getEl("eventName").value}`,
+        { x:bleedLeft + margin, y:bleedTop + y, width, height:eventHeight },
         { maxFont:eventStyle.size, minFont:10 * scale, color:eventStyle.color, background:eventStyle.background });
 
       y += eventHeight + gap;
-      fitText(context, document.getElementById("circleName").value,
-        { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:circleHeight },
+      fitText(context, getEl("circleName").value,
+        { x:bleedLeft + margin, y:bleedTop + y, width, height:circleHeight },
         { maxFont:circleStyle.size, minFont:12 * scale, weight:"700", color:circleStyle.color, background:circleStyle.background });
 
       y += circleHeight + gap;
-      const space = document.getElementById("spaceNo").value;
+      const space = getEl("spaceNo").value;
       if (space) {
         fitText(context, ` ${space} `,
-          { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:spaceHeight },
+          { x:bleedLeft + margin, y:bleedTop + y, width, height:spaceHeight },
           {
-            maxFont:spaceStyle.size,
-            minFont:10 * scale,
-            weight:"700",
+            maxFont:spaceStyle.size, minFont:10 * scale, weight:"700",
             family:'"M PLUS Rounded 1c", sans-serif',
-            color:spaceStyle.color,
-            background:spaceStyle.background,
-            align:"center"
+            color:spaceStyle.color, background:spaceStyle.background, align:"center"
           });
       }
     }
@@ -1473,53 +1347,39 @@
         );
         const imageWidth = item.imageWidth * imageScale;
         const imageHeight = item.imageHeight * imageScale;
-
         imageBox = {
           x:x + padding,
           y:bodyY + (bodyHeight - imageHeight) / 2,
           width:imageWidth,
           height:imageHeight
         };
-
         textX = imageBox.x + imageWidth + (config.social ? 10 : config.padding);
         textWidth = Math.max(1, x + width - padding - textX);
       }
 
       const parts = [];
-
       if (item.title) {
         parts.push({
-          text:item.title,
-          ratio:.42,
-          max:78 * config.textScale,
+          text:item.title, ratio:.42, max:78 * config.textScale,
           min:Math.max(5, 8 * config.textScale),
-          family:'"Noto Sans JP", sans-serif',
-          weight:"700",
-          color:"#0f172a"
+          family:'"Noto Sans JP", sans-serif', weight:"700", color:"#0f172a"
         });
       }
-
       if (!["無料配布","Web展示"].includes(item.category) && item.price) {
         parts.push({
-          text:item.price,
-          ratio:.28,
-          max:100 * config.textScale,
+          text:item.price, ratio:.28, max:100 * config.textScale,
           min:Math.max(5, 8 * config.textScale),
-          family:'"M PLUS Rounded 1c", sans-serif',
-          weight:"700",
+          family:'"M PLUS Rounded 1c", sans-serif', weight:"700",
           color:style.background
         });
       }
-
       if (item.desc) {
         parts.push({
           text:item.desc,
           ratio:.30,
           max:Math.max(8, Math.min(100, Number(item.descriptionFontSize) || 38)) * config.textScale,
           min:Math.max(4, 7 * config.textScale),
-          family:'"Noto Sans JP", sans-serif',
-          weight:"400",
-          color:"#475569"
+          family:'"Noto Sans JP", sans-serif', weight:"400", color:"#475569"
         });
       }
 
@@ -1531,26 +1391,19 @@
         fitText(context, part.text,
           { x:textX, y:cursorY, width:textWidth, height:partHeight },
           {
-            maxFont:part.max,
-            minFont:part.min,
-            family:part.family,
-            weight:part.weight,
-            color:part.color
+            maxFont:part.max, minFont:part.min,
+            family:part.family, weight:part.weight, color:part.color
           });
         cursorY += partHeight;
       }
 
       if (imageBox && item.image) {
-        try {
-          context.save();
-          context.shadowColor = "rgba(15,23,42,.22)";
-          context.shadowBlur = config.social ? 4 : 12;
-          context.shadowOffsetY = config.social ? 2 : 5;
-          context.drawImage(item.image, imageBox.x, imageBox.y, imageBox.width, imageBox.height);
-          context.restore();
-        } catch (error) {
-          console.error("頒布物画像の描画に失敗しました。", error);
-        }
+        context.save();
+        context.shadowColor = "rgba(15,23,42,.22)";
+        context.shadowBlur = config.social ? 4 : 12;
+        context.shadowOffsetY = config.social ? 2 : 5;
+        context.drawImage(item.image, imageBox.x, imageBox.y, imageBox.width, imageBox.height);
+        context.restore();
       }
 
       context.restore();
@@ -1567,8 +1420,6 @@
 
         context.setTransform(1, 0, 0, 1, 0, 0);
         context.clearRect(0, 0, outputWidth, outputHeight);
-
-        // 背景を先に塗る。パターン・単色・画像すべて塗り足し込みの全体が対象。
         drawBackground(context);
 
         const social = SOCIAL_LAYOUTS[paper] || null;
@@ -1577,15 +1428,14 @@
           ? social.header
           : Math.round(trimHeight * (landscape ? .17 : .15));
 
-        // ヘッダー背景は上端の塗り足し部分まで続ける。
-        context.fillStyle = document.getElementById("headerBgColor").value || "#333333";
+        context.fillStyle = getEl("headerBgColor").value || "#333333";
         context.fillRect(0, 0, outputWidth, Math.min(outputHeight, bleedTop + headerHeight));
 
         const accentHeight = social
           ? Math.max(3, Math.round(headerHeight * .025))
           : Math.max(8, Math.round(12 * trimWidth / 3307));
 
-        context.fillStyle = document.getElementById("headerAccentColor").value || selectedPalette.accent;
+        context.fillStyle = getEl("headerAccentColor").value || selectedPalette.accent;
         context.fillRect(bleedLeft, bleedTop + headerHeight - accentHeight, trimWidth, accentHeight);
 
         const eventStyle = getHeaderStyle("eventInfo", social ? social.eventFont : 60, "#ffffff");
@@ -1609,14 +1459,10 @@
         const startY = headerHeight + (social ? 10 : Math.max(24 * scale, safeY));
         const rows = Math.max(1, Math.ceil(items.length / columns));
 
-        const cardWidth = Math.max(
-          1,
-          (trimWidth - marginX * 2 - gapX * (columns - 1)) / columns
-        );
-        const cardHeight = Math.max(
-          1,
-          (trimHeight - startY - marginY - gapY * (rows - 1)) / rows
-        );
+        const cardWidth = Math.max(1,
+          (trimWidth - marginX * 2 - gapX * (columns - 1)) / columns);
+        const cardHeight = Math.max(1,
+          (trimHeight - startY - marginY - gapY * (rows - 1)) / rows);
 
         const config = {
           social:Boolean(social),
@@ -1630,7 +1476,6 @@
 
         items.forEach((item, index) => {
           if (token !== renderToken) return;
-
           const row = Math.floor(index / columns);
           const column = index % columns;
           const x = bleedLeft + marginX + column * (cardWidth + gapX);
@@ -1638,23 +1483,14 @@
           drawCard(context, item, x, y, cardWidth, cardHeight, config, landscape);
         });
       } catch (error) {
-        console.error("プレビューの描画に失敗しました。", error);
-
-        const context = canvas.getContext("2d");
-        if (context && canvas.width && canvas.height) {
-          context.fillStyle = "#fff1f1";
-          context.fillRect(0, 0, canvas.width, canvas.height);
-          context.fillStyle = "#991b1b";
-          context.font = "20px sans-serif";
-          context.fillText("プレビュー描画エラー。ブラウザーのコンソールを確認してください。", 24, 40);
-        }
+        console.error("プレビュー描画エラー:", error);
       }
     }
 
     function applyPreviewScale(scale) {
       const safeScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
-      const container = document.getElementById("canvasContainer");
-      const stage = document.getElementById("canvasStage");
+      const container = getEl("canvasContainer");
+      const stage = getEl("canvasStage");
 
       stage.style.width = `${outputWidth}px`;
       stage.style.height = `${outputHeight}px`;
@@ -1662,31 +1498,24 @@
       container.style.width = `${outputWidth * safeScale}px`;
       container.style.height = `${outputHeight * safeScale}px`;
 
-      document.getElementById("zoomDisplay").textContent =
-        `表示 ${Math.round(safeScale * 100)}%`;
-      document.getElementById("zoomSlider").value =
-        String(Math.max(1, Math.min(200, Math.round(safeScale * 100))));
+      getEl("zoomDisplay").textContent = `表示 ${Math.round(safeScale * 100)}%`;
+      getEl("zoomSlider").value = String(Math.max(1, Math.min(200, Math.round(safeScale * 100))));
     }
 
     function fitPreview() {
-      const workspace = document.getElementById("workspace");
+      const workspace = getEl("workspace");
       const availableWidth = Math.max(1, workspace.clientWidth - 50);
       const availableHeight = Math.max(1, workspace.clientHeight - 75);
-      applyPreviewScale(Math.min(
-        availableWidth / outputWidth,
-        availableHeight / outputHeight
-      ));
+      applyPreviewScale(Math.min(availableWidth / outputWidth, availableHeight / outputHeight));
     }
 
     function setupScaler() {
-      const workspace = document.getElementById("workspace");
-
+      const workspace = getEl("workspace");
       if ("ResizeObserver" in window) {
         new ResizeObserver(() => {
           if (previewMode === "fit") fitPreview();
         }).observe(workspace);
       }
-
       window.addEventListener("resize", () => {
         if (previewMode === "fit") fitPreview();
       });
@@ -1728,14 +1557,13 @@
     }
 
     function setupToolbarDrag() {
-      const toolbar = document.getElementById("previewToolbar");
-      const handle = document.getElementById("previewToolbarDrag");
-      const workspace = document.getElementById("workspace");
+      const toolbar = getEl("previewToolbar");
+      const handle = getEl("previewToolbarDrag");
+      const workspace = getEl("workspace");
       let drag = null;
 
       handle.addEventListener("pointerdown", (event) => {
         event.preventDefault();
-
         const toolbarRect = toolbar.getBoundingClientRect();
         const workspaceRect = workspace.getBoundingClientRect();
 
@@ -1756,8 +1584,8 @@
 
       handle.addEventListener("pointermove", (event) => {
         if (!drag || drag.id !== event.pointerId) return;
-
         const rect = workspace.getBoundingClientRect();
+
         toolbar.style.left = `${Math.max(0, Math.min(
           rect.width - toolbar.offsetWidth,
           drag.left + event.clientX - drag.startX
@@ -1837,11 +1665,11 @@ document.getElementById("print").onclick=()=>window.print();
     }
 
     function bindEvents() {
-      document.getElementById("paperSizeSelect").addEventListener("change", updateLayout);
-      document.getElementById("orientationSelect").addEventListener("change", updateLayout);
+      getEl("paperSizeSelect").addEventListener("change", updateLayout);
+      getEl("orientationSelect").addEventListener("change", updateLayout);
 
       ["eventDate", "eventName", "circleName", "spaceNo"].forEach((id) => {
-        document.getElementById(id).addEventListener("input", renderCanvas);
+        getEl(id).addEventListener("input", renderCanvas);
       });
 
       [
@@ -1850,29 +1678,25 @@ document.getElementById("print").onclick=()=>window.print();
         "circleInfoFontSize", "circleInfoTextColor", "circleInfoBgEnabled", "circleInfoBgColor",
         "spaceInfoFontSize", "spaceInfoTextColor", "spaceInfoBgEnabled", "spaceInfoBgColor"
       ].forEach((id) => {
-        const element = document.getElementById(id);
+        const element = getEl(id);
         element.addEventListener("input", renderCanvas);
         element.addEventListener("change", renderCanvas);
       });
 
-      document.getElementById("bgTypeSelect").addEventListener("change", (event) => {
+      getEl("bgTypeSelect").addEventListener("change", (event) => {
         const type = event.target.value;
-
-        // 切替のたびに3種類すべての表示状態を明示的に更新する。
-        document.getElementById("patternControls").classList.toggle("hidden", type !== "pattern");
-        document.getElementById("customBgControls").classList.toggle("hidden", type !== "custom");
-        document.getElementById("singleColorControls").classList.toggle("hidden", type !== "color");
-
+        getEl("patternControls").classList.toggle("hidden", type !== "pattern");
+        getEl("customBgControls").classList.toggle("hidden", type !== "custom");
+        getEl("singleColorControls").classList.toggle("hidden", type !== "color");
         renderCanvas();
       });
 
-      document.getElementById("patternStyleSelect").addEventListener("change", renderCanvas);
-      document.getElementById("bgColorPicker").addEventListener("input", renderCanvas);
+      getEl("patternStyleSelect").addEventListener("change", renderCanvas);
+      getEl("bgColorPicker").addEventListener("input", renderCanvas);
 
-      document.getElementById("customBgInput").addEventListener("change", async (event) => {
+      getEl("customBgInput").addEventListener("change", async (event) => {
         const file = event.target.files && event.target.files[0];
         if (!file) return;
-
         try {
           const loaded = await readImageFile(file);
           customBackground = loaded.image;
@@ -1882,34 +1706,28 @@ document.getElementById("print").onclick=()=>window.print();
         }
       });
 
-      document.getElementById("batchImageInput").addEventListener("change", async (event) => {
+      getEl("batchImageInput").addEventListener("change", async (event) => {
         const files = Array.from(event.target.files || []);
         event.target.value = "";
         await uploadBatch(files);
       });
 
-      document.getElementById("addItemBtn").addEventListener("click", addItem);
+      getEl("addItemBtn").addEventListener("click", addItem);
 
-      document.getElementById("fitCanvasBtn").addEventListener("click", () => {
+      getEl("fitCanvasBtn").addEventListener("click", () => {
         previewMode = "fit";
         fitPreview();
       });
 
-      document.getElementById("zoomSlider").addEventListener("input", (event) => {
+      getEl("zoomSlider").addEventListener("input", (event) => {
         previewMode = "manual";
         applyPreviewScale(Number(event.target.value) / 100);
       });
 
-      document.getElementById("toggleGrid").addEventListener("change", (event) => {
-        document.getElementById("gridOverlay").classList.toggle("hidden", !event.target.checked);
-      });
-
-      setupScaler();
       setupToolbarDrag();
+      getEl("printPreviewBtn").addEventListener("click", openPreview);
 
-      document.getElementById("printPreviewBtn").addEventListener("click", openPreview);
-
-      document.getElementById("exportPng").addEventListener("click", async () => {
+      getEl("exportPng").addEventListener("click", async () => {
         try {
           const output = await getExportData();
           const link = document.createElement("a");
@@ -1921,9 +1739,12 @@ document.getElementById("print").onclick=()=>window.print();
         }
       });
 
-      document.getElementById("exportPdf").addEventListener("click", async () => {
+      getEl("exportPdf").addEventListener("click", async () => {
         try {
           const output = await getExportData();
+          if (!window.jspdf || !window.jspdf.jsPDF) {
+            throw new Error("PDFライブラリを読み込めませんでした。");
+          }
           const { jsPDF } = window.jspdf;
           const pdf = new jsPDF({
             orientation:output.widthMm >= output.heightMm ? "landscape" : "portrait",
@@ -1940,3 +1761,4 @@ document.getElementById("print").onclick=()=>window.print();
   </script>
 </body>
 </html>
+```
