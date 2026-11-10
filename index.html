@@ -164,6 +164,8 @@
                 <option value="A2">A2 (200dpi)</option>
                 <option value="A3" selected>A3 (200dpi)</option>
                 <option value="A4">A4 (200dpi)</option>
+                <option value="WEB_PORTRAIT">Web縦 (960 × 1280px)</option>
+                <option value="WEB_LANDSCAPE">Web横 (1200 × 675px)</option>
               </select>
             </label>
           </div>
@@ -510,13 +512,22 @@
     const SPECS = {
       A2: { width: 4677, height: 3307 },
       A3: { width: 3307, height: 2339 },
-      A4: { width: 2339, height: 1654 }
+      A4: { width: 2339, height: 1654 },
+      WEB_PORTRAIT: { width: 960, height: 1280 },
+      WEB_LANDSCAPE: { width: 1200, height: 675 }
     };
 
     const PAPER_MM = {
       A2: { width: 420, height: 594 },
       A3: { width: 297, height: 420 },
-      A4: { width: 210, height: 297 }
+      A4: { width: 210, height: 297 },
+      WEB_PORTRAIT: { width: 960 * 25.4 / 200, height: 1280 * 25.4 / 200 },
+      WEB_LANDSCAPE: { width: 1200 * 25.4 / 200, height: 675 * 25.4 / 200 }
+    };
+
+    const WEB_PRESETS = {
+      WEB_PORTRAIT: { width: 960, height: 1280, orientation: "PORTRAIT" },
+      WEB_LANDSCAPE: { width: 1200, height: 675, orientation: "LANDSCAPE" }
     };
 
     const BLEED_MM = 3;
@@ -541,6 +552,8 @@
         price: "¥ 1,000",
         desc: "文庫サイズ / 120P / 全年齢\n特製ノベルティステッカー付き",
         imageSrc: null,
+        imageWidth: 0,
+        imageHeight: 0,
         noImage: false
       },
       {
@@ -550,6 +563,8 @@
         price: "¥ 500",
         desc: "B5 / 24P / フルカラー\n過去イラストまとめ冊子",
         imageSrc: null,
+        imageWidth: 0,
+        imageHeight: 0,
         noImage: false
       }
     ];
@@ -650,17 +665,30 @@
     }
 
     function updateCanvasDimensions() {
-      currentOrientation = document.getElementById("orientationSelect").value;
       currentPaperSize = document.getElementById("paperSizeSelect").value;
 
-      const spec = SPECS[currentPaperSize];
+      const orientationSelect = document.getElementById("orientationSelect");
+      const webPreset = WEB_PRESETS[currentPaperSize];
 
-      if (currentOrientation === "LANDSCAPE") {
-        CANVAS_WIDTH = spec.width;
-        CANVAS_HEIGHT = spec.height;
+      if (webPreset) {
+        currentOrientation = webPreset.orientation;
+        orientationSelect.value = webPreset.orientation;
+        orientationSelect.disabled = true;
+
+        CANVAS_WIDTH = webPreset.width;
+        CANVAS_HEIGHT = webPreset.height;
       } else {
-        CANVAS_WIDTH = spec.height;
-        CANVAS_HEIGHT = spec.width;
+        orientationSelect.disabled = false;
+        currentOrientation = orientationSelect.value;
+
+        const spec = SPECS[currentPaperSize];
+        if (currentOrientation === "LANDSCAPE") {
+          CANVAS_WIDTH = spec.width;
+          CANVAS_HEIGHT = spec.height;
+        } else {
+          CANVAS_WIDTH = spec.height;
+          CANVAS_HEIGHT = spec.width;
+        }
       }
 
       canvas.setDimensions({
@@ -672,13 +700,14 @@
       stage.style.width = `${CANVAS_WIDTH}px`;
       stage.style.height = `${CANVAS_HEIGHT}px`;
 
+      const isWebPreset = Boolean(webPreset);
       const orientationLabel = currentOrientation === "LANDSCAPE" ? "横" : "縦";
-      const paperLabel =
-        `${currentPaperSize}${orientationLabel} (${CANVAS_WIDTH} × ${CANVAS_HEIGHT}px / 200dpi)`;
+      const label = isWebPreset
+        ? `${currentPaperSize === "WEB_PORTRAIT" ? "Web縦" : "Web横"} (${CANVAS_WIDTH} × ${CANVAS_HEIGHT}px)`
+        : `${currentPaperSize}${orientationLabel} (${CANVAS_WIDTH} × ${CANVAS_HEIGHT}px / 200dpi)`;
 
-      document.getElementById("paperSpecLabel").textContent = paperLabel;
-      document.getElementById("dimensionDisplay").textContent =
-        `${currentPaperSize}${orientationLabel} (${CANVAS_WIDTH}×${CANVAS_HEIGHT}px)`;
+      document.getElementById("paperSpecLabel").textContent = label;
+      document.getElementById("dimensionDisplay").textContent = label;
 
       previewZoomMode = "fit";
       if (resizeCanvasToFit) resizeCanvasToFit();
@@ -863,6 +892,8 @@
         price: "¥ 500",
         desc: "",
         imageSrc: null,
+        imageWidth: 0,
+        imageHeight: 0,
         noImage: false
       });
 
@@ -890,13 +921,39 @@
       if (!file || !items[index]) return;
 
       const reader = new FileReader();
-      reader.onload = (event) => {
-        items[index].imageSrc = event.target.result;
-        items[index].noImage = false;
-        renderFormItems();
-        generateOshinagaki();
+
+      reader.onload = async (event) => {
+        try {
+          const imageSrc = event.target.result;
+          const dimensions = await getImageDimensions(imageSrc);
+
+          items[index].imageSrc = imageSrc;
+          items[index].imageWidth = dimensions.width;
+          items[index].imageHeight = dimensions.height;
+          items[index].noImage = false;
+
+          renderFormItems();
+          generateOshinagaki();
+        } catch (error) {
+          alert(error.message);
+        }
       };
+
       reader.readAsDataURL(file);
+    }
+
+    function getImageDimensions(dataUrl) {
+      return new Promise((resolve, reject) => {
+        const image = new Image();
+
+        image.onload = () => resolve({
+          width: image.naturalWidth,
+          height: image.naturalHeight
+        });
+
+        image.onerror = () => reject(new Error("画像の寸法を読み取れませんでした。"));
+        image.src = dataUrl;
+      });
     }
 
     function readFileAsDataURL(file) {
@@ -916,10 +973,17 @@
 
       try {
         const imageSources = await Promise.all(files.map(readFileAsDataURL));
+        const imageDimensions = await Promise.all(
+          imageSources.map(getImageDimensions)
+        );
 
         imageSources.forEach((imageSrc, index) => {
+          const dimensions = imageDimensions[index];
+
           if (index < items.length) {
             items[index].imageSrc = imageSrc;
+            items[index].imageWidth = dimensions.width;
+            items[index].imageHeight = dimensions.height;
             items[index].noImage = false;
           } else {
             items.push({
@@ -929,6 +993,8 @@
               price: "¥ 500",
               desc: "",
               imageSrc,
+              imageWidth: dimensions.width,
+              imageHeight: dimensions.height,
               noImage: false
             });
           }
@@ -1172,7 +1238,9 @@
     }
 
     function addImageToCanvas(item, imageBox, thisGeneration, textAnchor) {
-      if (!item.imageSrc || item.noImage) return Promise.resolve();
+      if (!item.imageSrc || item.noImage) {
+        return Promise.resolve();
+      }
 
       return new Promise((resolve) => {
         fabric.Image.fromURL(item.imageSrc, (image) => {
@@ -1379,23 +1447,20 @@
         const categoryBandHeight = Math.min(100, slotHeight * 0.14);
         const ageBandHeight = Math.min(64, slotHeight * 0.09);
 
-        canvas.add(new fabric.Rect({
+        const categoryBandPath = [
+          `M ${categoryBandHeight ? `${categoryBandHeight}` : "0"} 0`,
+          `L ${slotWidth - 24} 0`,
+          `Q ${slotWidth} 0 ${slotWidth} 24`,
+          `L ${slotWidth} ${categoryBandHeight}`,
+          `L 0 ${categoryBandHeight}`,
+          `L 0 24`,
+          `Q 0 0 0 24`,
+          "Z"
+        ].join(" ");
+
+        canvas.add(new fabric.Path(categoryBandPath, {
           left: posX,
           top: posY,
-          width: slotWidth,
-          height: categoryBandHeight,
-          fill: categoryStyle.background,
-          rx: 24,
-          ry: 24,
-          selectable: false,
-          evented: false
-        }));
-
-        canvas.add(new fabric.Rect({
-          left: posX,
-          top: posY + categoryBandHeight / 2,
-          width: slotWidth,
-          height: categoryBandHeight / 2,
           fill: categoryStyle.background,
           selectable: false,
           evented: false
@@ -1403,9 +1468,9 @@
 
         canvas.add(new fabric.Textbox(item.category || "新刊", {
           left: posX + 24,
-          top: posY + 10,
+          top: posY + 8,
           width: slotWidth - 48,
-          height: categoryBandHeight - 20,
+          height: Math.max(1, categoryBandHeight - 16),
           fontSize: Math.min(64, categoryBandHeight * 0.64),
           fontWeight: "bold",
           fontFamily: "M PLUS Rounded 1c",
@@ -1431,9 +1496,9 @@
 
         canvas.add(new fabric.Textbox(isR18 ? "R18" : "全年齢", {
           left: posX + 24,
-          top: ageBandTop + 6,
+          top: ageBandTop + 5,
           width: slotWidth - 48,
-          height: ageBandHeight - 12,
+          height: Math.max(1, ageBandHeight - 10),
           fontSize: Math.min(34, ageBandHeight * 0.55),
           fontWeight: "bold",
           fontFamily: "M PLUS Rounded 1c",
@@ -1454,18 +1519,31 @@
         let textWidth;
 
         if (hasImage) {
-          const imageWidth = slotWidth * (isLandscape ? 0.38 : 0.36);
-          const imageHeight = Math.max(1, bodyHeight);
+          const maxImageWidth = slotWidth * (isLandscape ? 0.38 : 0.36);
+          const sourceWidth = item.imageWidth || 1;
+          const sourceHeight = item.imageHeight || 1;
+
+          const imageScale = Math.min(
+            maxImageWidth / sourceWidth,
+            bodyHeight / sourceHeight
+          );
+
+          const displayWidth = sourceWidth * imageScale;
+          const displayHeight = sourceHeight * imageScale;
+          const imageGap = 25;
 
           imageBox = {
             left: posX + padding,
-            top: bodyTop,
-            width: imageWidth,
-            height: imageHeight
+            top: bodyTop + (bodyHeight - displayHeight) / 2,
+            width: displayWidth,
+            height: displayHeight
           };
 
-          textX = imageBox.left + imageBox.width + 25;
-          textWidth = Math.max(1, posX + slotWidth - padding - textX);
+          textX = imageBox.left + imageBox.width + imageGap;
+          textWidth = Math.max(
+            1,
+            posX + slotWidth - padding - textX
+          );
         } else {
           textX = posX + padding;
           textWidth = Math.max(1, slotWidth - padding * 2);
@@ -1474,7 +1552,8 @@
         const fittedBlock = fitItemTextBlock(item, textWidth, bodyHeight);
 
         let currentY = bodyTop;
-        let categoryAnchor = null;
+
+        let titleAnchor = null;
 
         fittedBlock.entries.forEach((entry, entryIndex) => {
           entry.object.set({
@@ -1483,7 +1562,7 @@
           });
 
           if (entryIndex === 0) {
-            categoryAnchor = entry.object;
+            titleAnchor = entry.object;
           }
 
           canvas.add(entry.object);
@@ -1492,10 +1571,9 @@
 
         if (hasImage && imageBox) {
           imageLoadPromises.push(
-            addImageToCanvas(item, imageBox, thisGeneration, categoryAnchor)
+            addImageToCanvas(item, imageBox, thisGeneration, titleAnchor)
           );
         }
-
       });
 
       canvas.renderAll();
@@ -1577,6 +1655,26 @@
     }
 
     async function createBleedExport() {
+      await Promise.all(imageLoadPromises);
+      canvas.renderAll();
+
+      const webPreset = WEB_PRESETS[currentPaperSize];
+
+      if (webPreset) {
+        return {
+          dataUrl: canvas.toDataURL({
+            format: "png",
+            multiplier: 1
+          }),
+          widthMm: PAPER_MM[currentPaperSize].width,
+          heightMm: PAPER_MM[currentPaperSize].height,
+          widthPx: webPreset.width,
+          heightPx: webPreset.height,
+          trimWidthPx: webPreset.width,
+          trimHeightPx: webPreset.height
+        };
+      }
+
       const sourceDataUrl = canvas.toDataURL({
         format: "png",
         multiplier: 1
@@ -1586,7 +1684,9 @@
 
       await new Promise((resolve, reject) => {
         sourceImage.onload = resolve;
-        sourceImage.onerror = () => reject(new Error("キャンバス画像を読み込めませんでした。"));
+        sourceImage.onerror = () => reject(
+          new Error("キャンバス画像を読み込めませんでした。")
+        );
         sourceImage.src = sourceDataUrl;
       });
 
@@ -1596,40 +1696,109 @@
       const trimWidthMm = isLandscape ? paper.height : paper.width;
       const trimHeightMm = isLandscape ? paper.width : paper.height;
 
-      const bleedX = BLEED_MM * sourceImage.naturalWidth / trimWidthMm;
-      const bleedY = BLEED_MM * sourceImage.naturalHeight / trimHeightMm;
+      const outputWidthPx = Math.round(
+        (trimWidthMm + BLEED_MM * 2) * 200 / 25.4
+      );
+      const outputHeightPx = Math.round(
+        (trimHeightMm + BLEED_MM * 2) * 200 / 25.4
+      );
+
+      const trimWidthPx = CANVAS_WIDTH;
+      const trimHeightPx = CANVAS_HEIGHT;
+
+      const horizontalBleedPx = outputWidthPx - trimWidthPx;
+      const verticalBleedPx = outputHeightPx - trimHeightPx;
+
+      const leftBleedPx = Math.floor(horizontalBleedPx / 2);
+      const rightBleedPx = horizontalBleedPx - leftBleedPx;
+      const topBleedPx = Math.floor(verticalBleedPx / 2);
+      const bottomBleedPx = verticalBleedPx - topBleedPx;
 
       const outputCanvas = document.createElement("canvas");
-      outputCanvas.width = Math.round(sourceImage.naturalWidth + bleedX * 2);
-      outputCanvas.height = Math.round(sourceImage.naturalHeight + bleedY * 2);
+      outputCanvas.width = outputWidthPx;
+      outputCanvas.height = outputHeightPx;
 
       const context = outputCanvas.getContext("2d");
+      if (!context) {
+        throw new Error("塗り足し用キャンバスを作成できませんでした。");
+      }
 
-      const x = (outputCanvas.width - sourceImage.naturalWidth) / 2;
-      const y = (outputCanvas.height - sourceImage.naturalHeight) / 2;
+      const x = leftBleedPx;
+      const y = topBleedPx;
+      const width = trimWidthPx;
+      const height = trimHeightPx;
 
-      const width = sourceImage.naturalWidth;
-      const height = sourceImage.naturalHeight;
+      context.drawImage(
+        sourceImage,
+        0, 0, sourceImage.naturalWidth, 1,
+        x, 0, width, topBleedPx
+      );
 
-      context.drawImage(sourceImage, 0, 0, width, 1, x, 0, width, y);
-      context.drawImage(sourceImage, 0, height - 1, width, 1, x, y + height, width, y);
-      context.drawImage(sourceImage, 0, 0, 1, height, 0, y, x, height);
-      context.drawImage(sourceImage, width - 1, 0, 1, height, x + width, y, x, height);
-      context.drawImage(sourceImage, 0, 0, 1, 1, 0, 0, x, y);
-      context.drawImage(sourceImage, width - 1, 0, 1, 1, x + width, 0, x, y);
-      context.drawImage(sourceImage, 0, height - 1, 1, 1, 0, y + height, x, y);
-      context.drawImage(sourceImage, width - 1, height - 1, 1, 1, x + width, y + height, x, y);
+      context.drawImage(
+        sourceImage,
+        0, sourceImage.naturalHeight - 1, sourceImage.naturalWidth, 1,
+        x, y + height, width, bottomBleedPx
+      );
 
-      context.drawImage(sourceImage, x, y, width, height);
+      context.drawImage(
+        sourceImage,
+        0, 0, 1, sourceImage.naturalHeight,
+        0, y, leftBleedPx, height
+      );
+
+      context.drawImage(
+        sourceImage,
+        sourceImage.naturalWidth - 1, 0, 1, sourceImage.naturalHeight,
+        x + width, y, rightBleedPx, height
+      );
+
+      context.drawImage(
+        sourceImage, 0, 0, 1, 1,
+        0, 0, leftBleedPx, topBleedPx
+      );
+
+      context.drawImage(
+        sourceImage, sourceImage.naturalWidth - 1, 0, 1, 1,
+        x + width, 0, rightBleedPx, topBleedPx
+      );
+
+      context.drawImage(
+        sourceImage, 0, sourceImage.naturalHeight - 1, 1, 1,
+        0, y + height, leftBleedPx, bottomBleedPx
+      );
+
+      context.drawImage(
+        sourceImage,
+        sourceImage.naturalWidth - 1,
+        sourceImage.naturalHeight - 1,
+        1,
+        1,
+        x + width,
+        y + height,
+        rightBleedPx,
+        bottomBleedPx
+      );
+
+      context.drawImage(
+        sourceImage,
+        0,
+        0,
+        sourceImage.naturalWidth,
+        sourceImage.naturalHeight,
+        x,
+        y,
+        trimWidthPx,
+        trimHeightPx
+      );
 
       return {
         dataUrl: outputCanvas.toDataURL("image/png"),
         widthMm: trimWidthMm + BLEED_MM * 2,
         heightMm: trimHeightMm + BLEED_MM * 2,
-        widthPx: outputCanvas.width,
-        heightPx: outputCanvas.height,
-        trimWidthMm,
-        trimHeightMm
+        widthPx: outputWidthPx,
+        heightPx: outputHeightPx,
+        trimWidthPx,
+        trimHeightPx
       };
     }
 
@@ -1644,6 +1813,7 @@
       try {
         const exported = await createBleedExport();
 
+        const isWeb = Boolean(WEB_PRESETS[currentPaperSize]);
         const pageWidthMm = exported.widthMm;
         const pageHeightMm = exported.heightMm;
 
@@ -1762,11 +1932,11 @@
     <button id="actualSizeButton" type="button">100%表示</button>
     <button id="fitButton" type="button">画面に合わせる</button>
     <button id="printButton" type="button" class="print-button">印刷</button>
-    <span>${currentPaperSize}${currentOrientation === "LANDSCAPE" ? "横" : "縦"}・塗り足し込み ${pageWidthMm} × ${pageHeightMm}mm</span>
+    <span>${currentPaperSize}${currentOrientation === "LANDSCAPE" ? "横" : "縦"}・${isWeb ? "Web" : "塗り足し込み"} ${exported.widthPx} × ${exported.heightPx}px</span>
   </div>
   <main class="preview-area">
     <div class="sheet">
-      <img src="${exported.dataUrl}" alt="塗り足し付き印刷プレビュー">
+      <img src="${exported.dataUrl}" alt="印刷プレビュー">
     </div>
   </main>
   <script>
@@ -1886,7 +2056,12 @@
         try {
           const exported = await createBleedExport();
           const link = document.createElement("a");
-          link.download = `oshinagaki_${currentPaperSize}_${currentOrientation}_bleed3mm.png`;
+
+          const fileName = WEB_PRESETS[currentPaperSize]
+            ? `oshinagaki_${currentPaperSize}_${currentOrientation}.png`
+            : `oshinagaki_${currentPaperSize}_${currentOrientation}_bleed3mm.png`;
+
+          link.download = fileName;
           link.href = exported.dataUrl;
           link.click();
         } catch (error) {
@@ -1897,13 +2072,22 @@
       document.getElementById("exportPdf").addEventListener("click", async () => {
         try {
           const exported = await createBleedExport();
-
           const { jsPDF } = window.jspdf;
-          const pdf = new jsPDF({
-            orientation: currentOrientation === "LANDSCAPE" ? "landscape" : "portrait",
-            unit: "mm",
-            format: [exported.widthMm, exported.heightMm]
-          });
+
+          const isWeb = Boolean(WEB_PRESETS[currentPaperSize]);
+          const pdf = isWeb
+            ? new jsPDF({
+                orientation: exported.widthMm >= exported.heightMm
+                  ? "landscape"
+                  : "portrait",
+                unit: "mm",
+                format: [exported.widthMm, exported.heightMm]
+              })
+            : new jsPDF(
+                currentOrientation === "LANDSCAPE" ? "landscape" : "portrait",
+                "mm",
+                currentPaperSize.toLowerCase()
+              );
 
           pdf.addImage(
             exported.dataUrl,
@@ -1915,7 +2099,9 @@
           );
 
           pdf.save(
-            `oshinagaki_${currentPaperSize}_${currentOrientation}_bleed3mm.pdf`
+            isWeb
+              ? `oshinagaki_${currentPaperSize}_${currentOrientation}.pdf`
+              : `oshinagaki_${currentPaperSize}_${currentOrientation}_bleed3mm.pdf`
           );
         } catch (error) {
           alert(`PDFを書き出せませんでした: ${error.message}`);
