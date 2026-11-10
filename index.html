@@ -13,12 +13,7 @@
 
   <style>
     * { box-sizing: border-box; }
-
-    html, body {
-      height: 100%;
-      margin: 0;
-    }
-
+    html, body { height: 100%; margin: 0; }
     body {
       display: flex;
       flex-direction: column;
@@ -27,7 +22,6 @@
       color: #e2e8f0;
       font-family: "Noto Sans JP", sans-serif;
     }
-
     button, input, select, textarea { font: inherit; }
     button { cursor: pointer; }
 
@@ -41,14 +35,7 @@
       border-bottom: 1px solid #334155;
       background: #1e293b;
     }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 9px;
-      min-width: 0;
-    }
-
+    .brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
     .brand-icon {
       display: grid;
       width: 34px;
@@ -60,13 +47,7 @@
       color: #fff;
       font-size: 19px;
     }
-
-    .brand h1 {
-      margin: 0;
-      font-size: 14px;
-      line-height: 1.3;
-    }
-
+    .brand h1 { margin: 0; font-size: 14px; line-height: 1.3; }
     .brand p {
       overflow: hidden;
       margin: 2px 0 0;
@@ -75,18 +56,12 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-
-    .top-actions {
-      display: flex;
-      flex: 0 0 auto;
-      gap: 6px;
-    }
-
+    .top-actions { display: flex; flex: 0 0 auto; gap: 6px; }
     .button {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 5px;
       border: 0;
       border-radius: 7px;
       padding: 8px 10px;
@@ -94,18 +69,11 @@
       font-size: 11px;
       font-weight: 700;
     }
-
     .button-print { background: #475569; }
     .button-png { background: #059669; }
     .button-pdf { background: #e11d48; }
 
-    #mainLayout {
-      display: flex;
-      flex: 1 1 auto;
-      min-height: 0;
-      overflow: hidden;
-    }
-
+    #mainLayout { display: flex; flex: 1 1 auto; min-height: 0; overflow: hidden; }
     #settingsPanel {
       display: flex;
       flex: 0 0 410px;
@@ -115,7 +83,6 @@
       border-right: 1px solid #334155;
       background: #1e293b;
     }
-
     .panel-heading {
       display: flex;
       flex: 0 0 auto;
@@ -127,7 +94,6 @@
       font-size: 12px;
       font-weight: 700;
     }
-
     .panel-heading small {
       border: 1px solid #166534;
       border-radius: 999px;
@@ -136,13 +102,7 @@
       color: #4ade80;
       font-size: 9px;
     }
-
-    #settingsContent {
-      flex: 1 1 auto;
-      overflow: auto;
-      padding: 14px;
-    }
-
+    #settingsContent { flex: 1 1 auto; overflow: auto; padding: 14px; }
     .section {
       margin-bottom: 12px;
       border: 1px solid #334155;
@@ -150,22 +110,9 @@
       padding: 12px;
       background: rgba(15, 23, 42, .65);
     }
-
-    .section h2 {
-      margin: 0 0 10px;
-      color: #fb7185;
-      font-size: 12px;
-    }
-
-    .field {
-      display: block;
-      margin-bottom: 9px;
-      color: #94a3b8;
-      font-size: 10px;
-    }
-
+    .section h2 { margin: 0 0 10px; color: #fb7185; font-size: 12px; }
+    .field { display: block; margin-bottom: 9px; color: #94a3b8; font-size: 10px; }
     .field:last-child { margin-bottom: 0; }
-
     .control {
       display: block;
       width: 100%;
@@ -177,9 +124,7 @@
       color: #e2e8f0;
       font-size: 11px;
     }
-
     .control:disabled { opacity: .5; }
-
     .color-control {
       width: 48px;
       height: 31px;
@@ -189,42 +134,22 @@
       padding: 3px;
       background: #1e293b;
     }
-
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-
-    .palette {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 5px;
-    }
-
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
     .palette button {
       display: flex;
       align-items: center;
       gap: 5px;
+      min-width: 0;
       border: 1px solid #334155;
       border-radius: 6px;
       padding: 5px;
       background: #0f172a;
       color: #cbd5e1;
-      font-size: 10px;
+      font-size: 9px;
     }
-
-    .palette button.selected {
-      outline: 2px solid #f43f5e;
-    }
-
-    .swatch {
-      width: 12px;
-      height: 12px;
-      flex: 0 0 auto;
-      border-radius: 50%;
-    }
-
+    .palette button.selected { outline: 2px solid #f43f5e; }
+    .swatch { width: 12px; height: 12px; flex: 0 0 auto; border-radius: 50%; }
     .check-row {
       display: flex;
       align-items: center;
@@ -233,9 +158,7 @@
       color: #94a3b8;
       font-size: 10px;
     }
-
     .check-row input[type="checkbox"] { accent-color: #f43f5e; }
-
     .upload-box {
       display: block;
       border: 2px dashed #9f1239;
@@ -246,21 +169,8 @@
       text-align: center;
       cursor: pointer;
     }
-
-    .upload-box span {
-      display: block;
-      margin-top: 4px;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .upload-box small {
-      display: block;
-      margin-top: 3px;
-      color: #94a3b8;
-      font-size: 9px;
-    }
-
+    .upload-box span { display: block; margin-top: 4px; font-size: 11px; font-weight: 700; }
+    .upload-box small { display: block; margin-top: 3px; color: #94a3b8; font-size: 9px; }
     .item-card {
       margin-bottom: 10px;
       border: 1px solid #334155;
@@ -268,7 +178,6 @@
       padding: 10px;
       background: #0f172a;
     }
-
     .item-card-head {
       display: flex;
       align-items: center;
@@ -278,7 +187,6 @@
       font-size: 10px;
       font-weight: 700;
     }
-
     .item-card-head button {
       border: 0;
       border-radius: 5px;
@@ -287,10 +195,8 @@
       color: #e2e8f0;
       font-size: 10px;
     }
-
     .item-card-head button:disabled { opacity: .4; }
     .delete-item { margin-left: 4px; background: transparent !important; color: #fb7185 !important; }
-
     .add-item {
       width: 100%;
       border: 1px solid #475569;
@@ -313,7 +219,6 @@
       padding: 48px 20px 20px;
       background: #020617;
     }
-
     #canvasContainer {
       position: relative;
       flex: none;
@@ -323,27 +228,32 @@
       box-shadow: 0 15px 40px rgba(0, 0, 0, .45);
       line-height: 0;
     }
-
     #canvasStage {
       position: absolute;
       top: 0;
       left: 0;
       transform-origin: top left;
     }
-
     #gridOverlay {
       position: absolute;
       inset: 0;
       z-index: 10;
       pointer-events: none;
       background-image:
-        linear-gradient(to right, rgba(15, 23, 42, .2) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(15, 23, 42, .2) 1px, transparent 1px),
-        linear-gradient(to right, rgba(15, 23, 42, .1) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(15, 23, 42, .1) 1px, transparent 1px);
+        linear-gradient(to right, rgba(15,23,42,.2) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15,23,42,.2) 1px, transparent 1px),
+        linear-gradient(to right, rgba(15,23,42,.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15,23,42,.1) 1px, transparent 1px);
       background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
     }
-
+    .guide {
+      position: absolute;
+      z-index: 11;
+      pointer-events: none;
+      border: 1px dashed rgba(15, 23, 42, .65);
+    }
+    #trimGuide { outline: 1px solid rgba(255,255,255,.55); }
+    #safeGuide { border-color: rgba(225, 29, 72, .9); }
     .hidden { display: none !important; }
 
     #zoomInfo {
@@ -358,7 +268,6 @@
       color: #cbd5e1;
       font-size: 10px;
     }
-
     #previewToolbar {
       position: absolute;
       z-index: 12;
@@ -374,7 +283,6 @@
       box-shadow: 0 6px 20px rgba(0, 0, 0, .35);
       font-size: 10px;
     }
-
     #previewToolbar button {
       border: 0;
       border-radius: 5px;
@@ -383,12 +291,7 @@
       color: #e2e8f0;
       font-size: 10px;
     }
-
-    #previewToolbarDrag {
-      cursor: grab;
-      touch-action: none;
-    }
-
+    #previewToolbarDrag { cursor: grab; touch-action: none; }
     #previewToolbarDrag:active { cursor: grabbing; }
 
     @media (max-width: 767px) {
@@ -398,22 +301,14 @@
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
       }
-
       #settingsPanel {
         width: 100%;
         max-height: none;
         overflow: visible;
         border-right: 0;
       }
-
       #settingsContent { overflow: visible; }
-
-      #workspace {
-        width: 100%;
-        height: 75vh;
-        min-height: 480px;
-      }
-
+      #workspace { width: 100%; height: 75vh; min-height: 480px; }
       #previewToolbar {
         top: auto;
         right: 10px;
@@ -422,7 +317,6 @@
         justify-content: center;
       }
     }
-
     @media (max-width: 420px) {
       .topbar { padding-right: 6px; padding-left: 6px; }
       .button { gap: 3px; padding: 7px 6px; font-size: 10px; }
@@ -440,7 +334,6 @@
         <p id="paperSpecLabel">A3横</p>
       </div>
     </div>
-
     <div class="top-actions">
       <button id="printPreviewBtn" class="button button-print" type="button">プレビュー</button>
       <button id="exportPng" class="button button-png" type="button">PNG保存</button>
@@ -481,7 +374,7 @@
         </section>
 
         <section class="section">
-          <h2>背景デザイン</h2>
+          <h2>背景デザイン・推奨配色</h2>
           <label class="field">背景の種類
             <select id="bgTypeSelect" class="control">
               <option value="pattern">規定パターン</option>
@@ -491,10 +384,10 @@
           </label>
 
           <div class="field">
-            マテリアルデザイン推奨配色
+            CMYK向け推奨配色
             <div id="presetColorPalette" class="palette"></div>
             <small style="display:block;margin-top:5px;color:#64748b">
-              選択すると無地背景色とヘッダー配色をまとめて適用します。
+              選択すると無地背景とヘッダーに配色を適用します。表示色はCMYK値のRGB近似です。
             </small>
           </div>
 
@@ -554,11 +447,9 @@
           <label class="check-row">
             イベント情報の背景色
             <input id="eventInfoBgEnabled" type="checkbox">
-            <input id="eventInfoBgColor" type="color" value="#fff" class="color-control">
+            <input id="eventInfoBgColor" type="color" value="#ffffff" class="color-control">
           </label>
-
           <hr style="border-color:#334155;margin:10px 0">
-
           <div class="two-col">
             <label class="field">サークル名サイズ
               <input id="circleInfoFontSize" type="number" min="8" max="400" value="150" class="control">
@@ -570,17 +461,15 @@
           <label class="check-row">
             サークル名の背景色
             <input id="circleInfoBgEnabled" type="checkbox">
-            <input id="circleInfoBgColor" type="color" value="#fff" class="color-control">
+            <input id="circleInfoBgColor" type="color" value="#ffffff" class="color-control">
           </label>
-
           <hr style="border-color:#334155;margin:10px 0">
-
           <div class="two-col">
             <label class="field">スペース番号サイズ
               <input id="spaceInfoFontSize" type="number" min="8" max="300" value="90" class="control">
             </label>
             <label class="field">スペース文字色
-              <input id="spaceInfoTextColor" type="color" value="#fff" class="color-control">
+              <input id="spaceInfoTextColor" type="color" value="#ffffff" class="color-control">
             </label>
           </div>
           <label class="check-row">
@@ -626,27 +515,33 @@
         <div id="canvasStage">
           <canvas id="oshinagakiCanvas"></canvas>
           <div id="gridOverlay" class="hidden"></div>
+          <div id="trimGuide" class="guide hidden"></div>
+          <div id="safeGuide" class="guide hidden"></div>
         </div>
       </div>
     </main>
   </div>
 
   <script>
+    /*
+      推奨色は印刷で使われるCMYKの組み合わせを基準にしたRGB近似。
+      例: C0 M100 Y100 K0 は赤系。実際の色は印刷条件で変わります。
+    */
     const PRESET_COLORS = [
-      { name: "赤", hex: "#ef9a9a", background: "#ffebee", header: "#b71c1c", accent: "#e53935", eventText: "#b71c1c", circleText: "#880e4f", space: "#c2185b" },
-      { name: "ピンク", hex: "#f48fb1", background: "#fce4ec", header: "#880e4f", accent: "#d81b60", eventText: "#880e4f", circleText: "#4a148c", space: "#ad1457" },
-      { name: "橙", hex: "#ffcc80", background: "#fff3e0", header: "#e65100", accent: "#fb8c00", eventText: "#bf360c", circleText: "#4e342e", space: "#e65100" },
-      { name: "緑", hex: "#a5d6a7", background: "#e8f5e9", header: "#1b5e20", accent: "#43a047", eventText: "#1b5e20", circleText: "#004d40", space: "#2e7d32" },
-      { name: "青", hex: "#90caf9", background: "#e3f2fd", header: "#0d47a1", accent: "#1e88e5", eventText: "#0d47a1", circleText: "#01579b", space: "#1565c0" },
-      { name: "紫", hex: "#ce93d8", background: "#f3e5f5", header: "#4a148c", accent: "#8e24aa", eventText: "#4a148c", circleText: "#311b92", space: "#6a1b9a" },
-      { name: "灰", hex: "#b0bec5", background: "#eceff1", header: "#263238", accent: "#546e7a", eventText: "#263238", circleText: "#37474f", space: "#455a64" }
+      { name: "赤", hex: "#ed1c24", background: "#fff1f1", header: "#b5121b", accent: "#ed1c24", eventText: "#9b1118", circleText: "#7a102c", space: "#c41230", cmyk: "0,100,100,0" },
+      { name: "桃", hex: "#e84a8a", background: "#fff0f5", header: "#8f1648", accent: "#d81b60", eventText: "#8f1648", circleText: "#65123d", space: "#ad1457", cmyk: "0,75,25,0" },
+      { name: "橙", hex: "#f7941d", background: "#fff5e8", header: "#a84300", accent: "#e87500", eventText: "#8c3900", circleText: "#653300", space: "#b84d00", cmyk: "0,50,100,0" },
+      { name: "緑", hex: "#39b54a", background: "#eef8ef", header: "#155c25", accent: "#278c39", eventText: "#155c25", circleText: "#104b35", space: "#1d6b30", cmyk: "70,0,100,0" },
+      { name: "青", hex: "#0072bc", background: "#edf5fb", header: "#0b3d70", accent: "#0068a8", eventText: "#0b3d70", circleText: "#073b5c", space: "#075a96", cmyk: "100,60,0,0" },
+      { name: "紫", hex: "#92278f", background: "#f7eff7", header: "#4e1452", accent: "#84217e", eventText: "#4e1452", circleText: "#351044", space: "#70206c", cmyk: "50,100,0,0" },
+      { name: "灰", hex: "#666666", background: "#f1f1f1", header: "#333333", accent: "#595959", eventText: "#333333", circleText: "#222222", space: "#4a4a4a", cmyk: "0,0,0,60" }
     ];
 
     const CATEGORY_STYLES = {
-      "新刊": { background: "#dc2626", text: "#fff" },
-      "既刊": { background: "#2563eb", text: "#fff" },
-      "無料配布": { background: "#16a34a", text: "#fff" },
-      "Web展示": { background: "#0891b2", text: "#fff" }
+      "新刊": { background: "#c62828", text: "#ffffff" },
+      "既刊": { background: "#1565c0", text: "#ffffff" },
+      "無料配布": { background: "#2e7d32", text: "#ffffff" },
+      "Web展示": { background: "#00695c", text: "#ffffff" }
     };
 
     const SPECS = {
@@ -661,20 +556,11 @@
       A4: { width: 210, height: 297 }
     };
 
-    // 縦向き基準。mmとpixelの寸法はいずれも塗り足し込み。
+    // 縦向き基準。mmとpixelはいずれも塗り足し込み。
     const PRINT_EXPORT_SPECS = {
-      A2: {
-        widthMm: 426, heightMm: 600, widthPx: 3354, heightPx: 4724,
-        trimWidthMm: 420, trimHeightMm: 594
-      },
-      A3: {
-        widthMm: 303, heightMm: 426, widthPx: 2386, heightPx: 3354,
-        trimWidthMm: 297, trimHeightMm: 420
-      },
-      A4: {
-        widthMm: 216, heightMm: 303, widthPx: 2976, heightPx: 4175,
-        trimWidthMm: 210, trimHeightMm: 297
-      }
+      A2: { widthMm: 426, heightMm: 600, widthPx: 3354, heightPx: 4724, trimWidthMm: 420, trimHeightMm: 594 },
+      A3: { widthMm: 303, heightMm: 426, widthPx: 2386, heightPx: 3354, trimWidthMm: 297, trimHeightMm: 420 },
+      A4: { widthMm: 216, heightMm: 303, widthPx: 2976, heightPx: 4175, trimWidthMm: 210, trimHeightMm: 297 }
     };
 
     const SOCIAL_PRESETS = {
@@ -685,26 +571,10 @@
     };
 
     const SOCIAL_LAYOUTS = {
-      WEB_PORTRAIT: {
-        header: 250, marginX: 28, marginY: 22, gapX: 16, gapY: 16,
-        padding: 12, eventFont: 18, circleFont: 32, spaceFont: 16,
-        cardScale: .55, categoryBand: 46, ageBand: 28
-      },
-      WEB_LANDSCAPE: {
-        header: 160, marginX: 28, marginY: 18, gapX: 16, gapY: 16,
-        padding: 11, eventFont: 14, circleFont: 24, spaceFont: 13,
-        cardScale: .48, categoryBand: 38, ageBand: 24
-      },
-      PICSQUARE: {
-        header: 143, marginX: 16, marginY: 16, gapX: 12, gapY: 12,
-        padding: 8, eventFont: 10, circleFont: 18, spaceFont: 10,
-        cardScale: .35, categoryBand: 34, ageBand: 21
-      },
-      PICREA: {
-        header: 270, marginX: 24, marginY: 22, gapX: 16, gapY: 16,
-        padding: 12, eventFont: 15, circleFont: 28, spaceFont: 15,
-        cardScale: .50, categoryBand: 44, ageBand: 28
-      }
+      WEB_PORTRAIT: { header: 250, marginX: 28, marginY: 22, gapX: 16, gapY: 16, padding: 12, eventFont: 18, circleFont: 32, spaceFont: 16, cardScale: .55, categoryBand: 46, ageBand: 28 },
+      WEB_LANDSCAPE: { header: 160, marginX: 28, marginY: 18, gapX: 16, gapY: 16, padding: 11, eventFont: 14, circleFont: 24, spaceFont: 13, cardScale: .48, categoryBand: 38, ageBand: 24 },
+      PICSQUARE: { header: 143, marginX: 16, marginY: 16, gapX: 12, gapY: 12, padding: 8, eventFont: 10, circleFont: 18, spaceFont: 10, cardScale: .35, categoryBand: 34, ageBand: 21 },
+      PICREA: { header: 270, marginX: 24, marginY: 22, gapX: 16, gapY: 16, padding: 12, eventFont: 15, circleFont: 28, spaceFont: 15, cardScale: .50, categoryBand: 44, ageBand: 28 }
     };
 
     const BLEED_MM = 3;
@@ -712,8 +582,21 @@
     let selectedPresetColor = PRESET_COLORS[0];
     let currentPaperSize = "A3";
     let currentOrientation = "LANDSCAPE";
+
+    // Canvasは印刷時も塗り足し込みの実出力サイズ。
     let CANVAS_WIDTH = SPECS.A3.width;
     let CANVAS_HEIGHT = SPECS.A3.height;
+
+    // DESIGN_* は仕上がり範囲。印刷時の全オブジェクト配置はbleed offsetを加える。
+    let DESIGN_WIDTH = CANVAS_WIDTH;
+    let DESIGN_HEIGHT = CANVAS_HEIGHT;
+    let BLEED_LEFT = 0;
+    let BLEED_TOP = 0;
+    let BLEED_RIGHT = 0;
+    let BLEED_BOTTOM = 0;
+    let SAFE_X = 0;
+    let SAFE_Y = 0;
+
     let canvas;
     let customBackgroundImage = null;
     let generationId = 0;
@@ -774,9 +657,9 @@
       PRESET_COLORS.forEach((preset, index) => {
         const button = document.createElement("button");
         button.type = "button";
+        button.title = `CMYK ${preset.cmyk}`;
         button.innerHTML =
-          `<span class="swatch" style="background:${preset.hex}"></span>${preset.name}`;
-
+          `<span class="swatch" style="background:${preset.hex}"></span><span>${preset.name}</span>`;
         if (index === 0) button.classList.add("selected");
 
         button.addEventListener("click", () => {
@@ -784,7 +667,7 @@
           root.querySelectorAll("button").forEach((el) => el.classList.remove("selected"));
           button.classList.add("selected");
 
-          // 推奨配色選択時は単色背景に切り替え、背景・ヘッダー・情報文字色を適用。
+          // 推奨色は無地背景とヘッダーにまとめて反映。
           document.getElementById("bgTypeSelect").value = "color";
           document.getElementById("patternControls").classList.add("hidden");
           document.getElementById("customBgControls").classList.add("hidden");
@@ -792,10 +675,10 @@
           document.getElementById("bgColorPicker").value = preset.background;
           document.getElementById("headerBgColor").value = preset.header;
           document.getElementById("headerAccentColor").value = preset.accent;
-          document.getElementById("eventInfoTextColor").value = preset.eventText;
-          document.getElementById("circleInfoTextColor").value = preset.circleText;
+          document.getElementById("eventInfoTextColor").value = "#ffffff";
+          document.getElementById("circleInfoTextColor").value = "#ffffff";
+          document.getElementById("spaceInfoTextColor").value = "#ffffff";
           document.getElementById("spaceInfoBgColor").value = preset.space;
-
           generate();
         });
 
@@ -814,11 +697,8 @@
           space: social.spaceFont
         };
       } else {
-        const areaScale = Math.sqrt(
-          (CANVAS_WIDTH * CANVAS_HEIGHT) / (3307 * 2339)
-        );
+        const areaScale = Math.sqrt((DESIGN_WIDTH * DESIGN_HEIGHT) / (3307 * 2339));
         const printScale = Math.max(.9, Math.min(1.25, areaScale));
-
         defaults = {
           event: Math.round(60 * printScale),
           circle: Math.round(150 * printScale),
@@ -831,30 +711,67 @@
       document.getElementById("spaceInfoFontSize").value = defaults.space;
     }
 
+    function updateGuidePositions() {
+      const trimGuide = document.getElementById("trimGuide");
+      const safeGuide = document.getElementById("safeGuide");
+      const print = Boolean(PRINT_EXPORT_SPECS[currentPaperSize]);
+
+      trimGuide.classList.toggle("hidden", !print);
+      safeGuide.classList.toggle("hidden", !print);
+
+      if (!print) return;
+
+      trimGuide.style.left = `${BLEED_LEFT}px`;
+      trimGuide.style.top = `${BLEED_TOP}px`;
+      trimGuide.style.width = `${DESIGN_WIDTH}px`;
+      trimGuide.style.height = `${DESIGN_HEIGHT}px`;
+
+      safeGuide.style.left = `${BLEED_LEFT + SAFE_X}px`;
+      safeGuide.style.top = `${BLEED_TOP + SAFE_Y}px`;
+      safeGuide.style.width = `${Math.max(1, DESIGN_WIDTH - SAFE_X * 2)}px`;
+      safeGuide.style.height = `${Math.max(1, DESIGN_HEIGHT - SAFE_Y * 2)}px`;
+    }
+
     function updateDimensions() {
       currentPaperSize = document.getElementById("paperSizeSelect").value;
-
-      const preset = SOCIAL_PRESETS[currentPaperSize];
       const orientationSelect = document.getElementById("orientationSelect");
+      const social = SOCIAL_PRESETS[currentPaperSize];
 
-      if (preset) {
-        currentOrientation = preset.orientation;
-        orientationSelect.value = preset.orientation;
+      BLEED_LEFT = BLEED_TOP = BLEED_RIGHT = BLEED_BOTTOM = 0;
+      SAFE_X = SAFE_Y = 0;
+
+      if (social) {
+        currentOrientation = social.orientation;
+        orientationSelect.value = social.orientation;
         orientationSelect.disabled = true;
-        CANVAS_WIDTH = preset.width;
-        CANVAS_HEIGHT = preset.height;
+
+        CANVAS_WIDTH = DESIGN_WIDTH = social.width;
+        CANVAS_HEIGHT = DESIGN_HEIGHT = social.height;
       } else {
         orientationSelect.disabled = false;
         currentOrientation = orientationSelect.value;
-        const spec = SPECS[currentPaperSize];
 
-        if (currentOrientation === "LANDSCAPE") {
-          CANVAS_WIDTH = spec.width;
-          CANVAS_HEIGHT = spec.height;
-        } else {
-          CANVAS_WIDTH = spec.height;
-          CANVAS_HEIGHT = spec.width;
-        }
+        const spec = PRINT_EXPORT_SPECS[currentPaperSize];
+        const landscape = currentOrientation === "LANDSCAPE";
+        CANVAS_WIDTH = landscape ? spec.heightPx : spec.widthPx;
+        CANVAS_HEIGHT = landscape ? spec.widthPx : spec.heightPx;
+
+        const outputWidthMm = landscape ? spec.heightMm : spec.widthMm;
+        const outputHeightMm = landscape ? spec.widthMm : spec.heightMm;
+        const trimWidthMm = landscape ? spec.trimHeightMm : spec.trimWidthMm;
+        const trimHeightMm = landscape ? spec.trimWidthMm : spec.trimHeightMm;
+
+        DESIGN_WIDTH = Math.round(trimWidthMm * CANVAS_WIDTH / outputWidthMm);
+        DESIGN_HEIGHT = Math.round(trimHeightMm * CANVAS_HEIGHT / outputHeightMm);
+
+        BLEED_LEFT = Math.floor((CANVAS_WIDTH - DESIGN_WIDTH) / 2);
+        BLEED_RIGHT = CANVAS_WIDTH - DESIGN_WIDTH - BLEED_LEFT;
+        BLEED_TOP = Math.floor((CANVAS_HEIGHT - DESIGN_HEIGHT) / 2);
+        BLEED_BOTTOM = CANVAS_HEIGHT - DESIGN_HEIGHT - BLEED_TOP;
+
+        // 文字・カードの安全マージンは仕上がり端から最低3mm。
+        SAFE_X = Math.ceil(BLEED_MM * DESIGN_WIDTH / trimWidthMm);
+        SAFE_Y = Math.ceil(BLEED_MM * DESIGN_HEIGHT / trimHeightMm);
       }
 
       canvas.setDimensions({ width: CANVAS_WIDTH, height: CANVAS_HEIGHT });
@@ -863,18 +780,18 @@
       stage.style.width = `${CANVAS_WIDTH}px`;
       stage.style.height = `${CANVAS_HEIGHT}px`;
 
-      // 用紙選択ごとに推奨ヘッダー文字サイズを更新
       applyHeaderFontDefaults();
+      updateGuidePositions();
 
-      const label = preset
-        ? `${preset.label} (${CANVAS_WIDTH} × ${CANVAS_HEIGHT}px)`
-        : `${currentPaperSize}${currentOrientation === "LANDSCAPE" ? "横" : "縦"} (${CANVAS_WIDTH} × ${CANVAS_HEIGHT}px / ${currentPaperSize === "A4" ? 350 : 200}dpi)`;
+      const label = social
+        ? `${social.label} (${CANVAS_WIDTH} × ${CANVAS_HEIGHT}px)`
+        : `${currentPaperSize}${currentOrientation === "LANDSCAPE" ? "横" : "縦"} 塗り足し込み ${CANVAS_WIDTH} × ${CANVAS_HEIGHT}px`;
 
       document.getElementById("paperSpecLabel").textContent = label;
       document.getElementById("dimensionDisplay").textContent = label;
-      document.getElementById("layoutHelp").textContent = preset
-        ? "SNS・オンラインイベント向け。ヘッダー文字サイズは小さめに自動設定します。"
-        : "印刷向け。ヘッダー文字サイズは大きめに設定し、塗り足し各3mmで出力します。";
+      document.getElementById("layoutHelp").textContent = social
+        ? "SNS向けサイズ。印刷用の塗り足し・安全ガイドはありません。"
+        : "プレビューは塗り足し込み。白線＝仕上がり、赤点線＝文字・カードの安全範囲です。";
 
       previewZoomMode = "fit";
       if (resizeCanvasToFit) resizeCanvasToFit();
@@ -965,19 +882,14 @@
 
           if (key === "descriptionFontSize") {
             const size = Number.parseInt(input.value, 10);
-            items[index][key] = Number.isFinite(size)
-              ? Math.max(8, Math.min(100, size))
-              : 38;
+            items[index][key] = Number.isFinite(size) ? Math.max(8, Math.min(100, size)) : 38;
           } else {
             items[index][key] = input.value;
           }
 
           if (key === "category") {
-            const price = container.querySelector(
-              `[data-index="${index}"][data-key="price"]`
-            );
+            const price = container.querySelector(`[data-index="${index}"][data-key="price"]`);
             const noPrice = ["無料配布", "Web展示"].includes(input.value);
-
             if (price) {
               price.disabled = noPrice;
               if (noPrice) {
@@ -986,7 +898,6 @@
               }
             }
           }
-
           generate();
         };
 
@@ -1004,15 +915,12 @@
         input.addEventListener("change", () => {
           const index = Number(input.dataset.noimage);
           if (!items[index]) return;
-
           items[index].noImage = input.checked;
           const fileInput = container.querySelector(`[data-image="${index}"]`);
-
           if (fileInput) {
             fileInput.disabled = input.checked;
             if (input.checked) fileInput.value = "";
           }
-
           generate();
         });
       });
@@ -1022,7 +930,6 @@
           const from = Number(button.dataset.move);
           const to = from + Number(button.dataset.dir);
           if (to < 0 || to >= items.length) return;
-
           [items[from], items[to]] = [items[to], items[from]];
           renderItems();
           generate();
@@ -1051,7 +958,6 @@
         imageHeight: 0,
         noImage: false
       });
-
       renderItems();
       generate();
     }
@@ -1078,16 +984,11 @@
       });
 
       const image = await loadImage(dataUrl);
-      return {
-        src: dataUrl,
-        width: image.naturalWidth,
-        height: image.naturalHeight
-      };
+      return { src: dataUrl, width: image.naturalWidth, height: image.naturalHeight };
     }
 
     async function uploadItemImage(index, file) {
       if (!file || !items[index]) return;
-
       try {
         const image = await readImageFile(file);
         Object.assign(items[index], {
@@ -1096,7 +997,6 @@
           imageHeight: image.height,
           noImage: false
         });
-
         renderItems();
         generate();
       } catch (error) {
@@ -1110,7 +1010,6 @@
 
       try {
         const loaded = await Promise.all(selected.map(readImageFile));
-
         loaded.forEach((image, index) => {
           const data = {
             imageSrc: image.src,
@@ -1118,7 +1017,6 @@
             imageHeight: image.height,
             noImage: false
           };
-
           if (index < items.length) {
             Object.assign(items[index], data);
           } else {
@@ -1133,7 +1031,6 @@
             });
           }
         });
-
         renderItems();
         generate();
       } catch (error) {
@@ -1145,7 +1042,6 @@
       const pattern = document.createElement("canvas");
       pattern.width = pattern.height = 240;
       const ctx = pattern.getContext("2d");
-
       ctx.fillStyle = "#fff8fb";
       ctx.fillRect(0, 0, 240, 240);
 
@@ -1163,9 +1059,7 @@
         ctx.translate(120, 120);
         ctx.rotate(Math.PI / 4);
         ctx.fillStyle = color;
-        for (let x = -360; x <= 360; x += 110) {
-          ctx.fillRect(x, -360, 36, 720);
-        }
+        for (let x = -360; x <= 360; x += 110) ctx.fillRect(x, -360, 36, 720);
         ctx.restore();
       } else if (style === "border") {
         ctx.fillStyle = color;
@@ -1179,57 +1073,106 @@
       return pattern;
     }
 
-    function applyBackground() {
+    function addFullBleedBackground() {
       const type = document.getElementById("bgTypeSelect").value;
-      canvas.setBackgroundImage(null);
-      canvas.setBackgroundColor("#ffffff");
 
+      // CSS canvas背景色はviewport transformに影響されず出力全体を塗る。
       if (type === "color") {
+        canvas.setBackgroundImage(null);
         canvas.setBackgroundColor(document.getElementById("bgColorPicker").value);
-      } else if (type === "custom" && customBackgroundImage) {
-        canvas.setBackgroundImage(customBackgroundImage, null, {
+        return;
+      }
+
+      canvas.setBackgroundColor("#ffffff");
+      canvas.setBackgroundImage(null);
+
+      if (type === "pattern") {
+        const pattern = new fabric.Pattern({
+          source: makePattern(
+            document.getElementById("patternStyleSelect").value,
+            selectedPresetColor.hex
+          ),
+          repeat: "repeat"
+        });
+
+        // 背景パターンはviewport transformに依存しないよう全出力寸法の画像にする。
+        const bg = document.createElement("canvas");
+        bg.width = CANVAS_WIDTH;
+        bg.height = CANVAS_HEIGHT;
+        const ctx = bg.getContext("2d");
+        const fill = ctx.createPattern(
+          makePattern(
+            document.getElementById("patternStyleSelect").value,
+            selectedPresetColor.hex
+          ),
+          "repeat"
+        );
+        if (fill) {
+          ctx.fillStyle = fill;
+          ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        }
+        canvas.setBackgroundImage(new fabric.Image(bg), canvas.renderAll.bind(canvas), {
           originX: "left",
           originY: "top",
           left: 0,
-          top: 0,
-          scaleX: CANVAS_WIDTH / customBackgroundImage.width,
-          scaleY: CANVAS_HEIGHT / customBackgroundImage.height
+          top: 0
         });
-      } else if (type === "pattern") {
-        canvas.add(new fabric.Rect({
+        return;
+      }
+
+      if (type === "custom" && customBackgroundImage) {
+        const element = customBackgroundImage.getElement();
+        const bg = document.createElement("canvas");
+        bg.width = CANVAS_WIDTH;
+        bg.height = CANVAS_HEIGHT;
+        const ctx = bg.getContext("2d");
+
+        // 背景画像は出力全体まで広げ、塗り足し部分に空白を作らない。
+        ctx.drawImage(element, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        canvas.setBackgroundImage(new fabric.Image(bg), canvas.renderAll.bind(canvas), {
+          originX: "left",
+          originY: "top",
           left: 0,
-          top: 0,
-          width: CANVAS_WIDTH,
-          height: CANVAS_HEIGHT,
-          fill: new fabric.Pattern({
-            source: makePattern(
-              document.getElementById("patternStyleSelect").value,
-              selectedPresetColor.hex
-            ),
-            repeat: "repeat"
-          }),
-          selectable: false,
-          evented: false
-        }));
+          top: 0
+        });
       }
     }
 
     function getInfoStyle(prefix, defaultSize, defaultColor, maxSize) {
-      const size = Number.parseInt(
-        document.getElementById(`${prefix}FontSize`).value,
-        10
-      );
+      const size = Number.parseInt(document.getElementById(`${prefix}FontSize`).value, 10);
       const enabled = document.getElementById(`${prefix}BgEnabled`).checked;
 
       return {
-        fontSize: Number.isFinite(size)
-          ? Math.min(Math.max(8, size), maxSize)
-          : defaultSize,
+        fontSize: Number.isFinite(size) ? Math.min(Math.max(8, size), maxSize) : defaultSize,
         fill: document.getElementById(`${prefix}TextColor`).value || defaultColor,
-        backgroundColor: enabled
-          ? document.getElementById(`${prefix}BgColor`).value
-          : ""
+        backgroundColor: enabled ? document.getElementById(`${prefix}BgColor`).value : ""
       };
+    }
+
+    function addDesignObject(object) {
+      // レイアウト座標は仕上がり範囲基準。出力canvasではbleed分移動する。
+      object.set({
+        left: (object.left || 0) + BLEED_LEFT,
+        top: (object.top || 0) + BLEED_TOP
+      });
+      canvas.add(object);
+      return object;
+    }
+
+    function addHeaderBackground(headerHeight, color) {
+      /*
+        ヘッダー背景は上端の塗り足しまで延長。
+        左右の塗り足しにも背景色が続く。
+      */
+      canvas.add(new fabric.Rect({
+        left: 0,
+        top: 0,
+        width: CANVAS_WIDTH,
+        height: Math.min(CANVAS_HEIGHT, BLEED_TOP + headerHeight),
+        fill: color,
+        selectable: false,
+        evented: false
+      }));
     }
 
     function createFittedTextbox(text, width, maxHeight, maxFontSize, options = {}) {
@@ -1262,7 +1205,6 @@
       for (let i = 0; i < 22; i += 1) {
         const size = (low + high) / 2;
         const candidate = create(content, size);
-
         if (candidate.height <= safeHeight) {
           best = candidate;
           low = size;
@@ -1292,12 +1234,11 @@
           right = middle - 1;
         }
       }
-
       return shortened;
     }
 
     function fittedTextbox(text, box, options = {}) {
-      const textbox = createFittedTextbox(
+      const object = createFittedTextbox(
         text,
         box.width,
         box.height,
@@ -1312,9 +1253,8 @@
           lineHeight: options.lineHeight || 1
         }
       );
-
-      textbox.set({ left: box.left, top: box.top });
-      return textbox;
+      object.set({ left: box.left, top: box.top });
+      return object;
     }
 
     function getCategoryStyle(category) {
@@ -1327,27 +1267,17 @@
 
       if (item.title) {
         parts.push({
-          text: item.title,
-          max: 78 * scale,
-          min: Math.max(5, 8 * scale),
-          ratio: .42,
-          gap: 8 * scale,
-          family: "Noto Sans JP",
-          weight: "bold",
-          fill: "#0f172a"
+          text: item.title, max: 78 * scale, min: Math.max(5, 8 * scale),
+          ratio: .42, gap: 8 * scale, family: "Noto Sans JP",
+          weight: "bold", fill: "#0f172a"
         });
       }
 
       if (!["無料配布", "Web展示"].includes(item.category) && item.price) {
         parts.push({
-          text: item.price,
-          max: 100 * scale,
-          min: Math.max(5, 8 * scale),
-          ratio: .28,
-          gap: 7 * scale,
-          family: "M PLUS Rounded 1c",
-          weight: "bold",
-          fill: categoryStyle.background
+          text: item.price, max: 100 * scale, min: Math.max(5, 8 * scale),
+          ratio: .28, gap: 7 * scale, family: "M PLUS Rounded 1c",
+          weight: "bold", fill: categoryStyle.background
         });
       }
 
@@ -1355,170 +1285,123 @@
         parts.push({
           text: item.desc,
           max: Math.max(8, Math.min(100, Number(item.descriptionFontSize) || 38)) * scale,
-          min: Math.max(4, 7 * scale),
-          ratio: .30,
-          gap: 0,
-          family: "Noto Sans JP",
-          weight: "normal",
-          fill: "#475569"
+          min: Math.max(4, 7 * scale), ratio: .30, gap: 0,
+          family: "Noto Sans JP", weight: "normal", fill: "#475569"
         });
       }
 
       if (!parts.length) return [];
-
-      const ratioTotal = parts.reduce((sum, part) => sum + part.ratio, 0);
+      const ratioSum = parts.reduce((sum, part) => sum + part.ratio, 0);
 
       return parts.map((part) => {
-        const allocatedHeight = Math.max(
-          1,
-          height * part.ratio / ratioTotal - part.gap
-        );
-
+        const allocatedHeight = Math.max(1, height * part.ratio / ratioSum - part.gap);
         return {
-          object: createFittedTextbox(
-            part.text,
-            width,
-            allocatedHeight,
-            part.max,
-            {
-              minFontSize: part.min,
-              fontFamily: part.family,
-              fontWeight: part.weight,
-              fill: part.fill,
-              lineHeight: 1.05
-            }
-          ),
+          object: createFittedTextbox(part.text, width, allocatedHeight, part.max, {
+            minFontSize: part.min,
+            fontFamily: part.family,
+            fontWeight: part.weight,
+            fill: part.fill,
+            lineHeight: 1.05
+          }),
           gapAfter: part.gap
         };
       });
     }
 
-    function drawHeader(social, headerHeight, landscape, eventStyle, circleStyle, spaceStyle, safeX, safeY) {
+    function drawHeader(social, headerHeight, landscape, eventStyle, circleStyle, spaceStyle) {
       if (social) {
         const margin = social.marginX;
-        const width = Math.max(1, CANVAS_WIDTH - margin * 2);
+        const width = Math.max(1, DESIGN_WIDTH - margin * 2);
         const isPicsquare = currentPaperSize === "PICSQUARE";
         const top = isPicsquare ? 5 : Math.max(6, Math.round(headerHeight * .04));
-        const bottom = top;
-        const usable = Math.max(1, headerHeight - top - bottom);
+        const usable = Math.max(1, headerHeight - top * 2);
         const gap = isPicsquare ? 2 : Math.max(3, Math.round(usable * .025));
-
         const eventHeight = isPicsquare ? 29 : Math.round(usable * .25);
         const circleHeight = isPicsquare ? 44 : Math.round(usable * .34);
         const spaceHeight = Math.max(1, usable - eventHeight - circleHeight - gap * 2);
 
         let y = top;
-
-        canvas.add(fittedTextbox(
+        addDesignObject(fittedTextbox(
           `${document.getElementById("eventDate").value} | ${document.getElementById("eventName").value}`,
           { left: margin, top: y, width, height: eventHeight },
           {
-            fontSize: eventStyle.fontSize,
-            minimum: 7,
-            fontFamily: "Noto Sans JP",
-            fill: eventStyle.fill,
-            backgroundColor: eventStyle.backgroundColor,
-            lineHeight: 1
+            fontSize: eventStyle.fontSize, minimum: 7, fontFamily: "Noto Sans JP",
+            fill: eventStyle.fill, backgroundColor: eventStyle.backgroundColor, lineHeight: 1
           }
         ));
 
         y += eventHeight + gap;
-
-        canvas.add(fittedTextbox(
+        addDesignObject(fittedTextbox(
           document.getElementById("circleName").value,
           { left: margin, top: y, width, height: circleHeight },
           {
-            fontSize: circleStyle.fontSize,
-            minimum: 8,
-            fontFamily: "Noto Sans JP",
-            fontWeight: "bold",
-            fill: circleStyle.fill,
-            backgroundColor: circleStyle.backgroundColor,
-            lineHeight: 1
+            fontSize: circleStyle.fontSize, minimum: 8, fontFamily: "Noto Sans JP",
+            fontWeight: "bold", fill: circleStyle.fill,
+            backgroundColor: circleStyle.backgroundColor, lineHeight: 1
           }
         ));
 
         y += circleHeight + gap;
-
         const spaceNo = document.getElementById("spaceNo").value;
         if (spaceNo) {
-          canvas.add(fittedTextbox(
+          addDesignObject(fittedTextbox(
             ` ${spaceNo} `,
             { left: margin, top: y, width, height: spaceHeight },
             {
-              fontSize: spaceStyle.fontSize,
-              minimum: 7,
-              fontFamily: "M PLUS Rounded 1c",
-              fontWeight: "bold",
-              fill: spaceStyle.fill,
-              backgroundColor: spaceStyle.backgroundColor,
+              fontSize: spaceStyle.fontSize, minimum: 7,
+              fontFamily: "M PLUS Rounded 1c", fontWeight: "bold",
+              fill: spaceStyle.fill, backgroundColor: spaceStyle.backgroundColor,
               lineHeight: 1
             }
           ));
         }
-
         return;
       }
 
-      // 印刷用はヘッダー領域内を3段に分け、A2縦でも重なりを防ぐ。
-      const scale = Math.min(CANVAS_WIDTH / 3307, CANVAS_HEIGHT / 2339);
-      const margin = Math.max(80, safeX + 8);
-      const width = Math.max(1, CANVAS_WIDTH - margin * 2);
-      const innerTop = Math.max(safeY, Math.round(headerHeight * .055));
-      const innerBottom = Math.max(safeY, Math.round(headerHeight * .055));
-      const available = Math.max(1, headerHeight - innerTop - innerBottom);
+      const scale = Math.min(DESIGN_WIDTH / 3307, DESIGN_HEIGHT / 2339);
+      const margin = Math.max(80, SAFE_X + 8);
+      const width = Math.max(1, DESIGN_WIDTH - margin * 2);
+      const innerTop = Math.max(SAFE_Y, Math.round(headerHeight * .055));
+      const available = Math.max(1, headerHeight - innerTop - Math.max(SAFE_Y, 10));
       const gap = Math.max(5, Math.round(available * .055));
-      const rowsHeight = Math.max(1, available - gap * 2);
-
-      const eventHeight = rowsHeight * .24;
-      const circleHeight = rowsHeight * .43;
-      const spaceHeight = rowsHeight - eventHeight - circleHeight;
-
+      const rowSpace = Math.max(1, available - gap * 2);
+      const eventHeight = rowSpace * .24;
+      const circleHeight = rowSpace * .43;
+      const spaceHeight = rowSpace - eventHeight - circleHeight;
       let y = innerTop;
 
-      canvas.add(fittedTextbox(
+      addDesignObject(fittedTextbox(
         `${document.getElementById("eventDate").value} | ${document.getElementById("eventName").value}`,
         { left: margin, top: y, width, height: eventHeight },
         {
-          fontSize: eventStyle.fontSize,
-          minimum: 10 * scale,
-          fontFamily: "Noto Sans JP",
-          fill: eventStyle.fill,
-          backgroundColor: eventStyle.backgroundColor,
-          lineHeight: 1
+          fontSize: eventStyle.fontSize, minimum: 10 * scale,
+          fontFamily: "Noto Sans JP", fill: eventStyle.fill,
+          backgroundColor: eventStyle.backgroundColor, lineHeight: 1
         }
       ));
 
       y += eventHeight + gap;
-
-      canvas.add(fittedTextbox(
+      addDesignObject(fittedTextbox(
         document.getElementById("circleName").value,
         { left: margin, top: y, width, height: circleHeight },
         {
-          fontSize: circleStyle.fontSize,
-          minimum: 12 * scale,
-          fontFamily: "Noto Sans JP",
-          fontWeight: "bold",
-          fill: circleStyle.fill,
-          backgroundColor: circleStyle.backgroundColor,
+          fontSize: circleStyle.fontSize, minimum: 12 * scale,
+          fontFamily: "Noto Sans JP", fontWeight: "bold",
+          fill: circleStyle.fill, backgroundColor: circleStyle.backgroundColor,
           lineHeight: 1
         }
       ));
 
       y += circleHeight + gap;
-
       const spaceNo = document.getElementById("spaceNo").value;
       if (spaceNo) {
-        canvas.add(fittedTextbox(
+        addDesignObject(fittedTextbox(
           ` ${spaceNo} `,
           { left: margin, top: y, width, height: spaceHeight },
           {
-            fontSize: spaceStyle.fontSize,
-            minimum: 10 * scale,
-            fontFamily: "M PLUS Rounded 1c",
-            fontWeight: "bold",
-            fill: spaceStyle.fill,
-            backgroundColor: spaceStyle.backgroundColor,
+            fontSize: spaceStyle.fontSize, minimum: 10 * scale,
+            fontFamily: "M PLUS Rounded 1c", fontWeight: "bold",
+            fill: spaceStyle.fill, backgroundColor: spaceStyle.backgroundColor,
             lineHeight: 1
           }
         ));
@@ -1542,18 +1425,22 @@
             scaleX: scale,
             scaleY: scale,
             shadow: new fabric.Shadow({
-              color: "rgba(15,23,42,.35)",
-              blur: 18,
-              offsetX: 0,
-              offsetY: 7
+              color: "rgba(15,23,42,.35)", blur: 18, offsetX: 0, offsetY: 7
             }),
             selectable: false,
             evented: false
           });
 
           const index = anchor ? canvas.getObjects().indexOf(anchor) : -1;
-          if (index >= 0) canvas.insertAt(image, index, false);
-          else canvas.add(image);
+          if (index >= 0) {
+            image.set({
+              left: image.left + BLEED_LEFT,
+              top: image.top + BLEED_TOP
+            });
+            canvas.insertAt(image, index, false);
+          } else {
+            addDesignObject(image);
+          }
 
           canvas.requestRenderAll();
           resolve();
@@ -1567,84 +1454,45 @@
       const generation = ++generationId;
       imageLoadPromises = [];
       canvas.clear();
-      applyBackground();
+      addFullBleedBackground();
 
       const social = SOCIAL_LAYOUTS[currentPaperSize] || null;
       const isSocial = Boolean(social);
       const landscape = currentOrientation === "LANDSCAPE";
-
-      let safeX = 0;
-      let safeY = 0;
-
-      if (!isSocial) {
-        const mm = PAPER_MM[currentPaperSize];
-        const trimWidthMm = landscape ? mm.height : mm.width;
-        const trimHeightMm = landscape ? mm.width : mm.height;
-
-        safeX = Math.ceil(BLEED_MM * CANVAS_WIDTH / trimWidthMm);
-        safeY = Math.ceil(BLEED_MM * CANVAS_HEIGHT / trimHeightMm);
-      }
-
       const headerHeight = social
         ? social.header
-        : Math.round(CANVAS_HEIGHT * (landscape ? .17 : .15));
+        : Math.round(DESIGN_HEIGHT * (landscape ? .17 : .15));
 
-      const headerBg = document.getElementById("headerBgColor").value || "#3b0a1e";
-      const accent = document.getElementById("headerAccentColor").value || selectedPresetColor.hex;
+      const headerColor = document.getElementById("headerBgColor").value || "#3b0a1e";
+      const accentColor = document.getElementById("headerAccentColor").value || selectedPresetColor.accent;
 
-      canvas.add(new fabric.Rect({
+      addHeaderBackground(headerHeight, headerColor);
+
+      // ヘッダーのアクセント帯は仕上がり範囲内に配置する。
+      addDesignObject(new fabric.Rect({
         left: 0,
-        top: 0,
-        width: CANVAS_WIDTH,
-        height: headerHeight,
-        fill: headerBg,
-        selectable: false,
-        evented: false
-      }));
-
-      const accentHeight = social
-        ? Math.max(3, Math.round(headerHeight * .025))
-        : 12;
-
-      canvas.add(new fabric.Rect({
-        left: 0,
-        top: headerHeight - accentHeight,
-        width: CANVAS_WIDTH,
-        height: accentHeight,
-        fill: accent,
+        top: headerHeight - (social ? Math.max(3, Math.round(headerHeight * .025)) : 12),
+        width: DESIGN_WIDTH,
+        height: social ? Math.max(3, Math.round(headerHeight * .025)) : 12,
+        fill: accentColor,
         selectable: false,
         evented: false
       }));
 
       const eventStyle = getInfoStyle(
-        "eventInfo",
-        social ? social.eventFont : 60,
-        "#ffffff",
+        "eventInfo", social ? social.eventFont : 60, "#ffffff",
         social ? social.eventFont : 300
       );
       const circleStyle = getInfoStyle(
-        "circleInfo",
-        social ? social.circleFont : 150,
-        "#ffffff",
+        "circleInfo", social ? social.circleFont : 150, "#ffffff",
         social ? social.circleFont : 400
       );
       const spaceStyle = getInfoStyle(
-        "spaceInfo",
-        social ? social.spaceFont : 90,
-        "#ffffff",
+        "spaceInfo", social ? social.spaceFont : 90, "#ffffff",
         social ? social.spaceFont : 300
       );
 
-      drawHeader(
-        social,
-        headerHeight,
-        landscape,
-        eventStyle,
-        circleStyle,
-        spaceStyle,
-        safeX,
-        safeY
-      );
+      drawHeader(social, headerHeight, landscape, eventStyle, circleStyle, spaceStyle);
 
       let columns = 2;
       if (currentPaperSize === "WEB_LANDSCAPE") {
@@ -1657,19 +1505,22 @@
         columns = 1;
       }
 
-      const marginX = social ? social.marginX : Math.max(70, safeX + 8);
-      const marginY = social ? social.marginY : Math.max(40, safeY + 8);
+      // 文字・カードの外周は、印刷時に仕上がり端から3mm以上離す。
+      const marginX = social ? social.marginX : SAFE_X;
+      const marginY = social ? social.marginY : SAFE_Y;
       const gapX = social ? social.gapX : 40;
       const gapY = social ? social.gapY : 40;
       const padding = social ? social.padding : 25;
-      const startY = headerHeight + (social ? 10 : 50);
+      const startY = headerHeight + (social ? 10 : Math.max(24, SAFE_Y));
       const rows = Math.ceil(items.length / columns);
 
-      const cardWidth =
-        (CANVAS_WIDTH - marginX * 2 - gapX * (columns - 1)) / columns;
+      const cardWidth = Math.max(
+        1,
+        (DESIGN_WIDTH - marginX * 2 - gapX * (columns - 1)) / columns
+      );
       const cardHeight = Math.max(
         1,
-        (CANVAS_HEIGHT - startY - marginY - gapY * (rows - 1)) / rows
+        (DESIGN_HEIGHT - startY - marginY - gapY * (rows - 1)) / Math.max(1, rows)
       );
 
       items.forEach((item, index) => {
@@ -1680,29 +1531,25 @@
         const radius = social ? 12 : 24;
         const hasImage = Boolean(item.imageSrc) && !item.noImage;
 
-        canvas.add(new fabric.Rect({
-          left: x,
-          top: y,
-          width: cardWidth,
-          height: cardHeight,
-          fill: "#ffffff",
-          stroke: "transparent",
-          strokeWidth: 0,
-          rx: radius,
-          ry: radius,
-          selectable: false,
-          evented: false
+        addDesignObject(new fabric.Rect({
+          left: x, top: y, width: cardWidth, height: cardHeight,
+          fill: "#ffffff", stroke: "transparent", strokeWidth: 0,
+          rx: radius, ry: radius, selectable: false, evented: false
         }));
 
         const style = getCategoryStyle(item.category);
         const isR18 = item.ageRating === "R18";
+
+        // 帯の高さもレイアウトごとにカード高さ・幅から決める。
         const categoryHeight = Math.min(
-          social ? social.categoryBand : 100,
-          cardHeight * .14
+          social ? social.categoryBand : cardHeight * .14,
+          cardHeight * .16,
+          Math.max(24, cardWidth * (social ? .11 : .075))
         );
         const ageHeight = Math.min(
-          social ? social.ageBand : 64,
-          cardHeight * .09
+          social ? social.ageBand : cardHeight * .09,
+          cardHeight * .11,
+          Math.max(18, cardWidth * (social ? .07 : .05))
         );
 
         const categoryPath = [
@@ -1715,19 +1562,17 @@
           "Z"
         ].join(" ");
 
-        canvas.add(new fabric.Path(categoryPath, {
-          left: x,
-          top: y,
-          fill: style.background,
-          selectable: false,
-          evented: false
+        addDesignObject(new fabric.Path(categoryPath, {
+          left: x, top: y, fill: style.background,
+          selectable: false, evented: false
         }));
 
+        // カテゴリ帯の文字は、帯の縦横に収まる最大サイズにする。
         const categoryLabel = createFittedTextbox(
           item.category || "新刊",
-          cardWidth - padding * 2,
-          categoryHeight - 4,
-          categoryHeight * .72,
+          Math.max(1, cardWidth - padding * 2),
+          Math.max(1, categoryHeight - 4),
+          Math.min(categoryHeight * .78, cardWidth * .22),
           {
             minFontSize: 1,
             fontFamily: "M PLUS Rounded 1c",
@@ -1737,24 +1582,20 @@
           }
         );
         categoryLabel.set({ left: x + padding, top: y + 2 });
-        canvas.add(categoryLabel);
+        addDesignObject(categoryLabel);
 
         const ageTop = y + categoryHeight;
-        canvas.add(new fabric.Rect({
-          left: x,
-          top: ageTop,
-          width: cardWidth,
-          height: ageHeight,
+        addDesignObject(new fabric.Rect({
+          left: x, top: ageTop, width: cardWidth, height: ageHeight,
           fill: isR18 ? "#991b1b" : "#dcfce7",
-          selectable: false,
-          evented: false
+          selectable: false, evented: false
         }));
 
         const ageLabel = createFittedTextbox(
           isR18 ? "R18" : "全年齢",
-          cardWidth - padding * 2,
-          ageHeight - 2,
-          ageHeight * .72,
+          Math.max(1, cardWidth - padding * 2),
+          Math.max(1, ageHeight - 2),
+          Math.min(ageHeight * .75, cardWidth * .18),
           {
             minFontSize: 1,
             fontFamily: "M PLUS Rounded 1c",
@@ -1764,7 +1605,7 @@
           }
         );
         ageLabel.set({ left: x + padding, top: ageTop + 1 });
-        canvas.add(ageLabel);
+        addDesignObject(ageLabel);
 
         const bodyTop = y + categoryHeight + ageHeight + padding;
         const bodyHeight = Math.max(
@@ -1780,10 +1621,7 @@
           const imageWidth = item.imageWidth || 1;
           const imageHeight = item.imageHeight || 1;
           const maxImageWidth = cardWidth * (landscape ? .38 : .36);
-          const imageScale = Math.min(
-            maxImageWidth / imageWidth,
-            bodyHeight / imageHeight
-          );
+          const imageScale = Math.min(maxImageWidth / imageWidth, bodyHeight / imageHeight);
           const displayWidth = imageWidth * imageScale;
           const displayHeight = imageHeight * imageScale;
           const imageGap = social ? 10 : 25;
@@ -1794,7 +1632,6 @@
             width: displayWidth,
             height: displayHeight
           };
-
           textX = imageBox.left + displayWidth + imageGap;
           textWidth = Math.max(1, x + cardWidth - padding - textX);
         } else {
@@ -1815,7 +1652,7 @@
         textEntries.forEach((entry, entryIndex) => {
           entry.object.set({ left: textX, top: textY });
           if (entryIndex === 0) firstText = entry.object;
-          canvas.add(entry.object);
+          addDesignObject(entry.object);
           textY += entry.object.getScaledHeight() + entry.gapAfter;
         });
 
@@ -1823,18 +1660,11 @@
           imageLoadPromises.push(addFabricImage(item, imageBox, generation, firstText));
         }
 
-        canvas.add(new fabric.Rect({
-          left: x,
-          top: y,
-          width: cardWidth,
-          height: cardHeight,
-          fill: "rgba(255,255,255,0)",
-          stroke: "#cbd5e1",
-          strokeWidth: social ? 2 : 4,
-          rx: radius,
-          ry: radius,
-          selectable: false,
-          evented: false
+        addDesignObject(new fabric.Rect({
+          left: x, top: y, width: cardWidth, height: cardHeight,
+          fill: "rgba(255,255,255,0)", stroke: "#cbd5e1",
+          strokeWidth: social ? 2 : 4, rx: radius, ry: radius,
+          selectable: false, evented: false
         }));
       });
 
@@ -1855,8 +1685,7 @@
       canvas.calcOffset();
       canvas.requestRenderAll();
 
-      document.getElementById("zoomDisplay").textContent =
-        `表示 ${Math.round(safeScale * 100)}%`;
+      document.getElementById("zoomDisplay").textContent = `表示 ${Math.round(safeScale * 100)}%`;
       document.getElementById("zoomSlider").value =
         String(Math.max(1, Math.min(200, Math.round(safeScale * 100))));
     }
@@ -1865,7 +1694,6 @@
       const workspace = document.getElementById("workspace");
       const availableWidth = Math.max(1, workspace.clientWidth - 50);
       const availableHeight = Math.max(1, workspace.clientHeight - 75);
-
       applyPreviewScale(Math.min(
         availableWidth / CANVAS_WIDTH,
         availableHeight / CANVAS_HEIGHT
@@ -1876,11 +1704,8 @@
       const workspace = document.getElementById("workspace");
 
       resizeCanvasToFit = () => {
-        if (previewZoomMode === "fit") {
-          fitCanvasToWorkspace();
-        } else {
-          applyPreviewScale(Number(document.getElementById("zoomSlider").value) / 100);
-        }
+        if (previewZoomMode === "fit") fitCanvasToWorkspace();
+        else applyPreviewScale(Number(document.getElementById("zoomSlider").value) / 100);
       };
 
       if ("ResizeObserver" in window) {
@@ -1894,191 +1719,39 @@
       });
     }
 
-    /*
-      指定した無地・パターン・画像背景を、出力全体（塗り足し込み）に描画する。
-      仕上がり画像を中央に重ねるため、文字やカードは安全領域から出ない。
-    */
-    function paintExportBackground(context, outputWidth, outputHeight, trimWidth, trimHeight, left, top) {
-      const type = document.getElementById("bgTypeSelect").value;
-
-      if (type === "color") {
-        context.fillStyle = document.getElementById("bgColorPicker").value;
-        context.fillRect(0, 0, outputWidth, outputHeight);
-        return;
-      }
-
-      if (type === "pattern") {
-        const patternCanvas = makePattern(
-          document.getElementById("patternStyleSelect").value,
-          selectedPresetColor.hex
-        );
-        const pattern = context.createPattern(patternCanvas, "repeat");
-
-        if (pattern) {
-          // 仕上がり境界で模様の位相がつながるよう、パターン原点をずらす。
-          if (typeof pattern.setTransform === "function" && typeof DOMMatrix !== "undefined") {
-            pattern.setTransform(new DOMMatrix().translate(left, top));
-          }
-          context.fillStyle = pattern;
-          context.fillRect(0, 0, outputWidth, outputHeight);
-        } else {
-          context.fillStyle = "#fff8fb";
-          context.fillRect(0, 0, outputWidth, outputHeight);
-        }
-        return;
-      }
-
-      if (type === "custom" && customBackgroundImage) {
-        /*
-          背景画像は仕上がり領域で全体が表示される倍率を維持しつつ、
-          外側の塗り足し分だけ画像の端を延長する。
-        */
-        const image = customBackgroundImage.getElement();
-        const scaleX = outputWidth / trimWidth;
-        const scaleY = outputHeight / trimHeight;
-        const drawWidth = outputWidth * scaleX;
-        const drawHeight = outputHeight * scaleY;
-        const drawX = left - left * scaleX;
-        const drawY = top - top * scaleY;
-
-        context.drawImage(image, drawX, drawY, drawWidth, drawHeight);
-        return;
-      }
-
-      context.fillStyle = "#ffffff";
-      context.fillRect(0, 0, outputWidth, outputHeight);
-    }
-
     async function createBleedExport() {
       while (true) {
-        const startGeneration = generationId;
+        const generation = generationId;
         await Promise.all(imageLoadPromises.slice());
-        if (startGeneration === generationId) break;
+        if (generation === generationId) break;
       }
 
       canvas.renderAll();
 
-      const socialPreset = SOCIAL_PRESETS[currentPaperSize];
-      if (socialPreset) {
+      const social = SOCIAL_PRESETS[currentPaperSize];
+      const isPrint = Boolean(PRINT_EXPORT_SPECS[currentPaperSize]);
+
+      if (social) {
         return {
           dataUrl: canvas.toDataURL({ format: "png", multiplier: 1 }),
-          widthPx: socialPreset.width,
-          heightPx: socialPreset.height,
-          widthMm: socialPreset.width * 25.4 / 200,
-          heightMm: socialPreset.height * 25.4 / 200,
+          widthPx: social.width,
+          heightPx: social.height,
+          widthMm: social.width * 25.4 / 200,
+          heightMm: social.height * 25.4 / 200,
           hasBleed: false
         };
       }
 
       const spec = PRINT_EXPORT_SPECS[currentPaperSize];
-      if (!spec) throw new Error(`未対応の出力サイズです: ${currentPaperSize}`);
+      if (!isPrint || !spec) throw new Error("出力サイズが未定義です。");
 
       const landscape = currentOrientation === "LANDSCAPE";
-      const outputWidthPx = landscape ? spec.heightPx : spec.widthPx;
-      const outputHeightPx = landscape ? spec.widthPx : spec.heightPx;
-      const outputWidthMm = landscape ? spec.heightMm : spec.widthMm;
-      const outputHeightMm = landscape ? spec.widthMm : spec.heightMm;
-      const trimWidthMm = landscape ? spec.trimHeightMm : spec.trimWidthMm;
-      const trimHeightMm = landscape ? spec.trimWidthMm : spec.trimHeightMm;
-
-      const trimWidthPx = Math.round(trimWidthMm * outputWidthPx / outputWidthMm);
-      const trimHeightPx = Math.round(trimHeightMm * outputHeightPx / outputHeightMm);
-      const bleedX = outputWidthPx - trimWidthPx;
-      const bleedY = outputHeightPx - trimHeightPx;
-      const left = Math.floor(bleedX / 2);
-      const right = bleedX - left;
-      const top = Math.floor(bleedY / 2);
-      const bottom = bleedY - top;
-
-      const source = await loadImage(
-        canvas.toDataURL({ format: "png", multiplier: 1 })
-      );
-
-      const trimCanvas = document.createElement("canvas");
-      trimCanvas.width = trimWidthPx;
-      trimCanvas.height = trimHeightPx;
-
-      const trimContext = trimCanvas.getContext("2d");
-      if (!trimContext) throw new Error("仕上がり画像を作成できませんでした。");
-
-      trimContext.drawImage(
-        source,
-        0, 0, source.naturalWidth, source.naturalHeight,
-        0, 0, trimWidthPx, trimHeightPx
-      );
-
-      const outputCanvas = document.createElement("canvas");
-      outputCanvas.width = outputWidthPx;
-      outputCanvas.height = outputHeightPx;
-
-      const context = outputCanvas.getContext("2d");
-      if (!context) throw new Error("塗り足し画像を作成できませんでした。");
-
-      // 背景は仕上がり領域だけでなく塗り足し領域にも描画。
-      paintExportBackground(
-        context,
-        outputWidthPx,
-        outputHeightPx,
-        trimWidthPx,
-        trimHeightPx,
-        left,
-        top
-      );
-
-      /*
-        塗り足し外周にある絵柄も端から連続するよう延長。
-        安全マージン内の文字・カードはこの領域に配置されない。
-      */
-      if (top) {
-        context.drawImage(trimCanvas, 0, 0, trimWidthPx, 1, left, 0, trimWidthPx, top);
-      }
-      if (bottom) {
-        context.drawImage(
-          trimCanvas, 0, trimHeightPx - 1, trimWidthPx, 1,
-          left, top + trimHeightPx, trimWidthPx, bottom
-        );
-      }
-      if (left) {
-        context.drawImage(trimCanvas, 0, 0, 1, trimHeightPx, 0, top, left, trimHeightPx);
-      }
-      if (right) {
-        context.drawImage(
-          trimCanvas, trimWidthPx - 1, 0, 1, trimHeightPx,
-          left + trimWidthPx, top, right, trimHeightPx
-        );
-      }
-
-      if (left && top) {
-        context.drawImage(trimCanvas, 0, 0, 1, 1, 0, 0, left, top);
-      }
-      if (right && top) {
-        context.drawImage(
-          trimCanvas, trimWidthPx - 1, 0, 1, 1,
-          left + trimWidthPx, 0, right, top
-        );
-      }
-      if (left && bottom) {
-        context.drawImage(
-          trimCanvas, 0, trimHeightPx - 1, 1, 1,
-          0, top + trimHeightPx, left, bottom
-        );
-      }
-      if (right && bottom) {
-        context.drawImage(
-          trimCanvas, trimWidthPx - 1, trimHeightPx - 1, 1, 1,
-          left + trimWidthPx, top + trimHeightPx, right, bottom
-        );
-      }
-
-      // 仕上がり領域の描画を最前面に重ねる。
-      context.drawImage(trimCanvas, left, top);
-
       return {
-        dataUrl: outputCanvas.toDataURL("image/png"),
-        widthPx: outputWidthPx,
-        heightPx: outputHeightPx,
-        widthMm: outputWidthMm,
-        heightMm: outputHeightMm,
+        dataUrl: canvas.toDataURL({ format: "png", multiplier: 1 }),
+        widthPx: CANVAS_WIDTH,
+        heightPx: CANVAS_HEIGHT,
+        widthMm: landscape ? spec.heightMm : spec.widthMm,
+        heightMm: landscape ? spec.widthMm : spec.heightMm,
         hasBleed: true
       };
     }
@@ -2091,40 +1764,36 @@
 
       handle.addEventListener("pointerdown", (event) => {
         event.preventDefault();
+        const t = toolbar.getBoundingClientRect();
+        const w = workspace.getBoundingClientRect();
 
-        const toolbarRect = toolbar.getBoundingClientRect();
-        const workspaceRect = workspace.getBoundingClientRect();
-
-        toolbar.style.left = `${toolbarRect.left - workspaceRect.left}px`;
-        toolbar.style.top = `${toolbarRect.top - workspaceRect.top}px`;
+        toolbar.style.left = `${t.left - w.left}px`;
+        toolbar.style.top = `${t.top - w.top}px`;
         toolbar.style.right = "auto";
         toolbar.style.bottom = "auto";
 
         drag = {
           id: event.pointerId,
-          startX: event.clientX,
-          startY: event.clientY,
-          left: toolbarRect.left - workspaceRect.left,
-          top: toolbarRect.top - workspaceRect.top
+          x: event.clientX,
+          y: event.clientY,
+          left: t.left - w.left,
+          top: t.top - w.top
         };
-
         handle.setPointerCapture(event.pointerId);
       });
 
       handle.addEventListener("pointermove", (event) => {
         if (!drag || drag.id !== event.pointerId) return;
-
-        const rect = workspace.getBoundingClientRect();
-        toolbar.style.left = `${Math.max(0, Math.min(rect.width - toolbar.offsetWidth, drag.left + event.clientX - drag.startX))}px`;
-        toolbar.style.top = `${Math.max(0, Math.min(rect.height - toolbar.offsetHeight, drag.top + event.clientY - drag.startY))}px`;
+        const r = workspace.getBoundingClientRect();
+        toolbar.style.left = `${Math.max(0, Math.min(r.width - toolbar.offsetWidth, drag.left + event.clientX - drag.x))}px`;
+        toolbar.style.top = `${Math.max(0, Math.min(r.height - toolbar.offsetHeight, drag.top + event.clientY - drag.y))}px`;
       });
 
-      const end = (event) => {
+      const finish = (event) => {
         if (drag && drag.id === event.pointerId) drag = null;
       };
-
-      handle.addEventListener("pointerup", end);
-      handle.addEventListener("pointercancel", end);
+      handle.addEventListener("pointerup", finish);
+      handle.addEventListener("pointercancel", finish);
     }
 
     async function openPrintPreview() {
@@ -2136,15 +1805,14 @@
 
       try {
         const output = await createBleedExport();
-        const label = output.hasBleed ? "塗り足し各3mm" : "Webサイズ";
-
+        const label = output.hasBleed ? "塗り足し込み" : "Webサイズ";
         popup.document.open();
         popup.document.write(`<!doctype html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>印刷プレビュー</title>
+<title>出力プレビュー</title>
 <style>
 *{box-sizing:border-box}
 html,body{margin:0;min-height:100%;font-family:sans-serif}
@@ -2191,10 +1859,8 @@ document.getElementById("print").onclick=()=>window.print();
     }
 
     function setupEvents() {
-      document.getElementById("paperSizeSelect")
-        .addEventListener("change", updateDimensions);
-      document.getElementById("orientationSelect")
-        .addEventListener("change", updateDimensions);
+      document.getElementById("paperSizeSelect").addEventListener("change", updateDimensions);
+      document.getElementById("orientationSelect").addEventListener("change", updateDimensions);
 
       ["eventDate", "eventName", "circleName", "spaceNo"].forEach((id) => {
         document.getElementById(id).addEventListener("input", generate);
@@ -2225,7 +1891,6 @@ document.getElementById("print").onclick=()=>window.print();
       document.getElementById("customBgInput").addEventListener("change", async (event) => {
         const file = event.target.files?.[0];
         if (!file) return;
-
         try {
           const loaded = await readImageFile(file);
           customBackgroundImage = await new Promise((resolve, reject) => {
@@ -2270,8 +1935,7 @@ document.getElementById("print").onclick=()=>window.print();
           const output = await createBleedExport();
           const suffix = output.hasBleed ? "_bleed3mm" : "";
           const link = document.createElement("a");
-          link.download =
-            `oshinagaki_${currentPaperSize}_${currentOrientation}${suffix}_${output.widthPx}x${output.heightPx}.png`;
+          link.download = `oshinagaki_${currentPaperSize}_${currentOrientation}${suffix}_${output.widthPx}x${output.heightPx}.png`;
           link.href = output.dataUrl;
           link.click();
         } catch (error) {
@@ -2288,9 +1952,7 @@ document.getElementById("print").onclick=()=>window.print();
             unit: "mm",
             format: [output.widthMm, output.heightMm]
           });
-
           pdf.addImage(output.dataUrl, "PNG", 0, 0, output.widthMm, output.heightMm);
-
           const suffix = output.hasBleed ? "_bleed3mm" : "";
           pdf.save(`oshinagaki_${currentPaperSize}_${currentOrientation}${suffix}.pdf`);
         } catch (error) {
