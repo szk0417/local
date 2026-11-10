@@ -9,39 +9,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
 
   <style>
-    html,
-    body {
-      height: 100%;
-      margin: 0;
-    }
+    html, body { height: 100%; margin: 0; }
+    body { overflow: hidden; }
 
-    body {
-      overflow: hidden;
-    }
-
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-
-    ::-webkit-scrollbar-track {
-      background: #0f172a;
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 3px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: #475569;
-    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
 
     .form-control {
       width: 100%;
@@ -68,42 +46,24 @@
       transform-origin: top left;
     }
 
-    #oshinagakiCanvas {
-      display: block;
-    }
+    #oshinagakiCanvas { display: block; }
 
-    /* 編集プレビュー専用の方眼。PNG/PDFには含まれません。 */
     .grid-overlay {
       position: absolute;
       inset: 0;
       z-index: 10;
       pointer-events: none;
       background-image:
-        linear-gradient(to right, rgba(15, 23, 42, .24) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(15, 23, 42, .24) 1px, transparent 1px),
-        linear-gradient(to right, rgba(15, 23, 42, .12) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(15, 23, 42, .12) 1px, transparent 1px);
-      background-size:
-        100px 100px,
-        100px 100px,
-        20px 20px,
-        20px 20px;
+        linear-gradient(to right, rgba(15,23,42,.24) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15,23,42,.24) 1px, transparent 1px),
+        linear-gradient(to right, rgba(15,23,42,.12) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15,23,42,.12) 1px, transparent 1px);
+      background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
     }
 
-    #previewToolbar {
-      top: 12px;
-      right: 12px;
-      touch-action: auto;
-    }
-
-    #previewToolbarDrag {
-      touch-action: none;
-      cursor: grab;
-    }
-
-    #previewToolbarDrag:active {
-      cursor: grabbing;
-    }
+    #previewToolbar { top: 12px; right: 12px; }
+    #previewToolbarDrag { touch-action: none; cursor: grab; }
+    #previewToolbarDrag:active { cursor: grabbing; }
 
     @media (max-width: 767px) {
       #previewToolbar {
@@ -119,2035 +79,1673 @@
 
 <body class="h-full flex flex-col bg-slate-900 text-slate-100 font-sans overflow-hidden">
 
-  <header class="bg-slate-800 border-b border-slate-700 px-4 py-3 flex items-center justify-between gap-3 shrink-0">
-    <div class="flex items-center gap-2.5 min-w-0">
-      <div class="bg-gradient-to-r from-rose-500 to-purple-600 p-2 rounded-lg shadow shrink-0">
-        <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
-      </div>
-      <div class="min-w-0">
-        <h1 class="text-sm sm:text-base font-bold leading-tight">同人おしながきジェネレーター</h1>
-        <p id="paperSpecLabel" class="text-[10px] sm:text-[11px] text-slate-400 truncate">
-          A3横 (3307 × 2339px / 200dpi)
-        </p>
-      </div>
+<header class="bg-slate-800 border-b border-slate-700 px-4 py-3 flex items-center justify-between gap-3 shrink-0">
+  <div class="flex items-center gap-2.5 min-w-0">
+    <div class="bg-gradient-to-r from-rose-500 to-purple-600 p-2 rounded-lg shadow shrink-0">
+      <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
     </div>
-
-    <div class="flex items-center gap-2 shrink-0">
-      <button id="printPreviewBtn" type="button"
-        class="bg-slate-600 hover:bg-slate-500 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
-        <i data-lucide="printer" class="w-4 h-4"></i>
-        <span class="hidden sm:inline">印刷プレビュー</span>
-        <span class="sm:hidden">印刷</span>
-      </button>
-
-      <button id="exportPng" type="button"
-        class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 sm:px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
-        <i data-lucide="image" class="w-4 h-4"></i>
-        <span class="hidden sm:inline">PNG画像で保存</span>
-        <span class="sm:hidden">PNG</span>
-      </button>
-
-      <button id="exportPdf" type="button"
-        class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-3 sm:px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
-        <i data-lucide="file-text" class="w-4 h-4"></i>
-        <span class="hidden sm:inline">PDFで保存</span>
-        <span class="sm:hidden">PDF</span>
-      </button>
+    <div class="min-w-0">
+      <h1 class="text-sm sm:text-base font-bold leading-tight">同人おしながきジェネレーター</h1>
+      <p id="paperSpecLabel" class="text-[10px] sm:text-[11px] text-slate-400 truncate"></p>
     </div>
-  </header>
-
-  <div class="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
-
-    <aside class="w-full md:w-[400px] lg:w-[440px] bg-slate-800 border-r border-slate-700 flex flex-col shrink-0 overflow-hidden max-h-[48vh] md:max-h-none">
-      <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/80 shrink-0">
-        <h2 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-          <i data-lucide="sliders" class="w-4 h-4 text-rose-400"></i>
-          デザイン・情報設定
-        </h2>
-        <span class="text-[10px] text-emerald-400 bg-emerald-950 border border-emerald-800 px-2 py-0.5 rounded-full">
-          リアルタイム反映
-        </span>
-      </div>
-
-      <div class="flex-1 overflow-y-auto p-4 space-y-4">
-
-        <!-- 用紙・向き -->
-        <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
-          <h3 class="text-xs font-bold text-rose-400 flex items-center gap-1">
-            <i data-lucide="layout" class="w-3.5 h-3.5"></i>
-            レイアウト・用紙設定
-          </h3>
-
-          <div class="grid grid-cols-2 gap-2">
-            <label class="text-[11px] text-slate-400">
-              用紙向き
-              <select id="orientationSelect" class="form-control">
-                <option value="LANDSCAPE">横向き</option>
-                <option value="PORTRAIT">縦向き</option>
-              </select>
-            </label>
-
-            <label class="text-[11px] text-slate-400">
-              用紙サイズ
-              <select id="paperSizeSelect" class="form-control">
-                <option value="A2">A2 (200dpi)</option>
-                <option value="A3" selected>A3 (200dpi)</option>
-                <option value="A4">A4 (200dpi)</option>
-                <option value="WEB_PORTRAIT">Web縦 (960 × 1280px)</option>
-                <option value="WEB_LANDSCAPE">Web横 (1200 × 675px)</option>
-              </select>
-            </label>
-          </div>
-        </section>
-
-        <!-- 背景デザイン -->
-        <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
-          <h3 class="text-xs font-bold text-rose-400 flex items-center gap-1">
-            <i data-lucide="palette" class="w-3.5 h-3.5"></i>
-            背景デザイン
-          </h3>
-
-          <label class="block text-[11px] text-slate-400">
-            背景の種類
-            <select id="bgTypeSelect" class="form-control">
-              <option value="pattern">規定パターン</option>
-              <option value="custom">背景画像をアップロード</option>
-              <option value="color">単色カラー</option>
-            </select>
-          </label>
-
-          <div id="patternControls" class="space-y-3">
-            <label class="block text-[11px] text-slate-400">
-              パターン
-              <select id="patternStyleSelect" class="form-control">
-                <option value="dots">ドット</option>
-                <option value="stripes">ストライプ</option>
-                <option value="diagonal">斜めストライプ</option>
-                <option value="border">ボーダー</option>
-                <option value="check">チェック</option>
-              </select>
-            </label>
-
-            <div>
-              <span class="block text-[11px] text-slate-400 mb-1.5">規定カラー</span>
-              <div id="presetColorPalette" class="grid grid-cols-4 gap-1.5"></div>
-            </div>
-          </div>
-
-          <div id="customBgControls" class="hidden">
-            <label class="block text-[11px] text-slate-400">
-              背景画像ファイル
-              <input id="customBgInput" type="file" accept="image/*"
-                class="mt-1 w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:bg-rose-500 file:text-white hover:file:bg-rose-400 cursor-pointer">
-            </label>
-          </div>
-
-          <div id="singleColorControls" class="hidden">
-            <label class="flex items-center justify-between text-[11px] text-slate-400">
-              背景色
-              <input id="bgColorPicker" type="color" value="#f8fafc"
-                class="w-12 h-8 bg-slate-800 border border-slate-700 rounded cursor-pointer p-0.5">
-            </label>
-          </div>
-        </section>
-
-        <!-- イベント情報 -->
-        <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
-          <h3 class="text-xs font-bold text-rose-400 flex items-center gap-1">
-            <i data-lucide="info" class="w-3.5 h-3.5"></i>
-            イベント・サークル情報
-          </h3>
-
-          <label class="block text-[11px] text-slate-400">
-            イベント日時
-            <input id="eventDate" type="text" value="2026年12月30日(水)" class="form-control">
-          </label>
-
-          <label class="block text-[11px] text-slate-400">
-            イベント名
-            <input id="eventName" type="text" value="コミックマーケット109" class="form-control">
-          </label>
-
-          <div class="grid grid-cols-2 gap-2">
-            <label class="block text-[11px] text-slate-400">
-              サークル名
-              <input id="circleName" type="text" value="暁の稜線" class="form-control">
-            </label>
-
-            <label class="block text-[11px] text-slate-400">
-              スペース番号
-              <input id="spaceNo" type="text" value="東7ホール あ-01a" class="form-control">
-            </label>
-          </div>
-        </section>
-
-        <!-- ヘッダー背景・アクセント -->
-        <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
-          <h3 class="text-xs font-bold text-rose-400">ヘッダー背景・アクセント</h3>
-
-          <div class="grid grid-cols-2 gap-2">
-            <label class="text-[10px] text-slate-400">
-              ヘッダー背景色
-              <input id="headerBgColor" type="color" value="#3b0a1e"
-                class="mt-1 h-9 w-full rounded border border-slate-700 bg-slate-800 p-1">
-            </label>
-
-            <label class="text-[10px] text-slate-400">
-              アクセント色
-              <input id="headerAccentColor" type="color" value="#fb7185"
-                class="mt-1 h-9 w-full rounded border border-slate-700 bg-slate-800 p-1">
-            </label>
-          </div>
-
-          <p class="text-[10px] text-slate-500">
-            規定カラーを選ぶとおすすめ配色が適用されます。各色は個別に変更できます。
-          </p>
-        </section>
-
-        <!-- ヘッダー文字・背景設定 -->
-        <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
-          <h3 class="text-xs font-bold text-rose-400">
-            情報ボックスの文字・背景設定
-          </h3>
-
-          <div class="space-y-2">
-            <p class="text-[11px] font-bold text-slate-300">日時・イベント名</p>
-            <div class="grid grid-cols-2 gap-2">
-              <label class="text-[10px] text-slate-400">
-                文字サイズ
-                <input id="eventInfoFontSize" type="number" min="12" max="200" value="48" class="form-control">
-              </label>
-              <label class="text-[10px] text-slate-400">
-                文字色
-                <input id="eventInfoTextColor" type="color" value="#ffe4e6"
-                  class="mt-1 h-8 w-full rounded border border-slate-700 bg-slate-800 p-1">
-              </label>
-            </div>
-            <label class="flex items-center justify-between text-[10px] text-slate-400">
-              背景色を表示
-              <span class="flex items-center gap-2">
-                <input id="eventInfoBgEnabled" type="checkbox" class="accent-rose-500">
-                <input id="eventInfoBgColor" type="color" value="#334155"
-                  class="h-8 w-10 rounded border border-slate-700 bg-slate-800 p-1">
-              </span>
-            </label>
-          </div>
-
-          <hr class="border-slate-700">
-
-          <div class="space-y-2">
-            <p class="text-[11px] font-bold text-slate-300">サークル名</p>
-            <div class="grid grid-cols-2 gap-2">
-              <label class="text-[10px] text-slate-400">
-                文字サイズ
-                <input id="circleInfoFontSize" type="number" min="12" max="300" value="120" class="form-control">
-              </label>
-              <label class="text-[10px] text-slate-400">
-                文字色
-                <input id="circleInfoTextColor" type="color" value="#fff1f2"
-                  class="mt-1 h-8 w-full rounded border border-slate-700 bg-slate-800 p-1">
-              </label>
-            </div>
-            <label class="flex items-center justify-between text-[10px] text-slate-400">
-              背景色を表示
-              <span class="flex items-center gap-2">
-                <input id="circleInfoBgEnabled" type="checkbox" class="accent-rose-500">
-                <input id="circleInfoBgColor" type="color" value="#334155"
-                  class="h-8 w-10 rounded border border-slate-700 bg-slate-800 p-1">
-              </span>
-            </label>
-          </div>
-
-          <hr class="border-slate-700">
-
-          <div class="space-y-2">
-            <p class="text-[11px] font-bold text-slate-300">スペース番号</p>
-            <div class="grid grid-cols-2 gap-2">
-              <label class="text-[10px] text-slate-400">
-                文字サイズ
-                <input id="spaceInfoFontSize" type="number" min="12" max="200" value="75" class="form-control">
-              </label>
-              <label class="text-[10px] text-slate-400">
-                文字色
-                <input id="spaceInfoTextColor" type="color" value="#ffffff"
-                  class="mt-1 h-8 w-full rounded border border-slate-700 bg-slate-800 p-1">
-              </label>
-            </div>
-            <label class="flex items-center justify-between text-[10px] text-slate-400">
-              背景色を表示
-              <span class="flex items-center gap-2">
-                <input id="spaceInfoBgEnabled" type="checkbox" checked class="accent-rose-500">
-                <input id="spaceInfoBgColor" type="color" value="#e11d48"
-                  class="h-8 w-10 rounded border border-slate-700 bg-slate-800 p-1">
-              </span>
-            </label>
-          </div>
-        </section>
-
-        <!-- 頒布物画像一括アップロード -->
-        <section class="space-y-2.5 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
-          <h3 class="text-xs font-bold text-rose-400 flex items-center gap-1">
-            <i data-lucide="images" class="w-3.5 h-3.5"></i>
-            頒布物画像 一括アップロード
-          </h3>
-
-          <label class="flex flex-col items-center justify-center w-full h-20 border-2 border-dashed border-rose-500/50 hover:border-rose-400 rounded-xl cursor-pointer bg-slate-800/40 hover:bg-slate-800 transition p-2">
-            <i data-lucide="upload-cloud" class="w-6 h-6 text-rose-400 mb-1"></i>
-            <span class="text-xs text-slate-200 font-bold">画像をまとめて選択（複数可）</span>
-            <span class="text-[10px] text-slate-400">選択順に頒布物へ割り当て</span>
-            <input type="file" id="batchImageInput" accept="image/*" multiple class="hidden">
-          </label>
-
-          <label class="block text-[11px] text-slate-400 mt-3">
-            説明文のフォントサイズ
-            <input id="descriptionFontSize" type="number" min="12" max="100" value="38" class="form-control">
-          </label>
-        </section>
-
-        <!-- 頒布物一覧 -->
-        <section>
-          <div class="flex justify-between items-center mb-2">
-            <h3 class="text-xs font-bold text-rose-400 flex items-center gap-1">
-              <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
-              頒布物一覧
-            </h3>
-            <button id="addItemBtn" type="button" class="bg-slate-700 hover:bg-slate-600 text-xs px-2.5 py-1.5 rounded-lg border border-slate-600 text-slate-200 flex items-center gap-1">
-              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
-              頒布物を追加
-            </button>
-          </div>
-          <div id="itemsContainer" class="space-y-3"></div>
-        </section>
-      </div>
-    </aside>
-
-    <!-- 右：プレビュー -->
-    <main id="workspace" class="flex-1 min-w-0 bg-slate-950 flex items-center justify-center p-3 sm:p-5 overflow-hidden relative">
-      <div class="absolute top-3 left-3 z-20 rounded-lg border border-slate-700 bg-slate-800/90 px-3 py-2 text-[11px] text-slate-300 shadow">
-        <span id="zoomDisplay">表示: --%</span>
-        <span class="mx-1 text-slate-600">|</span>
-        <span id="dimensionDisplay" class="text-slate-400">A3横</span>
-      </div>
-
-      <div id="previewToolbar"
-        class="absolute z-20 flex flex-wrap items-center justify-end gap-2 rounded-lg border border-slate-700 bg-slate-800/95 px-3 py-2 shadow">
-        <button id="previewToolbarDrag" type="button" aria-label="操作バーを移動"
-          class="cursor-move rounded bg-slate-700 px-2 py-1 text-xs text-slate-200"
-          title="ドラッグして移動">
-          <i data-lucide="move" class="h-4 w-4"></i>
-        </button>
-
-        <button id="fitCanvasBtn" type="button"
-          class="rounded bg-slate-700 px-2 py-1 text-xs text-slate-200 hover:bg-slate-600">
-          全体表示
-        </button>
-
-        <label class="flex items-center gap-1.5 text-xs text-slate-200">
-          倍率
-          <input id="zoomSlider" type="range" min="1" max="200" value="100" class="w-20 accent-rose-500">
-        </label>
-
-        <label class="flex items-center gap-1.5 text-xs text-slate-200">
-          <input id="toggleGrid" type="checkbox" class="accent-rose-500">
-          方眼
-        </label>
-      </div>
-
-      <div id="canvasContainer" class="shadow-2xl border border-slate-700/50 bg-white">
-        <div id="canvasStage">
-          <canvas id="oshinagakiCanvas"></canvas>
-          <div id="gridOverlay" class="grid-overlay hidden" aria-hidden="true"></div>
-        </div>
-      </div>
-    </main>
   </div>
 
-  <script>
+  <div class="flex items-center gap-2 shrink-0">
+    <button id="printPreviewBtn" type="button" class="bg-slate-600 hover:bg-slate-500 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5">
+      <i data-lucide="printer" class="w-4 h-4"></i>
+      <span class="hidden sm:inline">印刷プレビュー</span>
+      <span class="sm:hidden">印刷</span>
+    </button>
+    <button id="exportPng" type="button" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 sm:px-4 py-2 rounded-lg flex items-center gap-1.5">
+      <i data-lucide="image" class="w-4 h-4"></i>
+      <span class="hidden sm:inline">PNG画像で保存</span><span class="sm:hidden">PNG</span>
+    </button>
+    <button id="exportPdf" type="button" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-3 sm:px-4 py-2 rounded-lg flex items-center gap-1.5">
+      <i data-lucide="file-text" class="w-4 h-4"></i>
+      <span class="hidden sm:inline">PDFで保存</span><span class="sm:hidden">PDF</span>
+    </button>
+  </div>
+</header>
+
+<div class="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
+
+  <aside class="w-full md:w-[400px] lg:w-[440px] bg-slate-800 border-r border-slate-700 flex flex-col shrink-0 overflow-hidden max-h-[48vh] md:max-h-none">
+    <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/80 shrink-0">
+      <h2 class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+        <i data-lucide="sliders" class="w-4 h-4 text-rose-400"></i>
+        デザイン・情報設定
+      </h2>
+      <span class="text-[10px] text-emerald-400 bg-emerald-950 border border-emerald-800 px-2 py-0.5 rounded-full">リアルタイム反映</span>
+    </div>
+
+    <div class="flex-1 overflow-y-auto p-4 space-y-4">
+
+      <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
+        <h3 class="text-xs font-bold text-rose-400">レイアウト・用紙設定</h3>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="text-[11px] text-slate-400">
+            用紙向き
+            <select id="orientationSelect" class="form-control">
+              <option value="LANDSCAPE">横向き</option>
+              <option value="PORTRAIT">縦向き</option>
+            </select>
+          </label>
+          <label class="text-[11px] text-slate-400">
+            レイアウト
+            <select id="paperSizeSelect" class="form-control">
+              <option value="A2">A2 (200dpi)</option>
+              <option value="A3" selected>A3 (200dpi)</option>
+              <option value="A4">A4 (200dpi)</option>
+              <option value="WEB_PORTRAIT">X用縦書き (960 × 1280px)</option>
+              <option value="WEB_LANDSCAPE">X用横書き (1200 × 675px)</option>
+              <option value="PICSQUARE">ピクスク用 (500 × 1,000px)</option>
+              <option value="PICREA">ピクリエ用 (800 × 1,600px)</option>
+            </select>
+          </label>
+        </div>
+        <p id="layoutHelp" class="text-[10px] text-slate-500"></p>
+      </section>
+
+      <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
+        <h3 class="text-xs font-bold text-rose-400">背景デザイン</h3>
+        <label class="block text-[11px] text-slate-400">
+          背景の種類
+          <select id="bgTypeSelect" class="form-control">
+            <option value="pattern">規定パターン</option>
+            <option value="custom">背景画像をアップロード</option>
+            <option value="color">単色カラー</option>
+          </select>
+        </label>
+
+        <div id="patternControls" class="space-y-3">
+          <label class="block text-[11px] text-slate-400">
+            パターン
+            <select id="patternStyleSelect" class="form-control">
+              <option value="dots">ドット</option>
+              <option value="stripes">ストライプ</option>
+              <option value="diagonal">斜めストライプ</option>
+              <option value="border">ボーダー</option>
+              <option value="check">チェック</option>
+            </select>
+          </label>
+          <div>
+            <span class="block text-[11px] text-slate-400 mb-1.5">規定カラー</span>
+            <div id="presetColorPalette" class="grid grid-cols-4 gap-1.5"></div>
+          </div>
+        </div>
+
+        <div id="customBgControls" class="hidden">
+          <label class="block text-[11px] text-slate-400">
+            背景画像
+            <input id="customBgInput" type="file" accept="image/*" class="mt-1 w-full text-xs text-slate-400">
+          </label>
+        </div>
+
+        <div id="singleColorControls" class="hidden">
+          <label class="flex items-center justify-between text-[11px] text-slate-400">
+            背景色
+            <input id="bgColorPicker" type="color" value="#f8fafc" class="w-12 h-8 bg-slate-800 border border-slate-700 rounded p-1">
+          </label>
+        </div>
+      </section>
+
+      <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
+        <h3 class="text-xs font-bold text-rose-400">イベント・サークル情報</h3>
+        <label class="block text-[11px] text-slate-400">
+          イベント日時
+          <input id="eventDate" type="text" value="2026年12月30日(水)" class="form-control">
+        </label>
+        <label class="block text-[11px] text-slate-400">
+          イベント名
+          <input id="eventName" type="text" value="コミックマーケット109" class="form-control">
+        </label>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="block text-[11px] text-slate-400">
+            サークル名
+            <input id="circleName" type="text" value="暁の稜線" class="form-control">
+          </label>
+          <label class="block text-[11px] text-slate-400">
+            スペース番号
+            <input id="spaceNo" type="text" value="東7ホール あ-01a" class="form-control">
+          </label>
+        </div>
+      </section>
+
+      <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
+        <h3 class="text-xs font-bold text-rose-400">ヘッダー背景・アクセント</h3>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="text-[10px] text-slate-400">
+            ヘッダー背景色
+            <input id="headerBgColor" type="color" value="#3b0a1e" class="mt-1 h-9 w-full rounded border border-slate-700 bg-slate-800 p-1">
+          </label>
+          <label class="text-[10px] text-slate-400">
+            アクセント色
+            <input id="headerAccentColor" type="color" value="#fb7185" class="mt-1 h-9 w-full rounded border border-slate-700 bg-slate-800 p-1">
+          </label>
+        </div>
+      </section>
+
+      <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
+        <h3 class="text-xs font-bold text-rose-400">情報ボックスの文字・背景設定</h3>
+
+        <div class="space-y-2">
+          <p class="text-[11px] font-bold text-slate-300">日時・イベント名</p>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="text-[10px] text-slate-400">文字サイズ
+              <input id="eventInfoFontSize" type="number" min="12" max="200" value="48" class="form-control">
+            </label>
+            <label class="text-[10px] text-slate-400">文字色
+              <input id="eventInfoTextColor" type="color" value="#ffe4e6" class="mt-1 h-8 w-full rounded border border-slate-700 bg-slate-800 p-1">
+            </label>
+          </div>
+          <label class="flex items-center justify-between text-[10px] text-slate-400">
+            背景色を表示
+            <span class="flex items-center gap-2">
+              <input id="eventInfoBgEnabled" type="checkbox" class="accent-rose-500">
+              <input id="eventInfoBgColor" type="color" value="#334155" class="h-8 w-10 rounded border border-slate-700 bg-slate-800 p-1">
+            </span>
+          </label>
+        </div>
+
+        <hr class="border-slate-700">
+
+        <div class="space-y-2">
+          <p class="text-[11px] font-bold text-slate-300">サークル名</p>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="text-[10px] text-slate-400">文字サイズ
+              <input id="circleInfoFontSize" type="number" min="12" max="300" value="120" class="form-control">
+            </label>
+            <label class="text-[10px] text-slate-400">文字色
+              <input id="circleInfoTextColor" type="color" value="#fff1f2" class="mt-1 h-8 w-full rounded border border-slate-700 bg-slate-800 p-1">
+            </label>
+          </div>
+          <label class="flex items-center justify-between text-[10px] text-slate-400">
+            背景色を表示
+            <span class="flex items-center gap-2">
+              <input id="circleInfoBgEnabled" type="checkbox" class="accent-rose-500">
+              <input id="circleInfoBgColor" type="color" value="#334155" class="h-8 w-10 rounded border border-slate-700 bg-slate-800 p-1">
+            </span>
+          </label>
+        </div>
+
+        <hr class="border-slate-700">
+
+        <div class="space-y-2">
+          <p class="text-[11px] font-bold text-slate-300">スペース番号</p>
+          <div class="grid grid-cols-2 gap-2">
+            <label class="text-[10px] text-slate-400">文字サイズ
+              <input id="spaceInfoFontSize" type="number" min="12" max="200" value="75" class="form-control">
+            </label>
+            <label class="text-[10px] text-slate-400">文字色
+              <input id="spaceInfoTextColor" type="color" value="#ffffff" class="mt-1 h-8 w-full rounded border border-slate-700 bg-slate-800 p-1">
+            </label>
+          </div>
+          <label class="flex items-center justify-between text-[10px] text-slate-400">
+            背景色を表示
+            <span class="flex items-center gap-2">
+              <input id="spaceInfoBgEnabled" type="checkbox" checked class="accent-rose-500">
+              <input id="spaceInfoBgColor" type="color" value="#e11d48" class="h-8 w-10 rounded border border-slate-700 bg-slate-800 p-1">
+            </span>
+          </label>
+        </div>
+      </section>
+
+      <section class="space-y-2.5 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
+        <h3 class="text-xs font-bold text-rose-400">頒布物画像 一括アップロード</h3>
+        <label class="flex flex-col items-center justify-center w-full h-20 border-2 border-dashed border-rose-500/50 hover:border-rose-400 rounded-xl cursor-pointer bg-slate-800/40 p-2">
+          <i data-lucide="upload-cloud" class="w-6 h-6 text-rose-400 mb-1"></i>
+          <span class="text-xs text-slate-200 font-bold">画像をまとめて選択（複数可）</span>
+          <span class="text-[10px] text-slate-400">選択順に頒布物へ割り当て</span>
+          <input type="file" id="batchImageInput" accept="image/*" multiple class="hidden">
+        </label>
+
+        <label class="block text-[11px] text-slate-400 mt-3">
+          説明文のフォントサイズ
+          <input id="descriptionFontSize" type="number" min="12" max="100" value="38" class="form-control">
+        </label>
+      </section>
+
+      <section>
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="text-xs font-bold text-rose-400">頒布物一覧</h3>
+          <button id="addItemBtn" type="button" class="bg-slate-700 hover:bg-slate-600 text-xs px-2.5 py-1.5 rounded-lg border border-slate-600 text-slate-200">
+            頒布物を追加
+          </button>
+        </div>
+        <div id="itemsContainer" class="space-y-3"></div>
+      </section>
+    </div>
+  </aside>
+
+  <main id="workspace" class="flex-1 min-w-0 bg-slate-950 flex items-center justify-center p-3 sm:p-5 overflow-hidden relative">
+    <div class="absolute top-3 left-3 z-20 rounded-lg border border-slate-700 bg-slate-800/90 px-3 py-2 text-[11px] text-slate-300 shadow">
+      <span id="zoomDisplay">表示: --%</span>
+      <span class="mx-1 text-slate-600">|</span>
+      <span id="dimensionDisplay" class="text-slate-400"></span>
+    </div>
+
+    <div id="previewToolbar" class="absolute z-20 flex flex-wrap items-center justify-end gap-2 rounded-lg border border-slate-700 bg-slate-800/95 px-3 py-2 shadow">
+      <button id="previewToolbarDrag" type="button" aria-label="操作バーを移動" class="cursor-move rounded bg-slate-700 px-2 py-1 text-xs text-slate-200" title="ドラッグして移動">
+        <i data-lucide="move" class="h-4 w-4"></i>
+      </button>
+      <button id="fitCanvasBtn" type="button" class="rounded bg-slate-700 px-2 py-1 text-xs text-slate-200 hover:bg-slate-600">全体表示</button>
+      <label class="flex items-center gap-1.5 text-xs text-slate-200">
+        倍率
+        <input id="zoomSlider" type="range" min="1" max="200" value="100" class="w-20 accent-rose-500">
+      </label>
+      <label class="flex items-center gap-1.5 text-xs text-slate-200">
+        <input id="toggleGrid" type="checkbox" class="accent-rose-500">
+        方眼
+      </label>
+    </div>
+
+    <div id="canvasContainer" class="shadow-2xl border border-slate-700/50 bg-white">
+      <div id="canvasStage">
+        <canvas id="oshinagakiCanvas"></canvas>
+        <div id="gridOverlay" class="grid-overlay hidden" aria-hidden="true"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  lucide.createIcons();
+
+  const PRESET_COLORS = [
+    { name: "赤", hex: "#fca5a5", main: "#e11d48" },
+    { name: "ピンク", hex: "#f472b6", main: "#db2777" },
+    { name: "オレンジ", hex: "#fdba74", main: "#ea580c" },
+    { name: "緑", hex: "#86efac", main: "#16a34a" },
+    { name: "青", hex: "#93c5fd", main: "#2563eb" },
+    { name: "紫", hex: "#d8b4fe", main: "#9333ea" },
+    { name: "グレー", hex: "#cbd5e1", main: "#475569" }
+  ];
+
+  const HEADER_COLOR_SCHEMES = {
+    "赤": { headerBg: "#3b0a1e", accent: "#fb7185", eventText: "#ffe4e6", circleText: "#fff1f2", spaceText: "#ffffff", spaceBg: "#e11d48" },
+    "ピンク": { headerBg: "#3b1028", accent: "#f472b6", eventText: "#fce7f3", circleText: "#fff1f7", spaceText: "#ffffff", spaceBg: "#db2777" },
+    "オレンジ": { headerBg: "#3b1b0b", accent: "#fb923c", eventText: "#ffedd5", circleText: "#fff7ed", spaceText: "#ffffff", spaceBg: "#ea580c" },
+    "緑": { headerBg: "#092e24", accent: "#4ade80", eventText: "#dcfce7", circleText: "#f0fdf4", spaceText: "#ffffff", spaceBg: "#16a34a" },
+    "青": { headerBg: "#0b2340", accent: "#60a5fa", eventText: "#dbeafe", circleText: "#eff6ff", spaceText: "#ffffff", spaceBg: "#2563eb" },
+    "紫": { headerBg: "#26103b", accent: "#c084fc", eventText: "#f3e8ff", circleText: "#faf5ff", spaceText: "#ffffff", spaceBg: "#9333ea" },
+    "グレー": { headerBg: "#1f2937", accent: "#cbd5e1", eventText: "#e2e8f0", circleText: "#f8fafc", spaceText: "#ffffff", spaceBg: "#475569" }
+  };
+
+  const CATEGORY_STYLES = {
+    "新刊": { text: "#ffffff", background: "#dc2626" },
+    "既刊": { text: "#ffffff", background: "#2563eb" },
+    "無料配布": { text: "#ffffff", background: "#16a34a" }
+  };
+
+  const SPECS = {
+    A2: { width: 4677, height: 3307 },
+    A3: { width: 3307, height: 2339 },
+    A4: { width: 2339, height: 1654 },
+    WEB_PORTRAIT: { width: 960, height: 1280 },
+    WEB_LANDSCAPE: { width: 1200, height: 675 },
+    PICSQUARE: { width: 500, height: 1000 },
+    PICREA: { width: 800, height: 1600 }
+  };
+
+  const PAPER_MM = {
+    A2: { width: 420, height: 594 },
+    A3: { width: 297, height: 420 },
+    A4: { width: 210, height: 297 },
+    WEB_PORTRAIT: { width: 960 * 25.4 / 200, height: 1280 * 25.4 / 200 },
+    WEB_LANDSCAPE: { width: 1200 * 25.4 / 200, height: 675 * 25.4 / 200 },
+    PICSQUARE: { width: 500 * 25.4 / 200, height: 1000 * 25.4 / 200 },
+    PICREA: { width: 800 * 25.4 / 200, height: 1600 * 25.4 / 200 }
+  };
+
+  const SOCIAL_PRESETS = {
+    WEB_PORTRAIT: { width: 960, height: 1280, orientation: "PORTRAIT", label: "X用縦書き" },
+    WEB_LANDSCAPE: { width: 1200, height: 675, orientation: "LANDSCAPE", label: "X用横書き" },
+    PICSQUARE: { width: 500, height: 1000, orientation: "PORTRAIT", label: "ピクスク用" },
+    PICREA: { width: 800, height: 1600, orientation: "PORTRAIT", label: "ピクリエ用" }
+  };
+
+  const BLEED_MM = 3;
+
+  let selectedPresetColor = PRESET_COLORS[0];
+  let currentOrientation = "LANDSCAPE";
+  let currentPaperSize = "A3";
+  let CANVAS_WIDTH = SPECS.A3.width;
+  let CANVAS_HEIGHT = SPECS.A3.height;
+  let canvas;
+  let customBgImageObj = null;
+  let generationId = 0;
+  let resizeCanvasToFit = null;
+  let previewZoomMode = "fit";
+  let imageLoadPromises = [];
+
+  let items = [
+    {
+      category: "新刊",
+      ageRating: "全年齢",
+      title: "新刊サンプルタイトル",
+      price: "¥ 1,000",
+      desc: "文庫サイズ / 120P / 全年齢\n特製ノベルティステッカー付き",
+      imageSrc: null,
+      imageWidth: 0,
+      imageHeight: 0,
+      noImage: false
+    },
+    {
+      category: "既刊",
+      ageRating: "全年齢",
+      title: "既刊イラスト集",
+      price: "¥ 500",
+      desc: "B5 / 24P / フルカラー\n過去イラストまとめ冊子",
+      imageSrc: null,
+      imageWidth: 0,
+      imageHeight: 0,
+      noImage: false
+    }
+  ];
+
+  window.addEventListener("DOMContentLoaded", () => {
+    initCanvas();
+    setupColorPalette();
+    applyHeaderColorScheme(selectedPresetColor.name);
+    renderFormItems();
+    setupEventListeners();
+    setupResponsiveScaler();
+    updateCanvasDimensions();
     lucide.createIcons();
+  });
 
-    const PRESET_COLORS = [
-      { name: "赤", hex: "#fca5a5", main: "#e11d48" },
-      { name: "ピンク", hex: "#f472b6", main: "#db2777" },
-      { name: "オレンジ", hex: "#fdba74", main: "#ea580c" },
-      { name: "緑", hex: "#86efac", main: "#16a34a" },
-      { name: "青", hex: "#93c5fd", main: "#2563eb" },
-      { name: "紫", hex: "#d8b4fe", main: "#9333ea" },
-      { name: "グレー", hex: "#cbd5e1", main: "#475569" }
-    ];
+  function initCanvas() {
+    canvas = new fabric.Canvas("oshinagakiCanvas", {
+      width: CANVAS_WIDTH,
+      height: CANVAS_HEIGHT,
+      backgroundColor: "#ffffff",
+      selection: false,
+      enableRetinaScaling: true
+    });
+  }
 
-    const HEADER_COLOR_SCHEMES = {
-      "赤": {
-        headerBg: "#3b0a1e",
-        accent: "#fb7185",
-        eventText: "#ffe4e6",
-        circleText: "#fff1f2",
-        spaceText: "#ffffff",
-        spaceBg: "#e11d48"
-      },
-      "ピンク": {
-        headerBg: "#3b1028",
-        accent: "#f472b6",
-        eventText: "#fce7f3",
-        circleText: "#fff1f7",
-        spaceText: "#ffffff",
-        spaceBg: "#db2777"
-      },
-      "オレンジ": {
-        headerBg: "#3b1b0b",
-        accent: "#fb923c",
-        eventText: "#ffedd5",
-        circleText: "#fff7ed",
-        spaceText: "#ffffff",
-        spaceBg: "#ea580c"
-      },
-      "緑": {
-        headerBg: "#092e24",
-        accent: "#4ade80",
-        eventText: "#dcfce7",
-        circleText: "#f0fdf4",
-        spaceText: "#ffffff",
-        spaceBg: "#16a34a"
-      },
-      "青": {
-        headerBg: "#0b2340",
-        accent: "#60a5fa",
-        eventText: "#dbeafe",
-        circleText: "#eff6ff",
-        spaceText: "#ffffff",
-        spaceBg: "#2563eb"
-      },
-      "紫": {
-        headerBg: "#26103b",
-        accent: "#c084fc",
-        eventText: "#f3e8ff",
-        circleText: "#faf5ff",
-        spaceText: "#ffffff",
-        spaceBg: "#9333ea"
-      },
-      "グレー": {
-        headerBg: "#1f2937",
-        accent: "#cbd5e1",
-        eventText: "#e2e8f0",
-        circleText: "#f8fafc",
-        spaceText: "#ffffff",
-        spaceBg: "#475569"
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[char]);
+  }
+
+  function applyHeaderColorScheme(name) {
+    const scheme = HEADER_COLOR_SCHEMES[name];
+    if (!scheme) return;
+    document.getElementById("headerBgColor").value = scheme.headerBg;
+    document.getElementById("headerAccentColor").value = scheme.accent;
+    document.getElementById("eventInfoTextColor").value = scheme.eventText;
+    document.getElementById("circleInfoTextColor").value = scheme.circleText;
+    document.getElementById("spaceInfoTextColor").value = scheme.spaceText;
+    document.getElementById("spaceInfoBgColor").value = scheme.spaceBg;
+  }
+
+  function setupColorPalette() {
+    const container = document.getElementById("presetColorPalette");
+    container.innerHTML = "";
+
+    PRESET_COLORS.forEach((color, index) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "flex items-center gap-1 p-1.5 rounded border text-[10px] text-slate-300 hover:bg-slate-700";
+      button.classList.add("border-slate-700", "bg-slate-900");
+
+      if (index === 0) {
+        button.classList.add("ring-2", "ring-rose-500", "border-slate-500", "bg-slate-800");
       }
-    };
 
-    const CATEGORY_STYLES = {
-      "新刊": {
-        text: "#ffffff",
-        background: "#dc2626",
-        border: "#991b1b"
-      },
-      "既刊": {
-        text: "#ffffff",
-        background: "#2563eb",
-        border: "#1e40af"
-      },
-      "無料配布": {
-        text: "#ffffff",
-        background: "#16a34a",
-        border: "#166534"
+      button.innerHTML =
+        `<span class="w-3 h-3 rounded-full shrink-0" style="background:${color.hex}"></span><span>${color.name}</span>`;
+
+      button.addEventListener("click", () => {
+        selectedPresetColor = color;
+        applyHeaderColorScheme(color.name);
+
+        container.querySelectorAll("button").forEach((el) => {
+          el.classList.remove("ring-2", "ring-rose-500", "border-slate-500", "bg-slate-800");
+          el.classList.add("border-slate-700", "bg-slate-900");
+        });
+
+        button.classList.add("ring-2", "ring-rose-500", "border-slate-500", "bg-slate-800");
+        button.classList.remove("border-slate-700", "bg-slate-900");
+        generateOshinagaki();
+      });
+
+      container.appendChild(button);
+    });
+  }
+
+  function updateCanvasDimensions() {
+    currentPaperSize = document.getElementById("paperSizeSelect").value;
+
+    const orientationSelect = document.getElementById("orientationSelect");
+    const socialPreset = SOCIAL_PRESETS[currentPaperSize];
+
+    if (socialPreset) {
+      currentOrientation = socialPreset.orientation;
+      orientationSelect.value = socialPreset.orientation;
+      orientationSelect.disabled = true;
+      CANVAS_WIDTH = socialPreset.width;
+      CANVAS_HEIGHT = socialPreset.height;
+    } else {
+      orientationSelect.disabled = false;
+      currentOrientation = orientationSelect.value;
+      const spec = SPECS[currentPaperSize];
+
+      if (currentOrientation === "LANDSCAPE") {
+        CANVAS_WIDTH = spec.width;
+        CANVAS_HEIGHT = spec.height;
+      } else {
+        CANVAS_WIDTH = spec.height;
+        CANVAS_HEIGHT = spec.width;
       }
-    };
+    }
 
-    const SPECS = {
-      A2: { width: 4677, height: 3307 },
-      A3: { width: 3307, height: 2339 },
-      A4: { width: 2339, height: 1654 },
-      WEB_PORTRAIT: { width: 960, height: 1280 },
-      WEB_LANDSCAPE: { width: 1200, height: 675 }
-    };
+    canvas.setDimensions({ width: CANVAS_WIDTH, height: CANVAS_HEIGHT });
 
-    const PAPER_MM = {
-      A2: { width: 420, height: 594 },
-      A3: { width: 297, height: 420 },
-      A4: { width: 210, height: 297 },
-      WEB_PORTRAIT: {
-        width: 960 * 25.4 / 200,
-        height: 1280 * 25.4 / 200
-      },
-      WEB_LANDSCAPE: {
-        width: 1200 * 25.4 / 200,
-        height: 675 * 25.4 / 200
-      }
-    };
+    const stage = document.getElementById("canvasStage");
+    stage.style.width = `${CANVAS_WIDTH}px`;
+    stage.style.height = `${CANVAS_HEIGHT}px`;
 
-    const WEB_PRESETS = {
-      WEB_PORTRAIT: {
-        width: 960,
-        height: 1280,
-        orientation: "PORTRAIT"
-      },
-      WEB_LANDSCAPE: {
-        width: 1200,
-        height: 675,
-        orientation: "LANDSCAPE"
-      }
-    };
+    const label = socialPreset
+      ? `${socialPreset.label} (${CANVAS_WIDTH} × ${CANVAS_HEIGHT}px)`
+      : `${currentPaperSize}${currentOrientation === "LANDSCAPE" ? "横" : "縦"} (${CANVAS_WIDTH} × ${CANVAS_HEIGHT}px / 200dpi)`;
 
-    const BLEED_MM = 3;
+    document.getElementById("paperSpecLabel").textContent = label;
+    document.getElementById("dimensionDisplay").textContent = label;
+    document.getElementById("layoutHelp").textContent = socialPreset
+      ? "SNS・オンラインイベント向けのレイアウトです。ヘッダーを小さくし、情報の重なりを抑えます。"
+      : "印刷向けレイアウトです。出力には上下左右3mmの塗り足しが付きます。";
 
-    let selectedPresetColor = PRESET_COLORS[0];
-    let currentOrientation = "LANDSCAPE";
-    let currentPaperSize = "A3";
-    let CANVAS_WIDTH = SPECS.A3.width;
-    let CANVAS_HEIGHT = SPECS.A3.height;
-    let canvas;
-    let customBgImageObj = null;
-    let generationId = 0;
-    let resizeCanvasToFit = null;
-    let previewZoomMode = "fit";
-    let imageLoadPromises = [];
+    previewZoomMode = "fit";
+    resizeCanvasToFit?.();
+    generateOshinagaki();
+  }
 
-    let items = [
-      {
-        category: "新刊",
-        ageRating: "全年齢",
-        title: "新刊サンプルタイトル",
-        price: "¥ 1,000",
-        desc: "文庫サイズ / 120P / 全年齢\n特製ノベルティステッカー付き",
-        imageSrc: null,
-        imageWidth: 0,
-        imageHeight: 0,
-        noImage: false
-      },
-      {
-        category: "既刊",
-        ageRating: "全年齢",
-        title: "既刊イラスト集",
-        price: "¥ 500",
-        desc: "B5 / 24P / フルカラー\n過去イラストまとめ冊子",
-        imageSrc: null,
-        imageWidth: 0,
-        imageHeight: 0,
-        noImage: false
-      }
-    ];
+  function renderFormItems() {
+    const container = document.getElementById("itemsContainer");
+    container.innerHTML = "";
 
-    window.addEventListener("DOMContentLoaded", () => {
-      initCanvas();
-      setupColorPalette();
-      applyHeaderColorScheme(selectedPresetColor.name);
-      renderFormItems();
-      setupEventListeners();
-      setupResponsiveScaler();
-      updateCanvasDimensions();
+    items.forEach((item, index) => {
+      const card = document.createElement("div");
+      card.className = "bg-slate-900/80 border border-slate-700/80 p-3 rounded-xl space-y-2";
+
+      card.innerHTML = `
+        <div class="flex justify-between items-center">
+          <span class="text-[11px] font-bold text-slate-400">頒布物 #${index + 1}</span>
+          <div class="flex items-center gap-1">
+            <button type="button" data-move="${index}" data-dir="-1" ${index === 0 ? "disabled" : ""} class="rounded bg-slate-700 px-2 py-1 text-xs disabled:opacity-40">↑</button>
+            <button type="button" data-move="${index}" data-dir="1" ${index === items.length - 1 ? "disabled" : ""} class="rounded bg-slate-700 px-2 py-1 text-xs disabled:opacity-40">↓</button>
+            ${items.length > 1 ? `<button type="button" data-remove="${index}" class="ml-1 text-xs text-rose-400">削除</button>` : ""}
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <label class="block text-[10px] text-slate-400">
+            カテゴリ
+            <select data-index="${index}" data-key="category" class="form-control font-bold text-rose-300">
+              <option value="新刊" ${item.category === "新刊" ? "selected" : ""}>新刊</option>
+              <option value="既刊" ${item.category === "既刊" ? "selected" : ""}>既刊</option>
+              <option value="無料配布" ${item.category === "無料配布" ? "selected" : ""}>無料配布</option>
+            </select>
+          </label>
+          <label class="block text-[10px] text-slate-400">
+            年齢区分
+            <select data-index="${index}" data-key="ageRating" class="form-control font-bold">
+              <option value="全年齢" ${item.ageRating === "全年齢" ? "selected" : ""}>全年齢</option>
+              <option value="R18" ${item.ageRating === "R18" ? "selected" : ""}>R18</option>
+            </select>
+          </label>
+        </div>
+
+        <label class="block text-[10px] text-slate-400">
+          タイトル
+          <input type="text" data-index="${index}" data-key="title" value="${escapeHtml(item.title)}" class="form-control font-bold">
+        </label>
+
+        <label class="block text-[10px] text-slate-400">
+          値段（無料配布は空欄）
+          <input type="text" data-index="${index}" data-key="price" value="${escapeHtml(item.price || "")}" ${item.category === "無料配布" ? "disabled" : ""} class="form-control disabled:opacity-50">
+        </label>
+
+        <label class="block text-[10px] text-slate-400">
+          説明
+          <textarea data-index="${index}" data-key="desc" class="form-control h-14 resize-y">${escapeHtml(item.desc)}</textarea>
+        </label>
+
+        <label class="flex items-center gap-2 text-[10px] text-slate-300">
+          <input type="checkbox" data-noimage="${index}" ${item.noImage ? "checked" : ""} class="accent-rose-500">
+          画像なし（テキスト欄を広く表示）
+        </label>
+
+        <label class="block text-[10px] text-slate-400">
+          個別画像
+          <input type="file" accept="image/*" data-image="${index}" ${item.noImage ? "disabled" : ""} class="mt-1 w-full text-[11px] disabled:opacity-50">
+        </label>
+      `;
+
+      container.appendChild(card);
     });
 
-    function initCanvas() {
-      canvas = new fabric.Canvas("oshinagakiCanvas", {
-        width: CANVAS_WIDTH,
-        height: CANVAS_HEIGHT,
-        backgroundColor: "#ffffff",
-        selection: false,
-        enableRetinaScaling: true
-      });
+    container.querySelectorAll("[data-index]").forEach((input) => {
+      const update = () => {
+        const index = Number(input.dataset.index);
+        const key = input.dataset.key;
+        if (!items[index]) return;
 
-      const stage = document.getElementById("canvasStage");
-      stage.style.width = `${CANVAS_WIDTH}px`;
-      stage.style.height = `${CANVAS_HEIGHT}px`;
-    }
+        items[index][key] = input.value;
 
-    function escapeHtml(value) {
-      return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-      })[char]);
-    }
-
-    function applyHeaderColorScheme(colorName) {
-      const scheme = HEADER_COLOR_SCHEMES[colorName];
-      if (!scheme) return;
-
-      document.getElementById("headerBgColor").value = scheme.headerBg;
-      document.getElementById("headerAccentColor").value = scheme.accent;
-      document.getElementById("eventInfoTextColor").value = scheme.eventText;
-      document.getElementById("circleInfoTextColor").value = scheme.circleText;
-      document.getElementById("spaceInfoTextColor").value = scheme.spaceText;
-      document.getElementById("spaceInfoBgColor").value = scheme.spaceBg;
-    }
-
-    function setupColorPalette() {
-      const container = document.getElementById("presetColorPalette");
-      container.innerHTML = "";
-
-      PRESET_COLORS.forEach((color, index) => {
-        const button = document.createElement("button");
-        button.type = "button";
-        button.className =
-          "flex items-center gap-1 p-1.5 rounded border text-[10px] text-slate-300 hover:bg-slate-700";
-
-        if (index === 0) {
-          button.classList.add("ring-2", "ring-rose-500", "border-slate-500", "bg-slate-800");
-        } else {
-          button.classList.add("border-slate-700", "bg-slate-900");
-        }
-
-        button.innerHTML =
-          `<span class="w-3 h-3 rounded-full shrink-0" style="background:${color.hex}"></span>` +
-          `<span>${color.name}</span>`;
-
-        button.addEventListener("click", () => {
-          selectedPresetColor = color;
-          applyHeaderColorScheme(color.name);
-
-          container.querySelectorAll("button").forEach((paletteButton) => {
-            paletteButton.classList.remove(
-              "ring-2",
-              "ring-rose-500",
-              "border-slate-500",
-              "bg-slate-800"
-            );
-            paletteButton.classList.add("border-slate-700", "bg-slate-900");
-          });
-
-          button.classList.add(
-            "ring-2",
-            "ring-rose-500",
-            "border-slate-500",
-            "bg-slate-800"
-          );
-          button.classList.remove("border-slate-700", "bg-slate-900");
-
-          generateOshinagaki();
-        });
-
-        container.appendChild(button);
-      });
-    }
-
-    function updateCanvasDimensions() {
-      currentPaperSize = document.getElementById("paperSizeSelect").value;
-
-      const orientationSelect = document.getElementById("orientationSelect");
-      const webPreset = WEB_PRESETS[currentPaperSize];
-
-      if (webPreset) {
-        currentOrientation = webPreset.orientation;
-        orientationSelect.value = webPreset.orientation;
-        orientationSelect.disabled = true;
-
-        CANVAS_WIDTH = webPreset.width;
-        CANVAS_HEIGHT = webPreset.height;
-      } else {
-        orientationSelect.disabled = false;
-        currentOrientation = orientationSelect.value;
-
-        const spec = SPECS[currentPaperSize];
-        if (currentOrientation === "LANDSCAPE") {
-          CANVAS_WIDTH = spec.width;
-          CANVAS_HEIGHT = spec.height;
-        } else {
-          CANVAS_WIDTH = spec.height;
-          CANVAS_HEIGHT = spec.width;
-        }
-      }
-
-      canvas.setDimensions({
-        width: CANVAS_WIDTH,
-        height: CANVAS_HEIGHT
-      });
-
-      const stage = document.getElementById("canvasStage");
-      stage.style.width = `${CANVAS_WIDTH}px`;
-      stage.style.height = `${CANVAS_HEIGHT}px`;
-
-      const isWebPreset = Boolean(webPreset);
-      const orientationLabel = currentOrientation === "LANDSCAPE" ? "横" : "縦";
-      const label = isWebPreset
-        ? `${currentPaperSize === "WEB_PORTRAIT" ? "Web縦" : "Web横"} (${CANVAS_WIDTH} × ${CANVAS_HEIGHT}px)`
-        : `${currentPaperSize}${orientationLabel} (${CANVAS_WIDTH} × ${CANVAS_HEIGHT}px / 200dpi)`;
-
-      document.getElementById("paperSpecLabel").textContent = label;
-      document.getElementById("dimensionDisplay").textContent = label;
-
-      previewZoomMode = "fit";
-      if (resizeCanvasToFit) resizeCanvasToFit();
-
-      generateOshinagaki();
-    }
-
-    function renderFormItems() {
-      const container = document.getElementById("itemsContainer");
-      container.innerHTML = "";
-
-      items.forEach((item, index) => {
-        const itemEl = document.createElement("div");
-        itemEl.className =
-          "bg-slate-900/80 border border-slate-700/80 p-3 rounded-xl space-y-2";
-
-        itemEl.innerHTML = `
-          <div class="flex justify-between items-center">
-            <span class="text-[11px] font-bold text-slate-400">頒布物 #${index + 1}</span>
-
-            <div class="flex items-center gap-1">
-              <button type="button" data-move-item="${index}" data-direction="-1"
-                ${index === 0 ? "disabled" : ""}
-                aria-label="上へ移動" title="上へ移動"
-                class="rounded bg-slate-700 px-2 py-1 text-xs text-slate-200 hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-40">↑</button>
-
-              <button type="button" data-move-item="${index}" data-direction="1"
-                ${index === items.length - 1 ? "disabled" : ""}
-                aria-label="下へ移動" title="下へ移動"
-                class="rounded bg-slate-700 px-2 py-1 text-xs text-slate-200 hover:bg-slate-600 disabled:cursor-not-allowed disabled:opacity-40">↓</button>
-
-              ${items.length > 1
-                ? `<button type="button" data-remove-item="${index}" class="ml-1 flex items-center gap-0.5 text-xs text-rose-400 hover:text-rose-300">
-                     <i data-lucide="trash-2" class="h-3.5 w-3.5"></i> 削除
-                   </button>`
-                : ""}
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <label class="block text-[10px] text-slate-400">
-              カテゴリ
-              <select data-item-index="${index}" data-item-key="category"
-                class="form-control font-bold text-rose-300">
-                <option value="新刊" ${item.category === "新刊" ? "selected" : ""}>新刊</option>
-                <option value="既刊" ${item.category === "既刊" ? "selected" : ""}>既刊</option>
-                <option value="無料配布" ${item.category === "無料配布" ? "selected" : ""}>無料配布</option>
-              </select>
-            </label>
-
-            <label class="block text-[10px] text-slate-400">
-              年齢区分
-              <select data-item-index="${index}" data-item-key="ageRating"
-                class="form-control font-bold">
-                <option value="全年齢" ${item.ageRating === "全年齢" ? "selected" : ""}>全年齢</option>
-                <option value="R18" ${item.ageRating === "R18" ? "selected" : ""}>R18</option>
-              </select>
-            </label>
-          </div>
-
-          <label class="block text-[10px] text-slate-400">
-            タイトル
-            <input type="text" data-item-index="${index}" data-item-key="title"
-              value="${escapeHtml(item.title)}" placeholder="作品タイトル"
-              class="form-control font-bold">
-          </label>
-
-          <label class="block text-[10px] text-slate-400">
-            値段（無料配布は空欄）
-            <input type="text" data-item-index="${index}" data-item-key="price"
-              value="${escapeHtml(item.price || "")}"
-              placeholder="例: ¥1,000"
-              ${item.category === "無料配布" ? "disabled" : ""}
-              class="form-control disabled:opacity-50">
-          </label>
-
-          <label class="block text-[10px] text-slate-400">
-            説明
-            <textarea data-item-index="${index}" data-item-key="desc"
-              placeholder="サイズ、ページ数など"
-              class="form-control h-14 resize-y">${escapeHtml(item.desc)}</textarea>
-          </label>
-
-          <label class="flex items-center gap-2 text-[10px] text-slate-300">
-            <input type="checkbox" data-item-noimage="${index}"
-              ${item.noImage ? "checked" : ""}
-              class="accent-rose-500">
-            画像なし（テキスト欄を広く表示）
-          </label>
-
-          <label class="block text-[10px] text-slate-400">
-            個別に画像を選択
-            <input type="file" accept="image/*" data-item-image="${index}"
-              ${item.noImage ? "disabled" : ""}
-              class="mt-1 w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600 cursor-pointer disabled:opacity-50">
-          </label>
-        `;
-
-        container.appendChild(itemEl);
-      });
-
-      lucide.createIcons();
-
-      container.querySelectorAll("[data-item-index]").forEach((input) => {
-        const updateItemField = () => {
-          const index = Number(input.dataset.itemIndex);
-          const key = input.dataset.itemKey;
-
-          if (!items[index]) return;
-          items[index][key] = input.value;
-
-          if (key === "category") {
-            const priceInput = container.querySelector(
-              `[data-item-index="${index}"][data-item-key="price"]`
-            );
-
-            if (input.value === "無料配布") {
+        if (key === "category") {
+          const priceInput = container.querySelector(`[data-index="${index}"][data-key="price"]`);
+          if (priceInput) {
+            priceInput.disabled = input.value === "無料配布";
+            if (priceInput.disabled) {
+              priceInput.value = "";
               items[index].price = "";
-              if (priceInput) {
-                priceInput.value = "";
-                priceInput.disabled = true;
-              }
-            } else if (priceInput) {
-              priceInput.disabled = false;
             }
           }
+        }
 
-          generateOshinagaki();
-        };
+        generateOshinagaki();
+      };
 
-        input.addEventListener("input", updateItemField);
-        input.addEventListener("change", updateItemField);
+      input.addEventListener("input", update);
+      input.addEventListener("change", update);
+    });
+
+    container.querySelectorAll("[data-move]").forEach((button) => {
+      button.addEventListener("click", () => {
+        moveItem(Number(button.dataset.move), Number(button.dataset.dir));
       });
+    });
 
-      container.querySelectorAll("[data-remove-item]").forEach((button) => {
-        button.addEventListener("click", () => {
-          removeItem(Number(button.dataset.removeItem));
-        });
+    container.querySelectorAll("[data-remove]").forEach((button) => {
+      button.addEventListener("click", () => removeItem(Number(button.dataset.remove)));
+    });
+
+    container.querySelectorAll("[data-noimage]").forEach((checkbox) => {
+      checkbox.addEventListener("change", () => {
+        const index = Number(checkbox.dataset.noimage);
+        if (!items[index]) return;
+
+        items[index].noImage = checkbox.checked;
+        const input = container.querySelector(`[data-image="${index}"]`);
+
+        if (input) {
+          input.disabled = checkbox.checked;
+          if (checkbox.checked) input.value = "";
+        }
+
+        generateOshinagaki();
       });
+    });
 
-      container.querySelectorAll("[data-move-item]").forEach((button) => {
-        button.addEventListener("click", () => {
-          moveItem(
-            Number(button.dataset.moveItem),
-            Number(button.dataset.direction)
-          );
-        });
+    container.querySelectorAll("[data-image]").forEach((input) => {
+      input.addEventListener("change", () => {
+        handleSingleImageUpload(Number(input.dataset.image), input);
       });
+    });
 
-      container.querySelectorAll("[data-item-image]").forEach((input) => {
-        input.addEventListener("change", () => {
-          handleSingleImageUpload(Number(input.dataset.itemImage), input);
-        });
-      });
+    lucide.createIcons();
+  }
 
-      container.querySelectorAll("[data-item-noimage]").forEach((checkbox) => {
-        checkbox.addEventListener("change", () => {
-          const index = Number(checkbox.dataset.itemNoimage);
-          if (!items[index]) return;
+  function addItem() {
+    items.push({
+      category: "新刊",
+      ageRating: "全年齢",
+      title: `頒布物 #${items.length + 1}`,
+      price: "¥ 500",
+      desc: "",
+      imageSrc: null,
+      imageWidth: 0,
+      imageHeight: 0,
+      noImage: false
+    });
+    renderFormItems();
+    generateOshinagaki();
+  }
 
-          items[index].noImage = checkbox.checked;
+  function removeItem(index) {
+    items.splice(index, 1);
+    renderFormItems();
+    generateOshinagaki();
+  }
 
-          const imageInput = container.querySelector(
-            `[data-item-image="${index}"]`
-          );
+  function moveItem(index, direction) {
+    const target = index + direction;
+    if (target < 0 || target >= items.length) return;
+    [items[index], items[target]] = [items[target], items[index]];
+    renderFormItems();
+    generateOshinagaki();
+  }
 
-          if (imageInput) {
-            imageInput.disabled = checkbox.checked;
-            if (checkbox.checked) imageInput.value = "";
-          }
+  function loadImage(dataUrl) {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(new Error("画像を読み込めませんでした。"));
+      image.src = dataUrl;
+    });
+  }
 
-          generateOshinagaki();
-        });
-      });
-    }
+  async function handleSingleImageUpload(index, input) {
+    const file = input.files?.[0];
+    if (!file || !items[index]) return;
 
-    function addItem() {
-      items.push({
-        category: "新刊",
-        ageRating: "全年齢",
-        title: `頒布物 #${items.length + 1}`,
-        price: "¥ 500",
-        desc: "",
-        imageSrc: null,
-        imageWidth: 0,
-        imageHeight: 0,
-        noImage: false
-      });
-
-      renderFormItems();
-      generateOshinagaki();
-    }
-
-    function removeItem(index) {
-      items.splice(index, 1);
-      renderFormItems();
-      generateOshinagaki();
-    }
-
-    function moveItem(index, direction) {
-      const nextIndex = index + direction;
-      if (nextIndex < 0 || nextIndex >= items.length) return;
-
-      [items[index], items[nextIndex]] = [items[nextIndex], items[index]];
-      renderFormItems();
-      generateOshinagaki();
-    }
-
-    function getImageDimensions(dataUrl) {
-      return new Promise((resolve, reject) => {
-        const image = new Image();
-
-        image.onload = () => resolve({
-          width: image.naturalWidth,
-          height: image.naturalHeight
-        });
-
-        image.onerror = () => reject(
-          new Error("画像の寸法を読み取れませんでした。")
-        );
-        image.src = dataUrl;
-      });
-    }
-
-    function readFileAsDataURL(file) {
-      return new Promise((resolve, reject) => {
+    try {
+      const dataUrl = await new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(
-          new Error(`画像を読み込めませんでした: ${file.name}`)
-        );
+        reader.onerror = () => reject(new Error("画像ファイルを読み込めませんでした。"));
         reader.readAsDataURL(file);
       });
+
+      const image = await loadImage(dataUrl);
+      items[index].imageSrc = dataUrl;
+      items[index].imageWidth = image.naturalWidth;
+      items[index].imageHeight = image.naturalHeight;
+      items[index].noImage = false;
+      renderFormItems();
+      generateOshinagaki();
+    } catch (error) {
+      alert(error.message);
     }
+  }
 
-    function handleSingleImageUpload(index, input) {
-      const file = input.files && input.files[0];
-      if (!file || !items[index]) return;
+  async function handleBatchImageUpload(fileList) {
+    const files = Array.from(fileList || []);
+    if (!files.length) return;
 
-      const reader = new FileReader();
+    try {
+      const dataUrls = await Promise.all(files.map((file) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error(`画像を読み込めませんでした: ${file.name}`));
+        reader.readAsDataURL(file);
+      })));
 
-      reader.onload = async (event) => {
-        try {
-          const imageSrc = event.target.result;
-          const dimensions = await getImageDimensions(imageSrc);
+      const images = await Promise.all(dataUrls.map(loadImage));
 
-          items[index].imageSrc = imageSrc;
-          items[index].imageWidth = dimensions.width;
-          items[index].imageHeight = dimensions.height;
-          items[index].noImage = false;
+      dataUrls.forEach((dataUrl, index) => {
+        const image = images[index];
 
-          renderFormItems();
-          generateOshinagaki();
-        } catch (error) {
-          alert(error.message);
+        if (index < items.length) {
+          Object.assign(items[index], {
+            imageSrc: dataUrl,
+            imageWidth: image.naturalWidth,
+            imageHeight: image.naturalHeight,
+            noImage: false
+          });
+        } else {
+          items.push({
+            category: "新刊",
+            ageRating: "全年齢",
+            title: `新刊アイテム ${index + 1}`,
+            price: "¥ 500",
+            desc: "",
+            imageSrc: dataUrl,
+            imageWidth: image.naturalWidth,
+            imageHeight: image.naturalHeight,
+            noImage: false
+          });
         }
-      };
+      });
 
-      reader.readAsDataURL(file);
+      renderFormItems();
+      generateOshinagaki();
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
+  function createPatternCanvas(style, color) {
+    const size = 240;
+    const patternCanvas = document.createElement("canvas");
+    const context = patternCanvas.getContext("2d");
+    patternCanvas.width = size;
+    patternCanvas.height = size;
+    context.fillStyle = "#fff8fb";
+    context.fillRect(0, 0, size, size);
+
+    if (style === "dots") {
+      context.fillStyle = color;
+      context.beginPath();
+      context.arc(size / 4, size / 4, 17, 0, Math.PI * 2);
+      context.arc(size * 3 / 4, size * 3 / 4, 17, 0, Math.PI * 2);
+      context.fill();
+    } else if (style === "stripes") {
+      context.fillStyle = color;
+      context.fillRect(0, 0, size / 2, size);
+    } else if (style === "diagonal") {
+      const period = size / Math.sqrt(2);
+      context.save();
+      context.translate(size / 2, size / 2);
+      context.rotate(Math.PI / 4);
+      context.fillStyle = color;
+      for (let x = -size * 2; x <= size * 2; x += period) {
+        context.fillRect(x, -size * 2, period / 3, size * 4);
+      }
+      context.restore();
+    } else if (style === "border") {
+      context.fillStyle = color;
+      context.fillRect(0, 0, size, size / 2);
+    } else if (style === "check") {
+      const square = size / 2;
+      context.fillStyle = color;
+      context.fillRect(0, 0, square, square);
+      context.fillRect(square, square, square, square);
     }
 
-    async function handleBatchImageUpload(fileList) {
-      const files = Array.from(fileList || []);
-      if (files.length === 0) return;
+    return patternCanvas;
+  }
 
-      try {
-        const imageSources = await Promise.all(files.map(readFileAsDataURL));
-        const dimensions = await Promise.all(imageSources.map(getImageDimensions));
+  function applyBackground() {
+    const type = document.getElementById("bgTypeSelect").value;
+    canvas.setBackgroundImage(null);
+    canvas.setBackgroundColor("#ffffff");
 
-        imageSources.forEach((imageSrc, index) => {
-          const imageSize = dimensions[index];
-
-          if (index < items.length) {
-            items[index].imageSrc = imageSrc;
-            items[index].imageWidth = imageSize.width;
-            items[index].imageHeight = imageSize.height;
-            items[index].noImage = false;
-          } else {
-            items.push({
-              category: "新刊",
-              ageRating: "全年齢",
-              title: `新刊アイテム ${index + 1}`,
-              price: "¥ 500",
-              desc: "",
-              imageSrc,
-              imageWidth: imageSize.width,
-              imageHeight: imageSize.height,
-              noImage: false
-            });
-          }
-        });
-
-        renderFormItems();
-        generateOshinagaki();
-      } catch (error) {
-        alert(error.message);
-      }
+    if (type === "color") {
+      canvas.setBackgroundColor(document.getElementById("bgColorPicker").value);
+      return null;
     }
 
-    function createPatternCanvas(patternStyle, colorHex) {
-      const size = 240;
-      const patternCanvas = document.createElement("canvas");
-      const context = patternCanvas.getContext("2d");
-
-      patternCanvas.width = size;
-      patternCanvas.height = size;
-      context.fillStyle = "#fff8fb";
-      context.fillRect(0, 0, size, size);
-
-      if (patternStyle === "dots") {
-        context.fillStyle = colorHex;
-        context.beginPath();
-        context.arc(size / 4, size / 4, 17, 0, Math.PI * 2);
-        context.arc(size * 3 / 4, size * 3 / 4, 17, 0, Math.PI * 2);
-        context.fill();
-      } else if (patternStyle === "stripes") {
-        context.fillStyle = colorHex;
-        context.fillRect(0, 0, size / 2, size);
-      } else if (patternStyle === "diagonal") {
-        const period = size / Math.sqrt(2);
-        const stripeWidth = period / 3;
-
-        context.save();
-        context.translate(size / 2, size / 2);
-        context.rotate(Math.PI / 4);
-        context.fillStyle = colorHex;
-
-        for (let x = -size * 2; x <= size * 2; x += period) {
-          context.fillRect(x, -size * 2, stripeWidth, size * 4);
-        }
-
-        context.restore();
-      } else if (patternStyle === "border") {
-        context.fillStyle = colorHex;
-        context.fillRect(0, 0, size, size / 2);
-      } else if (patternStyle === "check") {
-        const square = size / 2;
-        context.fillStyle = colorHex;
-        context.fillRect(0, 0, square, square);
-        context.fillRect(square, square, square, square);
-      }
-
-      return patternCanvas;
+    if (type === "custom" && customBgImageObj) {
+      canvas.setBackgroundImage(customBgImageObj, null, {
+        originX: "left",
+        originY: "top",
+        left: 0,
+        top: 0,
+        scaleX: CANVAS_WIDTH / customBgImageObj.width,
+        scaleY: CANVAS_HEIGHT / customBgImageObj.height
+      });
+      return null;
     }
 
-    function applyBackground() {
-      const type = document.getElementById("bgTypeSelect").value;
+    if (type === "custom") return null;
 
-      canvas.setBackgroundImage(null);
-      canvas.setBackgroundColor("#ffffff");
+    return new fabric.Pattern({
+      source: createPatternCanvas(
+        document.getElementById("patternStyleSelect").value,
+        selectedPresetColor.hex
+      ),
+      repeat: "repeat"
+    });
+  }
 
-      if (type === "color") {
-        canvas.setBackgroundColor(
-          document.getElementById("bgColorPicker").value
-        );
-        return null;
-      }
+  function getInfoStyle(prefix, defaultSize, defaultColor, maxSize) {
+    const raw = Number.parseInt(document.getElementById(`${prefix}FontSize`).value, 10);
+    const enabled = document.getElementById(`${prefix}BgEnabled`).checked;
 
-      if (type === "custom" && customBgImageObj) {
-        canvas.setBackgroundImage(customBgImageObj, null, {
-          originX: "left",
-          originY: "top",
-          left: 0,
-          top: 0,
-          scaleX: CANVAS_WIDTH / customBgImageObj.width,
-          scaleY: CANVAS_HEIGHT / customBgImageObj.height
-        });
-        return null;
-      }
+    return {
+      fontSize: Number.isFinite(raw) ? Math.max(12, Math.min(raw, maxSize)) : defaultSize,
+      fill: document.getElementById(`${prefix}TextColor`).value || defaultColor,
+      backgroundColor: enabled ? document.getElementById(`${prefix}BgColor`).value : ""
+    };
+  }
 
-      if (type === "custom") return null;
+  function getCategoryStyle(category) {
+    return CATEGORY_STYLES[category] || CATEGORY_STYLES["新刊"];
+  }
 
-      return new fabric.Pattern({
-        source: createPatternCanvas(
-          document.getElementById("patternStyleSelect").value,
-          selectedPresetColor.hex
-        ),
-        repeat: "repeat"
+  function createTextBlock(item, width, fontScale) {
+    const categoryStyle = getCategoryStyle(item.category);
+    const descriptionSize = Math.max(
+      12,
+      Math.min(100, Number.parseInt(document.getElementById("descriptionFontSize").value, 10) || 38)
+    );
+    const scaled = (value) => Math.max(1, value * fontScale);
+    const definitions = [{
+      text: item.title || "",
+      fontSize: scaled(78),
+      fontFamily: "Noto Sans JP",
+      fontWeight: "bold",
+      fill: "#0f172a",
+      gapAfter: Math.max(1, 9 * fontScale)
+    }];
+
+    if (item.category !== "無料配布" && item.price) {
+      definitions.push({
+        text: item.price,
+        fontSize: scaled(100),
+        fontFamily: "M PLUS Rounded 1c",
+        fontWeight: "bold",
+        fill: categoryStyle.background,
+        gapAfter: Math.max(1, 8 * fontScale)
       });
     }
 
-    function getInfoBoxStyle(prefix, defaultSize, defaultTextColor, maxSize) {
-      const size = Number.parseInt(
-        document.getElementById(`${prefix}FontSize`).value,
-        10
-      );
-      const hasBackground =
-        document.getElementById(`${prefix}BgEnabled`).checked;
-
-      return {
-        fontSize: Number.isFinite(size)
-          ? Math.max(12, Math.min(size, maxSize))
-          : defaultSize,
-        fill:
-          document.getElementById(`${prefix}TextColor`).value ||
-          defaultTextColor,
-        backgroundColor: hasBackground
-          ? document.getElementById(`${prefix}BgColor`).value
-          : ""
-      };
-    }
-
-    function getCategoryStyle(category) {
-      return CATEGORY_STYLES[category] || CATEGORY_STYLES["新刊"];
-    }
-
-    function createItemTextBlock(item, textWidth, fontScale) {
-      const categoryStyle = getCategoryStyle(item.category);
-      const descriptionSize = Math.max(
-        12,
-        Math.min(
-          100,
-          Number.parseInt(document.getElementById("descriptionFontSize").value, 10) || 38
-        )
-      );
-
-      const scaled = (size) => Math.max(1, size * fontScale);
-      const definitions = [{
-        text: item.title || "",
-        fontSize: scaled(78),
+    if (item.desc) {
+      definitions.push({
+        text: item.desc,
+        fontSize: scaled(descriptionSize),
         fontFamily: "Noto Sans JP",
+        fontWeight: "normal",
+        fill: "#475569",
+        gapAfter: 0
+      });
+    }
+
+    const entries = definitions.map((definition) => {
+      const object = new fabric.Textbox(definition.text, {
+        left: 0,
+        top: 0,
+        width,
+        fontSize: definition.fontSize,
+        fontFamily: definition.fontFamily,
+        fontWeight: definition.fontWeight,
+        fill: definition.fill,
+        splitByGrapheme: true,
+        lineHeight: 1.05,
+        selectable: false,
+        evented: false
+      });
+
+      return { object, gapAfter: definition.gapAfter };
+    });
+
+    return {
+      entries,
+      totalHeight: entries.reduce(
+        (sum, entry) => sum + entry.object.getScaledHeight() + entry.gapAfter,
+        0
+      )
+    };
+  }
+
+  function fitTextBlock(item, width, availableHeight) {
+    let low = 0.001;
+    let high = 1;
+    let best = createTextBlock(item, width, low);
+
+    for (let i = 0; i < 24; i += 1) {
+      const mid = (low + high) / 2;
+      const candidate = createTextBlock(item, width, mid);
+
+      if (candidate.totalHeight <= availableHeight) {
+        best = candidate;
+        low = mid;
+      } else {
+        high = mid;
+      }
+    }
+
+    return best;
+  }
+
+  function addImageToCanvas(item, imageBox, generation, textAnchor) {
+    if (!item.imageSrc || item.noImage) return Promise.resolve();
+
+    return new Promise((resolve) => {
+      fabric.Image.fromURL(item.imageSrc, (image) => {
+        if (!image || generation !== generationId) {
+          resolve();
+          return;
+        }
+
+        const scale = Math.min(
+          imageBox.width / image.width,
+          imageBox.height / image.height
+        );
+
+        image.set({
+          left: imageBox.left + (imageBox.width - image.width * scale) / 2,
+          top: imageBox.top + (imageBox.height - image.height * scale) / 2,
+          scaleX: scale,
+          scaleY: scale,
+          shadow: new fabric.Shadow({
+            color: "rgba(15, 23, 42, .35)",
+            blur: 24,
+            offsetX: 0,
+            offsetY: 10
+          }),
+          selectable: false,
+          evented: false
+        });
+
+        const anchorIndex = canvas.getObjects().indexOf(textAnchor);
+        if (anchorIndex >= 0) canvas.insertAt(image, anchorIndex, false);
+        else canvas.add(image);
+
+        canvas.requestRenderAll();
+        resolve();
+      });
+    });
+  }
+
+  function generateOshinagaki() {
+    if (!canvas) return;
+
+    const generation = ++generationId;
+    imageLoadPromises = [];
+    canvas.clear();
+
+    const pattern = applyBackground();
+    if (pattern) {
+      canvas.add(new fabric.Rect({
+        left: 0,
+        top: 0,
+        width: CANVAS_WIDTH,
+        height: CANVAS_HEIGHT,
+        fill: pattern,
+        selectable: false,
+        evented: false
+      }));
+    }
+
+    const social = SOCIAL_PRESETS[currentPaperSize];
+    const compact = Boolean(social);
+    const landscape = currentOrientation === "LANDSCAPE";
+
+    const eventDate = document.getElementById("eventDate").value;
+    const eventName = document.getElementById("eventName").value;
+    const circleName = document.getElementById("circleName").value;
+    const spaceNo = document.getElementById("spaceNo").value;
+    const headerColor = document.getElementById("headerBgColor").value || "#0f172a";
+    const accentColor = document.getElementById("headerAccentColor").value || selectedPresetColor.main;
+
+    const profile = (() => {
+      if (currentPaperSize === "PICSQUARE") {
+        return { headerHeight: 190, marginX: 18, marginY: 18, gapX: 14, gapY: 14, padding: 10, eventSize: 17, circleSize: 34, spaceSize: 18, cardFontScale: .42 };
+      }
+      if (currentPaperSize === "PICREA") {
+        return { headerHeight: 260, marginX: 26, marginY: 24, gapX: 18, gapY: 18, padding: 14, eventSize: 23, circleSize: 48, spaceSize: 24, cardFontScale: .58 };
+      }
+      if (currentPaperSize === "WEB_PORTRAIT") {
+        return { headerHeight: 245, marginX: 30, marginY: 24, gapX: 18, gapY: 18, padding: 14, eventSize: 23, circleSize: 50, spaceSize: 23, cardFontScale: .58 };
+      }
+      if (currentPaperSize === "WEB_LANDSCAPE") {
+        return { headerHeight: 155, marginX: 30, marginY: 22, gapX: 18, gapY: 18, padding: 14, eventSize: 20, circleSize: 42, spaceSize: 20, cardFontScale: .52 };
+      }
+      return { headerHeight: landscape ? 360 : 420, marginX: 70, marginY: 40, gapX: 40, gapY: 40, padding: 25, eventSize: landscape ? 48 : 46, circleSize: landscape ? 120 : 110, spaceSize: landscape ? 75 : 65, cardFontScale: 1 };
+    })();
+
+    const headerHeight = profile.headerHeight;
+    const headerMargin = compact ? profile.marginX : 80;
+
+    canvas.add(new fabric.Rect({
+      left: 0, top: 0, width: CANVAS_WIDTH, height: headerHeight,
+      fill: headerColor, selectable: false, evented: false
+    }));
+
+    canvas.add(new fabric.Rect({
+      left: 0, top: headerHeight - Math.max(4, compact ? 5 : 12),
+      width: CANVAS_WIDTH, height: Math.max(4, compact ? 5 : 12),
+      fill: accentColor, selectable: false, evented: false
+    }));
+
+    const eventStyle = getInfoStyle(
+      "eventInfo",
+      profile.eventSize,
+      "#cbd5e1",
+      compact ? profile.eventSize : 200
+    );
+    const circleStyle = getInfoStyle(
+      "circleInfo",
+      profile.circleSize,
+      "#ffffff",
+      compact ? profile.circleSize : 300
+    );
+    const spaceStyle = getInfoStyle(
+      "spaceInfo",
+      profile.spaceSize,
+      "#ffffff",
+      compact ? profile.spaceSize : 200
+    );
+
+    const eventTop = compact ? 14 : (landscape ? 55 : 60);
+    const circleTop = compact ? Math.round(profile.eventSize + 24) : (landscape ? 130 : 135);
+    const eventWidth = CANVAS_WIDTH - headerMargin * 2;
+    const circleWidth = compact ? eventWidth : (landscape ? CANVAS_WIDTH - 1000 : CANVAS_WIDTH - 160);
+
+    canvas.add(new fabric.Textbox(`${eventDate}  |  ${eventName}`, {
+      left: headerMargin,
+      top: eventTop,
+      width: eventWidth,
+      fontSize: eventStyle.fontSize,
+      fontFamily: "Noto Sans JP",
+      fill: eventStyle.fill,
+      backgroundColor: eventStyle.backgroundColor,
+      splitByGrapheme: true,
+      selectable: false,
+      evented: false
+    }));
+
+    canvas.add(new fabric.Textbox(circleName, {
+      left: headerMargin,
+      top: circleTop,
+      width: circleWidth,
+      fontSize: circleStyle.fontSize,
+      fontWeight: "bold",
+      fontFamily: "Noto Sans JP",
+      fill: circleStyle.fill,
+      backgroundColor: circleStyle.backgroundColor,
+      splitByGrapheme: true,
+      selectable: false,
+      evented: false
+    }));
+
+    if (spaceNo) {
+      const spaceTop = compact
+        ? Math.min(headerHeight - profile.spaceSize - 20, circleTop + profile.circleSize + 10)
+        : (landscape ? 120 : 270);
+
+      canvas.add(new fabric.Textbox(` ${spaceNo} `, {
+        left: headerMargin,
+        top: spaceTop,
+        width: eventWidth,
+        fontSize: spaceStyle.fontSize,
         fontWeight: "bold",
-        fill: "#0f172a",
-        gapAfter: Math.max(1, 9 * fontScale)
-      }];
+        fontFamily: "M PLUS Rounded 1c",
+        fill: spaceStyle.fill,
+        backgroundColor: spaceStyle.backgroundColor,
+        padding: compact ? 5 : 18,
+        splitByGrapheme: true,
+        selectable: false,
+        evented: false
+      }));
+    }
 
-      if (item.category !== "無料配布" && item.price) {
-        definitions.push({
-          text: item.price,
-          fontSize: scaled(100),
-          fontFamily: "M PLUS Rounded 1c",
-          fontWeight: "bold",
-          fill: categoryStyle.background,
-          gapAfter: Math.max(1, 8 * fontScale)
-        });
+    let columns = 2;
+    if (currentPaperSize === "PICSQUARE" || currentPaperSize === "PICREA" || currentPaperSize === "WEB_PORTRAIT") {
+      columns = items.length <= 3 ? 1 : 2;
+    } else if (currentPaperSize === "WEB_LANDSCAPE") {
+      columns = items.length <= 2 ? Math.max(1, items.length) : 2;
+    } else if (landscape) {
+      if (items.length <= 1) columns = 1;
+      else if (items.length > 4) columns = 3;
+    } else if (items.length <= 3) {
+      columns = 1;
+    }
+
+    const rows = Math.ceil(items.length / columns);
+    const startY = headerHeight + (compact ? 12 : 50);
+    const slotWidth =
+      (CANVAS_WIDTH - profile.marginX * 2 - profile.gapX * (columns - 1)) / columns;
+    const slotHeight = rows > 0
+      ? (CANVAS_HEIGHT - startY - profile.marginY - profile.gapY * (rows - 1)) / rows
+      : 0;
+
+    items.forEach((item, index) => {
+      const row = Math.floor(index / columns);
+      const column = index % columns;
+      const x = profile.marginX + column * (slotWidth + profile.gapX);
+      const y = startY + row * (slotHeight + profile.gapY);
+      const hasImage = Boolean(item.imageSrc) && !item.noImage;
+      const card = new fabric.Rect({
+        left: x,
+        top: y,
+        width: slotWidth,
+        height: slotHeight,
+        fill: "#ffffff",
+        stroke: "transparent",
+        strokeWidth: 0,
+        rx: compact ? 12 : 24,
+        ry: compact ? 12 : 24,
+        selectable: false,
+        evented: false
+      });
+      canvas.add(card);
+
+      const categoryStyle = getCategoryStyle(item.category);
+      const isR18 = item.ageRating === "R18";
+      const radius = Math.min(compact ? 12 : 24, slotWidth / 2);
+      const categoryHeight = Math.min(compact ? 44 : 100, slotHeight * .14);
+      const ageHeight = Math.min(compact ? 27 : 64, slotHeight * .09);
+
+      const bandPath = [
+        `M 0 ${radius}`,
+        `Q 0 0 ${radius} 0`,
+        `L ${slotWidth - radius} 0`,
+        `Q ${slotWidth} 0 ${slotWidth} ${radius}`,
+        `L ${slotWidth} ${categoryHeight}`,
+        `L 0 ${categoryHeight}`,
+        "Z"
+      ].join(" ");
+
+      canvas.add(new fabric.Path(bandPath, {
+        left: x,
+        top: y,
+        fill: categoryStyle.background,
+        selectable: false,
+        evented: false
+      }));
+
+      canvas.add(new fabric.Textbox(item.category || "新刊", {
+        left: x + profile.padding,
+        top: y + 2,
+        width: slotWidth - profile.padding * 2,
+        height: Math.max(1, categoryHeight - 4),
+        fontSize: Math.min(compact ? 25 : 64, categoryHeight * .64),
+        fontWeight: "bold",
+        fontFamily: "M PLUS Rounded 1c",
+        fill: categoryStyle.text,
+        valign: "middle",
+        splitByGrapheme: true,
+        selectable: false,
+        evented: false
+      }));
+
+      const ageTop = y + categoryHeight;
+      const ageBg = isR18 ? "#991b1b" : "#dcfce7";
+      const ageText = isR18 ? "#ffffff" : "#166534";
+
+      canvas.add(new fabric.Rect({
+        left: x,
+        top: ageTop,
+        width: slotWidth,
+        height: ageHeight,
+        fill: ageBg,
+        selectable: false,
+        evented: false
+      }));
+
+      canvas.add(new fabric.Textbox(isR18 ? "R18" : "全年齢", {
+        left: x + profile.padding,
+        top: ageTop + 1,
+        width: slotWidth - profile.padding * 2,
+        height: Math.max(1, ageHeight - 2),
+        fontSize: Math.min(compact ? 16 : 34, ageHeight * .55),
+        fontWeight: "bold",
+        fontFamily: "M PLUS Rounded 1c",
+        fill: ageText,
+        valign: "middle",
+        selectable: false,
+        evented: false
+      }));
+
+      const bodyTop = y + categoryHeight + ageHeight + profile.padding;
+      const bodyHeight = Math.max(
+        1,
+        slotHeight - categoryHeight - ageHeight - profile.padding * 2
+      );
+
+      let imageBox = null;
+      let textX;
+      let textWidth;
+
+      if (hasImage) {
+        const maxImageWidth = slotWidth * (landscape ? .38 : .36);
+        const sourceWidth = item.imageWidth || 1;
+        const sourceHeight = item.imageHeight || 1;
+        const scale = Math.min(maxImageWidth / sourceWidth, bodyHeight / sourceHeight);
+        const displayWidth = sourceWidth * scale;
+        const displayHeight = sourceHeight * scale;
+        const imageGap = compact ? 10 : 25;
+
+        imageBox = {
+          left: x + profile.padding,
+          top: bodyTop + (bodyHeight - displayHeight) / 2,
+          width: displayWidth,
+          height: displayHeight
+        };
+
+        textX = imageBox.left + displayWidth + imageGap;
+        textWidth = Math.max(1, x + slotWidth - profile.padding - textX);
+      } else {
+        textX = x + profile.padding;
+        textWidth = Math.max(1, slotWidth - profile.padding * 2);
       }
 
-      if (item.desc) {
-        definitions.push({
-          text: item.desc,
-          fontSize: scaled(descriptionSize),
-          fontFamily: "Noto Sans JP",
-          fontWeight: "normal",
-          fill: "#475569",
-          gapAfter: 0
-        });
+      const textBlock = createItemTextBlock(item, textWidth, profile.cardFontScale);
+      const fitted = fitTextBlockToHeight(textBlock, bodyHeight);
+
+      let textY = bodyTop;
+      let titleAnchor = null;
+
+      fitted.entries.forEach((entry, entryIndex) => {
+        entry.object.set({ left: textX, top: textY });
+        if (entryIndex === 0) titleAnchor = entry.object;
+        canvas.add(entry.object);
+        textY += entry.object.getScaledHeight() + entry.gapAfter;
+      });
+
+      if (hasImage && imageBox) {
+        imageLoadPromises.push(addImageToCanvas(item, imageBox, generation, titleAnchor));
       }
 
-      const entries = definitions.map((definition) => {
-        const object = new fabric.Textbox(definition.text, {
-          left: 0,
-          top: 0,
-          width: textWidth,
-          fontSize: definition.fontSize,
-          fontFamily: definition.fontFamily,
-          fontWeight: definition.fontWeight,
-          fill: definition.fill,
+      canvas.add(new fabric.Rect({
+        left: x,
+        top: y,
+        width: slotWidth,
+        height: slotHeight,
+        fill: "rgba(255,255,255,0)",
+        stroke: "#cbd5e1",
+        strokeWidth: compact ? 2 : 4,
+        rx: compact ? 12 : 24,
+        ry: compact ? 12 : 24,
+        selectable: false,
+        evented: false
+      }));
+    });
+
+    canvas.renderAll();
+  }
+
+  function fitTextBlockToHeight(block, availableHeight) {
+    if (block.totalHeight <= availableHeight) return block;
+
+    let low = 0.001;
+    let high = 1;
+    let best = block;
+
+    // 入力内容を保ったままフォントサイズを縮小
+    for (let i = 0; i < 24; i += 1) {
+      const factor = (low + high) / 2;
+      const entries = block.entries.map((entry) => {
+        const clone = new fabric.Textbox(entry.object.text, {
+          left: entry.object.left,
+          top: entry.object.top,
+          width: entry.object.width,
+          fontSize: Math.max(1, entry.object.fontSize * factor),
+          fontFamily: entry.object.fontFamily,
+          fontWeight: entry.object.fontWeight,
+          fill: entry.object.fill,
           splitByGrapheme: true,
           lineHeight: 1.05,
           selectable: false,
           evented: false
         });
-
-        return {
-          object,
-          gapAfter: definition.gapAfter
-        };
+        return { object: clone, gapAfter: entry.gapAfter * factor };
       });
 
-      const totalHeight = entries.reduce((height, entry) => {
-        return height + entry.object.getScaledHeight() + entry.gapAfter;
-      }, 0);
-
-      return { entries, totalHeight };
-    }
-
-    function fitItemTextBlock(item, textWidth, availableHeight) {
-      let low = 0.001;
-      let high = 1;
-      let best = createItemTextBlock(item, textWidth, low);
-
-      for (let i = 0; i < 24; i += 1) {
-        const middle = (low + high) / 2;
-        const candidate = createItemTextBlock(item, textWidth, middle);
-
-        if (candidate.totalHeight <= availableHeight) {
-          best = candidate;
-          low = middle;
-        } else {
-          high = middle;
-        }
-      }
-
-      return best;
-    }
-
-    function addImageToCanvas(item, imageBox, thisGeneration, textAnchor) {
-      if (!item.imageSrc || item.noImage) {
-        return Promise.resolve();
-      }
-
-      return new Promise((resolve) => {
-        fabric.Image.fromURL(item.imageSrc, (image) => {
-          if (!image || thisGeneration !== generationId) {
-            resolve();
-            return;
-          }
-
-          const scale = Math.min(
-            imageBox.width / image.width,
-            imageBox.height / image.height
-          );
-
-          image.set({
-            left: imageBox.left + (imageBox.width - image.width * scale) / 2,
-            top: imageBox.top + (imageBox.height - image.height * scale) / 2,
-            scaleX: scale,
-            scaleY: scale,
-            shadow: new fabric.Shadow({
-              color: "rgba(15, 23, 42, 0.35)",
-              blur: 24,
-              offsetX: 0,
-              offsetY: 10
-            }),
-            selectable: false,
-            evented: false
-          });
-
-          const anchorIndex = canvas.getObjects().indexOf(textAnchor);
-          if (anchorIndex >= 0) {
-            canvas.insertAt(image, anchorIndex, false);
-          } else {
-            canvas.add(image);
-          }
-
-          canvas.requestRenderAll();
-          resolve();
-        });
-      });
-    }
-
-    function generateOshinagaki() {
-      if (!canvas) return;
-
-      const thisGeneration = ++generationId;
-      imageLoadPromises = [];
-      canvas.clear();
-
-      const pattern = applyBackground();
-
-      if (pattern) {
-        canvas.add(new fabric.Rect({
-          left: 0,
-          top: 0,
-          width: CANVAS_WIDTH,
-          height: CANVAS_HEIGHT,
-          fill: pattern,
-          selectable: false,
-          evented: false
-        }));
-      }
-
-      const eventDate = document.getElementById("eventDate").value;
-      const eventName = document.getElementById("eventName").value;
-      const circleName = document.getElementById("circleName").value;
-      const spaceNo = document.getElementById("spaceNo").value;
-      const isLandscape = currentOrientation === "LANDSCAPE";
-
-      const headerColor =
-        document.getElementById("headerBgColor").value || "#0f172a";
-      const accentColor =
-        document.getElementById("headerAccentColor").value ||
-        selectedPresetColor.main;
-
-      const eventStyle = getInfoBoxStyle(
-        "eventInfo",
-        isLandscape ? 48 : 46,
-        "#cbd5e1",
-        200
-      );
-      const circleStyle = getInfoBoxStyle(
-        "circleInfo",
-        isLandscape ? 120 : 110,
-        "#ffffff",
-        300
-      );
-      const spaceStyle = getInfoBoxStyle(
-        "spaceInfo",
-        isLandscape ? 75 : 65,
-        "#ffffff",
-        200
+      const height = entries.reduce(
+        (sum, entry) => sum + entry.object.getScaledHeight() + entry.gapAfter,
+        0
       );
 
-      const headerHeight = isLandscape ? 360 : 420;
-
-      canvas.add(new fabric.Rect({
-        left: 0,
-        top: 0,
-        width: CANVAS_WIDTH,
-        height: headerHeight,
-        fill: headerColor,
-        selectable: false,
-        evented: false
-      }));
-
-      canvas.add(new fabric.Rect({
-        left: 0,
-        top: headerHeight - 12,
-        width: CANVAS_WIDTH,
-        height: 12,
-        fill: accentColor,
-        selectable: false,
-        evented: false
-      }));
-
-      canvas.add(new fabric.Textbox(`${eventDate}  |  ${eventName}`, {
-        left: 80,
-        top: isLandscape ? 55 : 60,
-        width: CANVAS_WIDTH - 160,
-        fontSize: eventStyle.fontSize,
-        fontFamily: "Noto Sans JP",
-        fill: eventStyle.fill,
-        backgroundColor: eventStyle.backgroundColor,
-        selectable: false,
-        evented: false
-      }));
-
-      canvas.add(new fabric.Textbox(circleName, {
-        left: 80,
-        top: isLandscape ? 130 : 135,
-        width: isLandscape ? CANVAS_WIDTH - 1000 : CANVAS_WIDTH - 160,
-        fontSize: circleStyle.fontSize,
-        fontWeight: "bold",
-        fontFamily: "Noto Sans JP",
-        fill: circleStyle.fill,
-        backgroundColor: circleStyle.backgroundColor,
-        selectable: false,
-        evented: false
-      }));
-
-      if (spaceNo) {
-        canvas.add(new fabric.Textbox(` ${spaceNo} `, {
-          left: isLandscape ? CANVAS_WIDTH - 850 : 80,
-          top: isLandscape ? 120 : 270,
-          width: isLandscape ? 760 : CANVAS_WIDTH - 160,
-          fontSize: spaceStyle.fontSize,
-          fontWeight: "bold",
-          fontFamily: "M PLUS Rounded 1c",
-          fill: spaceStyle.fill,
-          backgroundColor: spaceStyle.backgroundColor,
-          padding: 18,
-          selectable: false,
-          evented: false
-        }));
-      }
-
-      let columns = 2;
-
-      if (isLandscape) {
-        if (items.length <= 1) columns = 1;
-        else if (items.length > 4) columns = 3;
-      } else if (items.length <= 3) {
-        columns = 1;
-      }
-
-      const rows = Math.ceil(items.length / columns);
-      const startY = headerHeight + (WEB_PRESETS[currentPaperSize] ? 24 : 50);
-      const marginX = WEB_PRESETS[currentPaperSize] ? 28 : 70;
-      const marginY = WEB_PRESETS[currentPaperSize] ? 24 : 40;
-      const gapX = WEB_PRESETS[currentPaperSize] ? 18 : 40;
-      const gapY = WEB_PRESETS[currentPaperSize] ? 18 : 40;
-
-      const slotWidth =
-        (CANVAS_WIDTH - marginX * 2 - gapX * (columns - 1)) / columns;
-      const slotHeight = rows > 0
-        ? (CANVAS_HEIGHT - startY - marginY - gapY * (rows - 1)) / rows
-        : 0;
-
-      items.forEach((item, index) => {
-        const row = Math.floor(index / columns);
-        const column = index % columns;
-        const posX = marginX + column * (slotWidth + gapX);
-        const posY = startY + row * (slotHeight + gapY);
-        const padding = WEB_PRESETS[currentPaperSize] ? 12 : 25;
-        const hasImage = Boolean(item.imageSrc) && !item.noImage;
-
-        const card = new fabric.Rect({
-          left: posX,
-          top: posY,
-          width: slotWidth,
-          height: slotHeight,
-          fill: "#ffffff",
-          stroke: "transparent",
-          strokeWidth: 0,
-          rx: 24,
-          ry: 24,
-          selectable: false,
-          evented: false
-        });
-        canvas.add(card);
-
-        const categoryStyle = getCategoryStyle(item.category);
-        const isR18 = item.ageRating === "R18";
-        const cornerRadius = Math.min(24, slotWidth / 2);
-        const categoryBandHeight = Math.min(100, slotHeight * 0.14);
-        const ageBandHeight = Math.min(64, slotHeight * 0.09);
-
-        const categoryPath = [
-          `M 0 ${cornerRadius}`,
-          `Q 0 0 ${cornerRadius} 0`,
-          `L ${slotWidth - cornerRadius} 0`,
-          `Q ${slotWidth} 0 ${slotWidth} ${cornerRadius}`,
-          `L ${slotWidth} ${categoryBandHeight}`,
-          `L 0 ${categoryBandHeight}`,
-          "Z"
-        ].join(" ");
-
-        canvas.add(new fabric.Path(categoryPath, {
-          left: posX,
-          top: posY,
-          fill: categoryStyle.background,
-          selectable: false,
-          evented: false
-        }));
-
-        canvas.add(new fabric.Textbox(item.category || "新刊", {
-          left: posX + padding,
-          top: posY + 4,
-          width: slotWidth - padding * 2,
-          height: Math.max(1, categoryBandHeight - 8),
-          fontSize: Math.min(
-            WEB_PRESETS[currentPaperSize] ? 28 : 64,
-            categoryBandHeight * 0.64
-          ),
-          fontWeight: "bold",
-          fontFamily: "M PLUS Rounded 1c",
-          fill: categoryStyle.text,
-          valign: "middle",
-          selectable: false,
-          evented: false
-        }));
-
-        const ageBandTop = posY + categoryBandHeight;
-        const ageBandColor = isR18 ? "#991b1b" : "#dcfce7";
-        const ageTextColor = isR18 ? "#ffffff" : "#166534";
-
-        canvas.add(new fabric.Rect({
-          left: posX,
-          top: ageBandTop,
-          width: slotWidth,
-          height: ageBandHeight,
-          fill: ageBandColor,
-          selectable: false,
-          evented: false
-        }));
-
-        canvas.add(new fabric.Textbox(isR18 ? "R18" : "全年齢", {
-          left: posX + padding,
-          top: ageBandTop + 3,
-          width: slotWidth - padding * 2,
-          height: Math.max(1, ageBandHeight - 6),
-          fontSize: Math.min(
-            WEB_PRESETS[currentPaperSize] ? 18 : 34,
-            ageBandHeight * 0.55
-          ),
-          fontWeight: "bold",
-          fontFamily: "M PLUS Rounded 1c",
-          fill: ageTextColor,
-          valign: "middle",
-          selectable: false,
-          evented: false
-        }));
-
-        const bodyTop = posY + categoryBandHeight + ageBandHeight + padding;
-        const bodyHeight = Math.max(
-          1,
-          slotHeight - categoryBandHeight - ageBandHeight - padding * 2
-        );
-
-        let imageBox = null;
-        let textX;
-        let textWidth;
-
-        if (hasImage) {
-          const maxImageWidth = slotWidth * (isLandscape ? 0.38 : 0.36);
-          const sourceWidth = item.imageWidth || 1;
-          const sourceHeight = item.imageHeight || 1;
-          const imageScale = Math.min(
-            maxImageWidth / sourceWidth,
-            bodyHeight / sourceHeight
-          );
-
-          const displayWidth = sourceWidth * imageScale;
-          const displayHeight = sourceHeight * imageScale;
-          const imageGap = WEB_PRESETS[currentPaperSize] ? 12 : 25;
-
-          imageBox = {
-            left: posX + padding,
-            top: bodyTop + (bodyHeight - displayHeight) / 2,
-            width: displayWidth,
-            height: displayHeight
-          };
-
-          textX = imageBox.left + imageBox.width + imageGap;
-          textWidth = Math.max(1, posX + slotWidth - padding - textX);
-        } else {
-          textX = posX + padding;
-          textWidth = Math.max(1, slotWidth - padding * 2);
-        }
-
-        const fittedBlock = fitItemTextBlock(item, textWidth, bodyHeight);
-        let currentY = bodyTop;
-        let titleAnchor = null;
-
-        fittedBlock.entries.forEach((entry, entryIndex) => {
-          entry.object.set({
-            left: textX,
-            top: currentY
-          });
-
-          if (entryIndex === 0) {
-            titleAnchor = entry.object;
-          }
-
-          canvas.add(entry.object);
-          currentY += entry.object.getScaledHeight() + entry.gapAfter;
-        });
-
-        if (hasImage && imageBox) {
-          imageLoadPromises.push(
-            addImageToCanvas(item, imageBox, thisGeneration, titleAnchor)
-          );
-        }
-
-        // 枠線は最後に描き、カテゴリ帯・本文・画像の上に表示
-        canvas.add(new fabric.Rect({
-          left: posX,
-          top: posY,
-          width: slotWidth,
-          height: slotHeight,
-          fill: "rgba(255,255,255,0)",
-          stroke: "#cbd5e1",
-          strokeWidth: WEB_PRESETS[currentPaperSize] ? 2 : 4,
-          rx: 24,
-          ry: 24,
-          selectable: false,
-          evented: false
-        }));
-      });
-
-      canvas.renderAll();
-    }
-
-    function applyPreviewScale(scale) {
-      if (!canvas) return;
-
-      const container = document.getElementById("canvasContainer");
-      const stage = document.getElementById("canvasStage");
-      const safeScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
-
-      stage.style.width = `${CANVAS_WIDTH}px`;
-      stage.style.height = `${CANVAS_HEIGHT}px`;
-      stage.style.transform = `scale(${safeScale})`;
-
-      container.style.width = `${CANVAS_WIDTH * safeScale}px`;
-      container.style.height = `${CANVAS_HEIGHT * safeScale}px`;
-
-      canvas.calcOffset();
-      canvas.requestRenderAll();
-
-      document.getElementById("zoomDisplay").textContent =
-        `表示: ${Math.round(safeScale * 100)}%`;
-
-      const slider = document.getElementById("zoomSlider");
-      if (slider) {
-        slider.value = String(
-          Math.max(1, Math.min(200, Math.round(safeScale * 100)))
-        );
+      if (height <= availableHeight) {
+        best = { entries, totalHeight: height };
+        low = factor;
+      } else {
+        high = factor;
       }
     }
 
-    function fitCanvasToWorkspace() {
-      const workspace = document.getElementById("workspace");
-      const padding = 56;
-      const availableWidth = Math.max(workspace.clientWidth - padding, 1);
-      const availableHeight = Math.max(workspace.clientHeight - padding, 1);
+    return best;
+  }
 
-      applyPreviewScale(Math.min(
-        availableWidth / CANVAS_WIDTH,
-        availableHeight / CANVAS_HEIGHT
-      ));
-    }
+  function applyPreviewScale(scale) {
+    if (!canvas) return;
+    const container = document.getElementById("canvasContainer");
+    const stage = document.getElementById("canvasStage");
+    const safe = Number.isFinite(scale) && scale > 0 ? scale : 1;
 
-    function setupResponsiveScaler() {
-      const workspace = document.getElementById("workspace");
+    stage.style.width = `${CANVAS_WIDTH}px`;
+    stage.style.height = `${CANVAS_HEIGHT}px`;
+    stage.style.transform = `scale(${safe})`;
+    container.style.width = `${CANVAS_WIDTH * safe}px`;
+    container.style.height = `${CANVAS_HEIGHT * safe}px`;
 
-      resizeCanvasToFit = () => {
-        if (previewZoomMode === "fit") {
-          fitCanvasToWorkspace();
-        } else {
-          applyPreviewScale(
-            Number(document.getElementById("zoomSlider").value) / 100
-          );
-        }
-      };
+    canvas.calcOffset();
+    canvas.requestRenderAll();
 
-      if ("ResizeObserver" in window) {
-        const observer = new ResizeObserver(() => {
-          if (previewZoomMode === "fit") fitCanvasToWorkspace();
-        });
-        observer.observe(workspace);
+    document.getElementById("zoomDisplay").textContent =
+      `表示: ${Math.round(safe * 100)}%`;
+    document.getElementById("zoomSlider").value =
+      String(Math.max(1, Math.min(200, Math.round(safe * 100))));
+  }
+
+  function fitCanvasToWorkspace() {
+    const workspace = document.getElementById("workspace");
+    const availableWidth = Math.max(workspace.clientWidth - 56, 1);
+    const availableHeight = Math.max(workspace.clientHeight - 56, 1);
+
+    applyPreviewScale(Math.min(
+      availableWidth / CANVAS_WIDTH,
+      availableHeight / CANVAS_HEIGHT
+    ));
+  }
+
+  function setupResponsiveScaler() {
+    const workspace = document.getElementById("workspace");
+
+    resizeCanvasToFit = () => {
+      if (previewZoomMode === "fit") {
+        fitCanvasToWorkspace();
+      } else {
+        applyPreviewScale(Number(document.getElementById("zoomSlider").value) / 100);
       }
+    };
 
-      window.addEventListener("resize", () => {
+    if ("ResizeObserver" in window) {
+      new ResizeObserver(() => {
         if (previewZoomMode === "fit") fitCanvasToWorkspace();
-      });
-
-      requestAnimationFrame(fitCanvasToWorkspace);
+      }).observe(workspace);
     }
 
-    async function createBleedExport() {
-      while (true) {
-        const generationAtStart = generationId;
-        const pendingImages = imageLoadPromises.slice();
+    window.addEventListener("resize", () => {
+      if (previewZoomMode === "fit") fitCanvasToWorkspace();
+    });
 
-        await Promise.all(pendingImages);
+    requestAnimationFrame(fitCanvasToWorkspace);
+  }
 
-        if (generationAtStart === generationId) break;
-      }
+  async function createBleedExport() {
+    while (true) {
+      const generationAtStart = generationId;
+      await Promise.all(imageLoadPromises.slice());
+      if (generationAtStart === generationId) break;
+    }
 
-      canvas.renderAll();
+    canvas.renderAll();
 
-      const webPreset = WEB_PRESETS[currentPaperSize];
+    const social = SOCIAL_PRESETS[currentPaperSize];
 
-      if (webPreset) {
-        const outputCanvas = document.createElement("canvas");
-        outputCanvas.width = webPreset.width;
-        outputCanvas.height = webPreset.height;
-
-        const source = canvas.toDataURL({
-          format: "png",
-          multiplier: 1
-        });
-
-        const sourceImage = await loadImage(source);
-        const context = outputCanvas.getContext("2d");
-        if (!context) throw new Error("Web画像出力用キャンバスを作成できませんでした。");
-
-        context.drawImage(
-          sourceImage,
-          0,
-          0,
-          webPreset.width,
-          webPreset.height
-        );
-
-        return {
-          dataUrl: outputCanvas.toDataURL("image/png"),
-          widthPx: webPreset.width,
-          heightPx: webPreset.height,
-          widthMm: PAPER_MM[currentPaperSize].width,
-          heightMm: PAPER_MM[currentPaperSize].height,
-          hasBleed: false
-        };
-      }
-
-      const sourceImage = await loadImage(canvas.toDataURL({
-        format: "png",
-        multiplier: 1
-      }));
-
-      const paper = PAPER_MM[currentPaperSize];
-      const isLandscape = currentOrientation === "LANDSCAPE";
-      const trimWidthMm = isLandscape ? paper.height : paper.width;
-      const trimHeightMm = isLandscape ? paper.width : paper.height;
-
-      const trimWidthPx = CANVAS_WIDTH;
-      const trimHeightPx = CANVAS_HEIGHT;
-
-      const outputWidthPx = Math.round(
-        (trimWidthMm + BLEED_MM * 2) * 200 / 25.4
-      );
-      const outputHeightPx = Math.round(
-        (trimHeightMm + BLEED_MM * 2) * 200 / 25.4
-      );
-
-      const horizontalBleed = outputWidthPx - trimWidthPx;
-      const verticalBleed = outputHeightPx - trimHeightPx;
-      const leftBleed = Math.floor(horizontalBleed / 2);
-      const rightBleed = horizontalBleed - leftBleed;
-      const topBleed = Math.floor(verticalBleed / 2);
-      const bottomBleed = verticalBleed - topBleed;
-
-      const outputCanvas = document.createElement("canvas");
-      outputCanvas.width = outputWidthPx;
-      outputCanvas.height = outputHeightPx;
-
-      const context = outputCanvas.getContext("2d");
-      if (!context) throw new Error("塗り足し用キャンバスを作成できませんでした。");
-
-      const x = leftBleed;
-      const y = topBleed;
-      const width = trimWidthPx;
-      const height = trimHeightPx;
-      const sourceWidth = sourceImage.naturalWidth;
-      const sourceHeight = sourceImage.naturalHeight;
-
-      if (topBleed > 0) {
-        context.drawImage(sourceImage, 0, 0, sourceWidth, 1, x, 0, width, topBleed);
-      }
-      if (bottomBleed > 0) {
-        context.drawImage(
-          sourceImage, 0, sourceHeight - 1, sourceWidth, 1,
-          x, y + height, width, bottomBleed
-        );
-      }
-      if (leftBleed > 0) {
-        context.drawImage(sourceImage, 0, 0, 1, sourceHeight, 0, y, leftBleed, height);
-      }
-      if (rightBleed > 0) {
-        context.drawImage(
-          sourceImage, sourceWidth - 1, 0, 1, sourceHeight,
-          x + width, y, rightBleed, height
-        );
-      }
-
-      if (leftBleed > 0 && topBleed > 0) {
-        context.drawImage(sourceImage, 0, 0, 1, 1, 0, 0, leftBleed, topBleed);
-      }
-      if (rightBleed > 0 && topBleed > 0) {
-        context.drawImage(
-          sourceImage, sourceWidth - 1, 0, 1, 1,
-          x + width, 0, rightBleed, topBleed
-        );
-      }
-      if (leftBleed > 0 && bottomBleed > 0) {
-        context.drawImage(
-          sourceImage, 0, sourceHeight - 1, 1, 1,
-          0, y + height, leftBleed, bottomBleed
-        );
-      }
-      if (rightBleed > 0 && bottomBleed > 0) {
-        context.drawImage(
-          sourceImage, sourceWidth - 1, sourceHeight - 1, 1, 1,
-          x + width, y + height, rightBleed, bottomBleed
-        );
-      }
-
-      context.drawImage(
-        sourceImage,
-        0,
-        0,
-        sourceWidth,
-        sourceHeight,
-        x,
-        y,
-        trimWidthPx,
-        trimHeightPx
-      );
-
+    if (social) {
       return {
-        dataUrl: outputCanvas.toDataURL("image/png"),
-        widthPx: outputWidthPx,
-        heightPx: outputHeightPx,
-        widthMm: trimWidthMm + BLEED_MM * 2,
-        heightMm: trimHeightMm + BLEED_MM * 2,
-        hasBleed: true
+        dataUrl: canvas.toDataURL({ format: "png", multiplier: 1 }),
+        widthPx: social.width,
+        heightPx: social.height,
+        widthMm: PAPER_MM[currentPaperSize].width,
+        heightMm: PAPER_MM[currentPaperSize].height,
+        hasBleed: false
       };
     }
 
-    function loadImage(dataUrl) {
-      return new Promise((resolve, reject) => {
-        const image = new Image();
-        image.onload = () => resolve(image);
-        image.onerror = () => reject(new Error("出力画像を読み込めませんでした。"));
-        image.src = dataUrl;
-      });
+    const source = await loadImage(
+      canvas.toDataURL({ format: "png", multiplier: 1 })
+    );
+    const paper = PAPER_MM[currentPaperSize];
+    const landscape = currentOrientation === "LANDSCAPE";
+    const trimWidthMm = landscape ? paper.height : paper.width;
+    const trimHeightMm = landscape ? paper.width : paper.height;
+    const trimWidthPx = CANVAS_WIDTH;
+    const trimHeightPx = CANVAS_HEIGHT;
+
+    const outputWidthPx = Math.round((trimWidthMm + BLEED_MM * 2) * 200 / 25.4);
+    const outputHeightPx = Math.round((trimHeightMm + BLEED_MM * 2) * 200 / 25.4);
+    const horizontalBleed = outputWidthPx - trimWidthPx;
+    const verticalBleed = outputHeightPx - trimHeightPx;
+    const leftBleed = Math.floor(horizontalBleed / 2);
+    const rightBleed = horizontalBleed - leftBleed;
+    const topBleed = Math.floor(verticalBleed / 2);
+    const bottomBleed = verticalBleed - topBleed;
+
+    const output = document.createElement("canvas");
+    output.width = outputWidthPx;
+    output.height = outputHeightPx;
+
+    const context = output.getContext("2d");
+    if (!context) throw new Error("塗り足し用キャンバスを作成できませんでした。");
+
+    const x = leftBleed;
+    const y = topBleed;
+    const sourceWidth = source.naturalWidth;
+    const sourceHeight = source.naturalHeight;
+
+    if (topBleed) {
+      context.drawImage(source, 0, 0, sourceWidth, 1, x, 0, trimWidthPx, topBleed);
+    }
+    if (bottomBleed) {
+      context.drawImage(source, 0, sourceHeight - 1, sourceWidth, 1, x, y + trimHeightPx, trimWidthPx, bottomBleed);
+    }
+    if (leftBleed) {
+      context.drawImage(source, 0, 0, 1, sourceHeight, 0, y, leftBleed, trimHeightPx);
+    }
+    if (rightBleed) {
+      context.drawImage(source, sourceWidth - 1, 0, 1, sourceHeight, x + trimWidthPx, y, rightBleed, trimHeightPx);
+    }
+    if (leftBleed && topBleed) {
+      context.drawImage(source, 0, 0, 1, 1, 0, 0, leftBleed, topBleed);
+    }
+    if (rightBleed && topBleed) {
+      context.drawImage(source, sourceWidth - 1, 0, 1, 1, x + trimWidthPx, 0, rightBleed, topBleed);
+    }
+    if (leftBleed && bottomBleed) {
+      context.drawImage(source, 0, sourceHeight - 1, 1, 1, 0, y + trimHeightPx, leftBleed, bottomBleed);
+    }
+    if (rightBleed && bottomBleed) {
+      context.drawImage(source, sourceWidth - 1, sourceHeight - 1, 1, 1, x + trimWidthPx, y + trimHeightPx, rightBleed, bottomBleed);
     }
 
-    async function openPrintPreview() {
-      const previewWindow = window.open("", "_blank");
+    context.drawImage(source, 0, 0, sourceWidth, sourceHeight, x, y, trimWidthPx, trimHeightPx);
 
-      if (!previewWindow) {
-        alert("印刷プレビューを開けませんでした。ポップアップを許可してください。");
-        return;
-      }
+    return {
+      dataUrl: output.toDataURL("image/png"),
+      widthPx: outputWidthPx,
+      heightPx: outputHeightPx,
+      widthMm: trimWidthMm + BLEED_MM * 2,
+      heightMm: trimHeightMm + BLEED_MM * 2,
+      hasBleed: true
+    };
+  }
 
-      try {
-        const exported = await createBleedExport();
-        const pageWidthMm = exported.widthMm;
-        const pageHeightMm = exported.heightMm;
-        const outputLabel = exported.hasBleed
-          ? "塗り足し各3mm"
-          : "Webサイズ";
+  function loadImage(url) {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = () => reject(new Error("画像を読み込めませんでした。"));
+      image.src = url;
+    });
+  }
 
-        previewWindow.document.open();
-        previewWindow.document.write(`<!doctype html>
+  async function openPrintPreview() {
+    const popup = window.open("", "_blank");
+
+    if (!popup) {
+      alert("プレビューを開けませんでした。ポップアップを許可してください。");
+      return;
+    }
+
+    try {
+      const exported = await createBleedExport();
+      const label = exported.hasBleed ? "塗り足し各3mm" : "Webサイズ";
+      const widthMm = exported.widthMm;
+      const heightMm = exported.heightMm;
+
+      popup.document.open();
+      popup.document.write(`<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>印刷プレビュー</title>
-  <style>
-    * { box-sizing: border-box; }
-    html, body { margin: 0; min-height: 100%; font-family: sans-serif; }
-    body { background: #1e293b; color: #f8fafc; }
-    .toolbar {
-      position: sticky; top: 0; z-index: 2;
-      display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
-      padding: 10px 14px; background: #0f172a;
-    }
-    .toolbar button {
-      border: 0; border-radius: 6px; padding: 8px 12px;
-      color: white; background: #334155; cursor: pointer;
-    }
-    .toolbar .print-button { background: #e11d48; }
-    .preview-area { height: calc(100vh - 60px); overflow: auto; padding: 24px; }
-    .sheet {
-      width: ${exported.widthPx}px;
-      height: ${exported.heightPx}px;
-      margin: 0 auto; background: white;
-      box-shadow: 0 8px 30px rgba(0,0,0,.4);
-    }
-    .sheet img { display: block; width: 100%; height: 100%; }
-    body.fit .sheet { width: auto; height: auto; max-width: 100%; }
-    body.fit .sheet img {
-      width: auto; height: auto; max-width: 100%;
-      max-height: calc(100vh - 120px); object-fit: contain;
-    }
-    @page { size: ${pageWidthMm}mm ${pageHeightMm}mm; margin: 0; }
-    @media print {
-      html, body {
-        width: ${pageWidthMm}mm; height: ${pageHeightMm}mm;
-        margin: 0; padding: 0; overflow: hidden; background: white;
-      }
-      .toolbar { display: none !important; }
-      .preview-area {
-        width: ${pageWidthMm}mm; height: ${pageHeightMm}mm;
-        overflow: hidden; padding: 0;
-      }
-      .sheet {
-        width: ${pageWidthMm}mm !important;
-        height: ${pageHeightMm}mm !important;
-        margin: 0 !important; box-shadow: none;
-      }
-      .sheet img {
-        width: ${pageWidthMm}mm !important;
-        height: ${pageHeightMm}mm !important;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>印刷プレビュー</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:sans-serif}
+body{background:#1e293b;color:#f8fafc}
+.toolbar{position:sticky;top:0;z-index:2;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 14px;background:#0f172a}
+.toolbar button{border:0;border-radius:6px;padding:8px 12px;color:#fff;background:#334155;cursor:pointer}
+.toolbar .print{background:#e11d48}
+.preview{height:calc(100vh - 60px);overflow:auto;padding:24px}
+.sheet{width:${exported.widthPx}px;height:${exported.heightPx}px;margin:0 auto;background:white;box-shadow:0 8px 30px #0006}
+.sheet img{display:block;width:100%;height:100%}
+body.fit .sheet{width:auto;height:auto;max-width:100%}
+body.fit .sheet img{width:auto;height:auto;max-width:100%;max-height:calc(100vh - 120px);object-fit:contain}
+@page{size:${widthMm}mm ${heightMm}mm;margin:0}
+@media print{
+ html,body{width:${widthMm}mm;height:${heightMm}mm;margin:0;padding:0;overflow:hidden;background:#fff}
+ .toolbar{display:none!important}
+ .preview{width:${widthMm}mm;height:${heightMm}mm;overflow:hidden;padding:0}
+ .sheet{width:${widthMm}mm!important;height:${heightMm}mm!important;margin:0!important;box-shadow:none}
+ .sheet img{width:${widthMm}mm!important;height:${heightMm}mm!important}
+}
+</style>
 </head>
 <body>
-  <div class="toolbar">
-    <strong>プレビュー（${outputLabel}）</strong>
-    <button id="actualSizeButton" type="button">100%表示</button>
-    <button id="fitButton" type="button">画面に合わせる</button>
-    <button id="printButton" type="button" class="print-button">印刷</button>
-    <span>${exported.widthPx} × ${exported.heightPx}px</span>
-  </div>
-  <main class="preview-area">
-    <div class="sheet"><img src="${exported.dataUrl}" alt="出力プレビュー"></div>
-  </main>
-  <script>
-    document.getElementById("actualSizeButton").onclick =
-      () => document.body.classList.remove("fit");
-    document.getElementById("fitButton").onclick =
-      () => document.body.classList.add("fit");
-    document.getElementById("printButton").onclick =
-      () => window.print();
-  <\/script>
+<div class="toolbar">
+<strong>プレビュー（${label}）</strong>
+<button id="actual" type="button">100%表示</button>
+<button id="fit" type="button">画面に合わせる</button>
+<button id="print" class="print" type="button">印刷</button>
+<span>${exported.widthPx} × ${exported.heightPx}px</span>
+</div>
+<main class="preview"><div class="sheet"><img src="${exported.dataUrl}" alt="出力プレビュー"></div></main>
+<script>
+document.getElementById("actual").onclick=()=>document.body.classList.remove("fit");
+document.getElementById("fit").onclick=()=>document.body.classList.add("fit");
+document.getElementById("print").onclick=()=>window.print();
+<\/script>
 </body>
 </html>`);
-        previewWindow.document.close();
-      } catch (error) {
-        previewWindow.close();
-        alert(`印刷プレビューを作成できませんでした: ${error.message}`);
-      }
+      popup.document.close();
+    } catch (error) {
+      popup.close();
+      alert(`プレビューを作成できませんでした: ${error.message}`);
     }
+  }
 
-    function setupDraggablePreviewToolbar() {
-      const toolbar = document.getElementById("previewToolbar");
-      const handle = document.getElementById("previewToolbarDrag");
-      const workspace = document.getElementById("workspace");
+  function setupDraggablePreviewToolbar() {
+    const toolbar = document.getElementById("previewToolbar");
+    const handle = document.getElementById("previewToolbarDrag");
+    const workspace = document.getElementById("workspace");
+    let drag = null;
 
-      let dragState = null;
+    handle.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      const toolbarRect = toolbar.getBoundingClientRect();
+      const workspaceRect = workspace.getBoundingClientRect();
 
-      handle.addEventListener("pointerdown", (event) => {
-        event.preventDefault();
+      toolbar.style.left = `${toolbarRect.left - workspaceRect.left}px`;
+      toolbar.style.top = `${toolbarRect.top - workspaceRect.top}px`;
+      toolbar.style.right = "auto";
+      toolbar.style.bottom = "auto";
 
-        const toolbarRect = toolbar.getBoundingClientRect();
-        const workspaceRect = workspace.getBoundingClientRect();
-
-        toolbar.style.left = `${toolbarRect.left - workspaceRect.left}px`;
-        toolbar.style.top = `${toolbarRect.top - workspaceRect.top}px`;
-        toolbar.style.right = "auto";
-        toolbar.style.bottom = "auto";
-
-        dragState = {
-          pointerId: event.pointerId,
-          startX: event.clientX,
-          startY: event.clientY,
-          left: toolbarRect.left - workspaceRect.left,
-          top: toolbarRect.top - workspaceRect.top
-        };
-
-        handle.setPointerCapture(event.pointerId);
-      });
-
-      handle.addEventListener("pointermove", (event) => {
-        if (!dragState || dragState.pointerId !== event.pointerId) return;
-
-        const workspaceRect = workspace.getBoundingClientRect();
-        const maxLeft = Math.max(0, workspaceRect.width - toolbar.offsetWidth);
-        const maxTop = Math.max(0, workspaceRect.height - toolbar.offsetHeight);
-
-        const left = Math.max(
-          0,
-          Math.min(maxLeft, dragState.left + event.clientX - dragState.startX)
-        );
-        const top = Math.max(
-          0,
-          Math.min(maxTop, dragState.top + event.clientY - dragState.startY)
-        );
-
-        toolbar.style.left = `${left}px`;
-        toolbar.style.top = `${top}px`;
-      });
-
-      const finishDrag = (event) => {
-        if (!dragState || dragState.pointerId !== event.pointerId) return;
-        dragState = null;
+      drag = {
+        pointerId: event.pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        left: toolbarRect.left - workspaceRect.left,
+        top: toolbarRect.top - workspaceRect.top
       };
 
-      handle.addEventListener("pointerup", finishDrag);
-      handle.addEventListener("pointercancel", finishDrag);
-    }
-
-    function setupEventListeners() {
-      ["eventDate", "eventName", "circleName", "spaceNo"].forEach((id) => {
-        document.getElementById(id)
-          .addEventListener("input", generateOshinagaki);
-      });
-
-      [
-        "headerBgColor",
-        "headerAccentColor",
-        "eventInfoFontSize",
-        "eventInfoTextColor",
-        "eventInfoBgEnabled",
-        "eventInfoBgColor",
-        "circleInfoFontSize",
-        "circleInfoTextColor",
-        "circleInfoBgEnabled",
-        "circleInfoBgColor",
-        "spaceInfoFontSize",
-        "spaceInfoTextColor",
-        "spaceInfoBgEnabled",
-        "spaceInfoBgColor",
-        "descriptionFontSize"
-      ].forEach((id) => {
-        const input = document.getElementById(id);
-        input.addEventListener("input", generateOshinagaki);
-        input.addEventListener("change", generateOshinagaki);
-      });
-
-      document.getElementById("orientationSelect")
-        .addEventListener("change", updateCanvasDimensions);
-      document.getElementById("paperSizeSelect")
-        .addEventListener("change", updateCanvasDimensions);
-
-      document.getElementById("bgTypeSelect").addEventListener("change", (event) => {
-        const type = event.target.value;
-
-        document.getElementById("patternControls")
-          .classList.toggle("hidden", type !== "pattern");
-        document.getElementById("customBgControls")
-          .classList.toggle("hidden", type !== "custom");
-        document.getElementById("singleColorControls")
-          .classList.toggle("hidden", type !== "color");
-
-        generateOshinagaki();
-      });
-
-      document.getElementById("patternStyleSelect")
-        .addEventListener("change", generateOshinagaki);
-      document.getElementById("bgColorPicker")
-        .addEventListener("input", generateOshinagaki);
-
-      document.getElementById("customBgInput").addEventListener("change", (event) => {
-        const file = event.target.files && event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (loadEvent) => {
-          fabric.Image.fromURL(loadEvent.target.result, (image) => {
-            if (!image) return;
-            customBgImageObj = image;
-            generateOshinagaki();
-          });
-        };
-        reader.readAsDataURL(file);
-      });
-
-      document.getElementById("batchImageInput").addEventListener("change", (event) => {
-        handleBatchImageUpload(event.target.files);
-        event.target.value = "";
-      });
-
-      document.getElementById("addItemBtn")
-        .addEventListener("click", addItem);
-
-      document.getElementById("toggleGrid").addEventListener("change", (event) => {
-        document.getElementById("gridOverlay")
-          .classList.toggle("hidden", !event.target.checked);
-      });
-
-      document.getElementById("fitCanvasBtn").addEventListener("click", () => {
-        previewZoomMode = "fit";
-        fitCanvasToWorkspace();
-      });
-
-      document.getElementById("zoomSlider").addEventListener("input", (event) => {
-        previewZoomMode = "manual";
-        applyPreviewScale(Number(event.target.value) / 100);
-      });
-
-      setupDraggablePreviewToolbar();
-
-      document.getElementById("printPreviewBtn")
-        .addEventListener("click", openPrintPreview);
-
-      document.getElementById("exportPng").addEventListener("click", async () => {
-        try {
-          const exported = await createBleedExport();
-          const link = document.createElement("a");
-          const suffix = exported.hasBleed ? "_bleed3mm" : "";
-
-          link.download =
-            `oshinagaki_${currentPaperSize}_${currentOrientation}${suffix}_${exported.widthPx}x${exported.heightPx}.png`;
-          link.href = exported.dataUrl;
-          link.click();
-        } catch (error) {
-          alert(`PNGを書き出せませんでした: ${error.message}`);
-        }
-      });
-
-      document.getElementById("exportPdf").addEventListener("click", async () => {
-        try {
-          const exported = await createBleedExport();
-          const { jsPDF } = window.jspdf;
-
-          const pdf = new jsPDF({
-            orientation: exported.widthMm >= exported.heightMm
-              ? "landscape"
-              : "portrait",
-            unit: "mm",
-            format: [exported.widthMm, exported.heightMm]
-          });
-
-          pdf.addImage(
-            exported.dataUrl,
-            "PNG",
-            0,
-            0,
-            exported.widthMm,
-            exported.heightMm
-          );
-
-          const suffix = exported.hasBleed ? "_bleed3mm" : "";
-          pdf.save(
-            `oshinagaki_${currentPaperSize}_${currentOrientation}${suffix}.pdf`
-          );
-        } catch (error) {
-          alert(`PDFを書き出せませんでした: ${error.message}`);
-        }
-      });
-    }
-
-    window.addEventListener("DOMContentLoaded", () => {
-      setupEventListeners();
-      setupDraggablePreviewToolbar();
+      handle.setPointerCapture(event.pointerId);
     });
-  </script>
+
+    handle.addEventListener("pointermove", (event) => {
+      if (!drag || drag.pointerId !== event.pointerId) return;
+
+      const rect = workspace.getBoundingClientRect();
+      const left = Math.max(0, Math.min(
+        rect.width - toolbar.offsetWidth,
+        drag.left + event.clientX - drag.startX
+      ));
+      const top = Math.max(0, Math.min(
+        rect.height - toolbar.offsetHeight,
+        drag.top + event.clientY - drag.startY
+      ));
+
+      toolbar.style.left = `${left}px`;
+      toolbar.style.top = `${top}px`;
+    });
+
+    const endDrag = (event) => {
+      if (drag?.pointerId === event.pointerId) drag = null;
+    };
+
+    handle.addEventListener("pointerup", endDrag);
+    handle.addEventListener("pointercancel", endDrag);
+  }
+
+  function setupEventListeners() {
+    ["eventDate", "eventName", "circleName", "spaceNo"].forEach((id) => {
+      document.getElementById(id).addEventListener("input", generateOshinagaki);
+    });
+
+    [
+      "headerBgColor", "headerAccentColor",
+      "eventInfoFontSize", "eventInfoTextColor", "eventInfoBgEnabled", "eventInfoBgColor",
+      "circleInfoFontSize", "circleInfoTextColor", "circleInfoBgEnabled", "circleInfoBgColor",
+      "spaceInfoFontSize", "spaceInfoTextColor", "spaceInfoBgEnabled", "spaceInfoBgColor",
+      "descriptionFontSize"
+    ].forEach((id) => {
+      const input = document.getElementById(id);
+      input.addEventListener("input", generateOshinagaki);
+      input.addEventListener("change", generateOshinagaki);
+    });
+
+    document.getElementById("orientationSelect").addEventListener("change", updateCanvasDimensions);
+    document.getElementById("paperSizeSelect").addEventListener("change", updateCanvasDimensions);
+
+    document.getElementById("bgTypeSelect").addEventListener("change", (event) => {
+      const type = event.target.value;
+      document.getElementById("patternControls").classList.toggle("hidden", type !== "pattern");
+      document.getElementById("customBgControls").classList.toggle("hidden", type !== "custom");
+      document.getElementById("singleColorControls").classList.toggle("hidden", type !== "color");
+      generateOshinagaki();
+    });
+
+    document.getElementById("patternStyleSelect").addEventListener("change", generateOshinagaki);
+    document.getElementById("bgColorPicker").addEventListener("input", generateOshinagaki);
+
+    document.getElementById("customBgInput").addEventListener("change", (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (loadEvent) => {
+        fabric.Image.fromURL(loadEvent.target.result, (image) => {
+          if (!image) return;
+          customBgImageObj = image;
+          generateOshinagaki();
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById("batchImageInput").addEventListener("change", (event) => {
+      handleBatchImageUpload(event.target.files);
+      event.target.value = "";
+    });
+
+    document.getElementById("addItemBtn").addEventListener("click", addItem);
+
+    document.getElementById("toggleGrid").addEventListener("change", (event) => {
+      document.getElementById("gridOverlay").classList.toggle("hidden", !event.target.checked);
+    });
+
+    document.getElementById("fitCanvasBtn").addEventListener("click", () => {
+      previewZoomMode = "fit";
+      fitCanvasToWorkspace();
+    });
+
+    document.getElementById("zoomSlider").addEventListener("input", (event) => {
+      previewZoomMode = "manual";
+      applyPreviewScale(Number(event.target.value) / 100);
+    });
+
+    setupDraggablePreviewToolbar();
+
+    document.getElementById("printPreviewBtn").addEventListener("click", openPrintPreview);
+
+    document.getElementById("exportPng").addEventListener("click", async () => {
+      try {
+        const exported = await createBleedExport();
+        const link = document.createElement("a");
+        const bleedSuffix = exported.hasBleed ? "_bleed3mm" : "";
+        link.download =
+          `oshinagaki_${currentPaperSize}_${currentOrientation}${bleedSuffix}_${exported.widthPx}x${exported.heightPx}.png`;
+        link.href = exported.dataUrl;
+        link.click();
+      } catch (error) {
+        alert(`PNGを書き出せませんでした: ${error.message}`);
+      }
+    });
+
+    document.getElementById("exportPdf").addEventListener("click", async () => {
+      try {
+        const exported = await createBleedExport();
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          orientation: exported.widthMm >= exported.heightMm ? "landscape" : "portrait",
+          unit: "mm",
+          format: [exported.widthMm, exported.heightMm]
+        });
+
+        pdf.addImage(exported.dataUrl, "PNG", 0, 0, exported.widthMm, exported.heightMm);
+
+        const bleedSuffix = exported.hasBleed ? "_bleed3mm" : "";
+        pdf.save(`oshinagaki_${currentPaperSize}_${currentOrientation}${bleedSuffix}.pdf`);
+      } catch (error) {
+        alert(`PDFを書き出せませんでした: ${error.message}`);
+      }
+    });
+  }
+</script>
 </body>
 </html>
