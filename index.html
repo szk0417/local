@@ -2,381 +2,425 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>おしながきメーカー</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Zen+Maru+Gothic:wght@400;700&family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fabric@5.3.0/dist/fabric.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
 <style>
 
+*{
+ box-sizing:border-box;
+}
+
 body{
-margin:0;
-font-family:sans-serif;
-background:#f5f5f5;
+ margin:0;
+ background:#f3f4f6;
+ font-family:sans-serif;
 }
 
 .toolbar{
-display:flex;
-gap:8px;
-padding:10px;
-flex-wrap:wrap;
-background:white;
-position:sticky;
-top:0;
-z-index:100;
-box-shadow:0 2px 4px rgba(0,0,0,.1);
+ padding:12px;
+ display:flex;
+ flex-wrap:wrap;
+ gap:8px;
+ background:#fff;
+ border-bottom:1px solid #ddd;
+ position:sticky;
+ top:0;
+ z-index:100;
 }
 
-button{
-padding:8px 12px;
-cursor:pointer;
+button,
+select,
+label{
+ padding:8px 12px;
+ cursor:pointer;
 }
 
-#editor-wrap{
-display:flex;
-justify-content:center;
-padding:20px;
+label{
+ border:1px solid #ddd;
+ background:#fff;
 }
 
-#canvas{
-position:relative;
-width:800px;
-height:1131px;
-background:white;
-background-size:cover;
-background-position:center;
-border:1px solid #ccc;
-overflow:hidden;
+input[type=file]{
+ display:none;
 }
 
-.obj{
-position:absolute;
-resize:both;
-overflow:hidden;
-cursor:move;
+.editor{
+ padding:20px;
+ display:flex;
+ justify-content:center;
 }
 
-.textbox{
-min-width:150px;
-min-height:50px;
-padding:4px;
-background:rgba(255,255,255,.85);
-border:1px dashed #888;
+.canvas-wrapper{
+ width:min(95vw,900px);
+ background:white;
+ box-shadow:0 0 10px rgba(0,0,0,.1);
 }
 
-.imagebox img{
-width:100%;
-height:100%;
-object-fit:contain;
-pointer-events:none;
-}
-
-.selected{
-outline:2px solid #0066ff;
-}
-
-.delete-btn{
-position:absolute;
-top:0;
-right:0;
-background:red;
-color:white;
-border:none;
-width:20px;
-height:20px;
-cursor:pointer;
-}
-
-@media(max-width:900px){
-#canvas{
-width:95vw;
-height:134vw;
-}
+canvas{
+ width:100% !important;
+ height:auto !important;
 }
 
 </style>
 </head>
-
 <body>
 
 <div class="toolbar">
 
-<button onclick="addText()">テキスト</button>
+<button onclick="addText()">
+テキスト追加
+</button>
 
 <label>
-<button>画像</button>
-<input type="file" accept="image/*" hidden onchange="addImage(event)">
+画像追加
+<input
+ type="file"
+ accept="image/*"
+ onchange="uploadImage(event)">
 </label>
 
 <label>
-<button>背景</button>
-<input type="file" accept="image/*" hidden onchange="setBackground(event)">
+背景画像
+<input
+ type="file"
+ accept="image/*"
+ onchange="uploadBackground(event)">
 </label>
 
-<select id="fontChooser">
-<option>Noto Sans JP</option>
-<option>Zen Maru Gothic</option>
-<option>M PLUS Rounded 1c</option>
+<select id="fontSelect">
+
+<option value="Noto Sans JP">
+Noto Sans JP
+</option>
+
+<option value="Zen Maru Gothic">
+Zen Maru Gothic
+</option>
+
+<option value="M PLUS Rounded 1c">
+M PLUS Rounded
+</option>
+
 </select>
 
-<button onclick="applyFont()">フォント適用</button>
+<button onclick="changeFont()">
+フォント変更
+</button>
 
-<button onclick="alignLeft()">左揃え</button>
-<button onclick="alignCenter()">中央揃え</button>
-<button onclick="distributeVertical()">縦均等</button>
+<button onclick="alignLeft()">
+左揃え
+</button>
 
-<button onclick="exportPNG()">PNG</button>
-<button onclick="exportPDF()">PDF</button>
+<button onclick="alignCenter()">
+中央揃え
+</button>
+
+<button onclick="exportPNG()">
+PNG
+</button>
+
+<button onclick="exportPDF()">
+PDF
+</button>
 
 </div>
 
-<div id="editor-wrap">
-<div id="canvas"></div>
+<div class="editor">
+
+<div class="canvas-wrapper">
+
+<canvas id="canvas"></canvas>
+
+</div>
+
 </div>
 
 <script>
 
-const canvas=document.getElementById('canvas');
+const A3_WIDTH = 3508;
+const A3_HEIGHT = 4961;
 
-let selected=null;
+const canvas = new fabric.Canvas(
+ "canvas",
+ {
+   preserveObjectStacking:true,
+   selection:true
+ }
+);
 
-function select(el){
-
-document
-.querySelectorAll('.obj')
-.forEach(o=>o.classList.remove('selected'));
-
-selected=el;
-
-if(el)
-el.classList.add('selected');
-}
-
-function makeDraggable(el){
-
-el.addEventListener('mousedown',e=>{
-
-select(el);
-
-let startX=e.clientX;
-let startY=e.clientY;
-
-let left=el.offsetLeft;
-let top=el.offsetTop;
-
-function move(ev){
-
-el.style.left=
-left+(ev.clientX-startX)+'px';
-
-el.style.top=
-top+(ev.clientY-startY)+'px';
-
-}
-
-function up(){
-
-window.removeEventListener('mousemove',move);
-window.removeEventListener('mouseup',up);
-
-}
-
-window.addEventListener('mousemove',move);
-window.addEventListener('mouseup',up);
-
-});
-
-}
-
-function addDeleteButton(box){
-
-const btn=document.createElement('button');
-
-btn.textContent='×';
-btn.className='delete-btn';
-
-btn.onclick=e=>{
-e.stopPropagation();
-box.remove();
-};
-
-box.appendChild(btn);
-
-}
+canvas.setWidth(A3_WIDTH);
+canvas.setHeight(A3_HEIGHT);
 
 function addText(){
 
-const div=document.createElement('div');
+ const text = new fabric.IText(
+   "新刊タイトル",
+   {
+      left:300,
+      top:300,
+      fontSize:72,
+      fontFamily:"Noto Sans JP",
+      fill:"#000000"
+   }
+ );
 
-div.className='obj textbox';
+ canvas.add(text);
 
-div.contentEditable=true;
+ canvas.setActiveObject(text);
 
-div.innerHTML='新刊タイトル';
-
-div.style.left='20px';
-div.style.top='20px';
-
-makeDraggable(div);
-addDeleteButton(div);
-
-div.onclick=()=>select(div);
-
-canvas.appendChild(div);
-
-}
-
-function addImage(ev){
-
-const file=ev.target.files[0];
-if(!file)return;
-
-const r=new FileReader();
-
-r.onload=()=>{
-
-const box=document.createElement('div');
-
-box.className='obj imagebox';
-
-box.style.left='30px';
-box.style.top='30px';
-box.style.width='200px';
-box.style.height='280px';
-
-const img=document.createElement('img');
-
-img.src=r.result;
-
-box.appendChild(img);
-
-makeDraggable(box);
-addDeleteButton(box);
-
-box.onclick=()=>select(box);
-
-canvas.appendChild(box);
-
-};
-
-r.readAsDataURL(file);
+ canvas.renderAll();
 
 }
 
-function setBackground(ev){
 
-const file=ev.target.files[0];
 
-if(!file)return;
+function uploadImage(event){
 
-const r=new FileReader();
+ const file = event.target.files[0];
 
-r.onload=()=>{
+ if(!file) return;
 
-canvas.style.backgroundImage=
-`url(${r.result})`;
+ const reader = new FileReader();
 
-};
+ reader.onload = function(e){
 
-r.readAsDataURL(file);
+   fabric.Image.fromURL(
+     e.target.result,
+
+     function(img){
+
+       img.set({
+         left:500,
+         top:500
+       });
+
+       img.scaleToWidth(800);
+
+       canvas.add(img);
+
+       canvas.setActiveObject(img);
+
+       canvas.renderAll();
+
+     }
+
+   );
+
+ };
+
+ reader.readAsDataURL(file);
 
 }
 
-function applyFont(){
 
-if(!selected)return;
 
-selected.style.fontFamily=
-document.getElementById('fontChooser').value;
+function uploadBackground(event){
+
+ const file = event.target.files[0];
+
+ if(!file) return;
+
+ const reader = new FileReader();
+
+ reader.onload = function(e){
+
+   fabric.Image.fromURL(
+     e.target.result,
+
+     function(img){
+
+       const scaleX =
+          canvas.width / img.width;
+
+       const scaleY =
+          canvas.height / img.height;
+
+       canvas.setBackgroundImage(
+         img,
+         canvas.renderAll.bind(canvas),
+         {
+            scaleX,
+            scaleY
+         }
+       );
+
+     }
+
+   );
+
+ };
+
+ reader.readAsDataURL(file);
 
 }
+
+
+
+function changeFont(){
+
+ const font =
+  document.getElementById(
+   "fontSelect"
+  ).value;
+
+ const obj =
+  canvas.getActiveObject();
+
+ if(
+   obj &&
+   obj.type === "i-text"
+ ){
+
+    obj.set(
+      "fontFamily",
+      font
+    );
+
+    canvas.renderAll();
+
+ }
+
+}
+
+
 
 function alignLeft(){
 
-const objs=[...document.querySelectorAll('.obj')];
+ const objs =
+  canvas.getActiveObjects();
 
-objs.forEach(o=>{
-o.style.left='20px';
-});
+ if(objs.length===0)
+   return;
+
+ const left =
+  Math.min(
+    ...objs.map(
+      o => o.left
+    )
+  );
+
+ objs.forEach(obj=>{
+
+   obj.set("left",left);
+
+ });
+
+ canvas.renderAll();
 
 }
+
+
 
 function alignCenter(){
 
-const objs=[...document.querySelectorAll('.obj')];
+ const objs =
+  canvas.getActiveObjects();
 
-objs.forEach(o=>{
+ if(objs.length===0)
+   return;
 
-o.style.left=
-(canvas.clientWidth-o.offsetWidth)/2+'px';
+ objs.forEach(obj=>{
 
-});
+    obj.set(
+      "left",
+      (canvas.width/2)
+      -
+      obj.getScaledWidth()/2
+    );
 
-}
+ });
 
-function distributeVertical(){
-
-const objs=[...document.querySelectorAll('.obj')];
-
-if(objs.length<2) return;
-
-const gap=
-(canvas.clientHeight-200)/(objs.length);
-
-objs.forEach((o,i)=>{
-
-o.style.top=
-(50+i*gap)+'px';
-
-});
+ canvas.renderAll();
 
 }
 
-async function exportPNG(){
 
-const c=await html2canvas(canvas,{
-scale:4
-});
 
-const link=document.createElement('a');
+document.addEventListener(
+ "keydown",
+ e=>{
 
-link.download='oshinagaki.png';
+  if(
+    e.key==="Delete" ||
+    e.key==="Backspace"
+  ){
 
-link.href=c.toDataURL();
+    const active =
+     canvas.getActiveObjects();
 
-link.click();
+    active.forEach(obj=>{
+
+       canvas.remove(obj);
+
+    });
+
+    canvas.discardActiveObject();
+
+    canvas.renderAll();
+  }
+
+ }
+);
+
+
+
+function exportPNG(){
+
+ const data =
+  canvas.toDataURL({
+      format:"png",
+      multiplier:1
+  });
+
+ const link =
+  document.createElement("a");
+
+ link.href=data;
+
+ link.download=
+  "oshinagaki.png";
+
+ link.click();
 
 }
+
+
 
 async function exportPDF(){
 
-const c=await html2canvas(canvas,{
-scale:4
-});
+ const data =
+  canvas.toDataURL({
+     format:"png",
+     multiplier:1
+  });
 
-const img=c.toDataURL("image/png");
+ const pdf =
+   new jspdf.jsPDF(
+      "portrait",
+      "mm",
+      "a3"
+   );
 
-const pdf=
-new jspdf.jsPDF(
-'portrait',
-'mm',
-'A3'
-);
+ pdf.addImage(
+    data,
+    "PNG",
+    0,
+    0,
+    297,
+    420
+ );
 
-pdf.addImage(
-img,
-'PNG',
-0,
-0,
-297,
-420
-);
-
-pdf.save('oshinagaki.pdf');
+ pdf.save(
+   "oshinagaki.pdf"
+ );
 
 }
 
