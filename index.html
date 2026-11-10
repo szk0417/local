@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>同人おしながきジェネレーター</title>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -46,7 +45,7 @@
       place-items: center;
       border-radius: 9px;
       background: linear-gradient(120deg, #f43f5e, #9333ea);
-      color: #fff;
+      color: white;
       font-size: 19px;
     }
     .brand h1 { margin: 0; font-size: 14px; line-height: 1.3; }
@@ -98,7 +97,6 @@
       font-size: 12px;
       font-weight: 700;
     }
-
     .panel-heading small {
       border: 1px solid #166534;
       border-radius: 999px;
@@ -132,6 +130,7 @@
       font-size: 11px;
     }
     .control:disabled { opacity: .5; }
+
     .color-control {
       width: 48px;
       height: 31px;
@@ -141,9 +140,15 @@
       padding: 3px;
       background: #1e293b;
     }
+
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 
-    .palette { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin-top: 5px; }
+    .palette {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 5px;
+      margin-top: 5px;
+    }
     .palette button {
       display: flex;
       align-items: center;
@@ -242,7 +247,7 @@
       flex: none;
       overflow: hidden;
       border: 1px solid #475569;
-      background: #fff;
+      background: white;
       box-shadow: 0 15px 40px rgba(0, 0, 0, .45);
       line-height: 0;
     }
@@ -365,8 +370,8 @@
           <div class="two-col">
             <label class="field">用紙向き
               <select id="orientationSelect" class="control">
+                <option value="PORTRAIT" selected>縦向き</option>
                 <option value="LANDSCAPE">横向き</option>
-                <option value="PORTRAIT">縦向き</option>
               </select>
             </label>
             <label class="field">レイアウト
@@ -388,7 +393,7 @@
           <h2>背景デザイン・推奨配色</h2>
           <label class="field">背景の種類
             <select id="bgTypeSelect" class="control">
-              <option value="pattern">規定パターン</option>
+              <option value="pattern" selected>パターン・無地</option>
               <option value="custom">背景画像</option>
               <option value="color">単色カラー</option>
             </select>
@@ -397,17 +402,18 @@
             CUDO推奨配色セットの色
             <div id="presetColorPalette" class="palette"></div>
             <small style="display:block;margin-top:5px;color:#64748b">
-              色名ラベルを併用。印刷結果は用紙・印刷条件により異なります。
+              選択色は背景・パターン・ヘッダーに適用します。色名ラベルも併用しています。
             </small>
           </div>
           <div id="patternControls">
             <label class="field">パターン
               <select id="patternStyleSelect" class="control">
-                <option value="dots">ドット</option>
+                <option value="dots" selected>ドット</option>
                 <option value="stripes">ストライプ</option>
                 <option value="diagonal">斜めストライプ</option>
                 <option value="border">ボーダー</option>
                 <option value="check">チェック</option>
+                <option value="solid">無地</option>
               </select>
             </label>
           </div>
@@ -574,11 +580,10 @@
 
     const BLEED_MM = 3;
     const canvas = document.getElementById("previewCanvas");
-    const ctx = canvas.getContext("2d", { alpha:false });
 
-    let selectedPalette = PALETTES[0];
+    let selectedPalette = PALETTES[3];
     let paper = "A3";
-    let orientation = "LANDSCAPE";
+    let orientation = "PORTRAIT";
     let outputWidth = 0;
     let outputHeight = 0;
     let trimWidth = 0;
@@ -618,7 +623,7 @@
       }
     ];
 
-    // スクリプトはHTML末尾にあるため、ここで初期化して初回描画を実行する。
+    // HTMLの末尾で初期化するため、DOMContentLoaded待ちによる未実行を避ける。
     initialize();
 
     function initialize() {
@@ -628,7 +633,7 @@
       updateLayout();
 
       if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(() => renderCanvas()).catch(() => {});
+        document.fonts.ready.then(renderCanvas).catch(() => {});
       }
     }
 
@@ -651,33 +656,29 @@
       const root = document.getElementById("presetColorPalette");
       root.innerHTML = "";
 
-      PALETTES.forEach((preset, index) => {
+      PALETTES.forEach((preset) => {
         const button = document.createElement("button");
         button.type = "button";
         button.title = `${preset.name}（CUDO推奨配色セット）`;
         button.innerHTML =
           `<span class="swatch" style="background:${preset.hex}"></span><span>${preset.name}</span>`;
 
-        if (index === 0) button.classList.add("selected");
+        if (preset.name === selectedPalette.name) button.classList.add("selected");
 
         button.addEventListener("click", () => {
           selectedPalette = preset;
           root.querySelectorAll("button").forEach((el) => el.classList.remove("selected"));
           button.classList.add("selected");
 
-          document.getElementById("bgTypeSelect").value = "color";
-          document.getElementById("patternControls").classList.add("hidden");
-          document.getElementById("customBgControls").classList.add("hidden");
-          document.getElementById("singleColorControls").classList.remove("hidden");
+          const type = document.getElementById("bgTypeSelect").value;
+          if (type === "color") {
+            document.getElementById("bgColorPicker").value = preset.background;
+          }
 
-          document.getElementById("bgColorPicker").value = preset.background;
           document.getElementById("headerBgColor").value = preset.header;
           document.getElementById("headerAccentColor").value = preset.accent;
-          document.getElementById("eventInfoTextColor").value = "#ffffff";
-          document.getElementById("circleInfoTextColor").value = "#ffffff";
           document.getElementById("spaceInfoBgColor").value = preset.space;
-          document.getElementById("spaceInfoTextColor").value =
-            getReadableTextColor(preset.space);
+          document.getElementById("spaceInfoTextColor").value = getReadableTextColor(preset.space);
 
           renderCanvas();
         });
@@ -687,25 +688,9 @@
     }
 
     function applyHeaderDefaults(social) {
-      let sizes;
-
-      if (social) {
-        sizes = {
-          event:social.eventFont,
-          circle:social.circleFont,
-          space:social.spaceFont
-        };
-      } else {
-        const scale = Math.max(
-          .9,
-          Math.min(1.25, Math.sqrt((trimWidth * trimHeight) / (3307 * 2339)))
-        );
-        sizes = {
-          event:Math.round(60 * scale),
-          circle:Math.round(150 * scale),
-          space:Math.round(90 * scale)
-        };
-      }
+      const sizes = social
+        ? { event:social.eventFont, circle:social.circleFont, space:social.spaceFont }
+        : { event:60, circle:150, space:90 };
 
       document.getElementById("eventInfoFontSize").value = sizes.event;
       document.getElementById("circleInfoFontSize").value = sizes.circle;
@@ -714,6 +699,7 @@
 
     function updateLayout() {
       paper = document.getElementById("paperSizeSelect").value;
+
       const orientationSelect = document.getElementById("orientationSelect");
       const socialPreset = SOCIAL_PRESETS[paper];
 
@@ -726,7 +712,6 @@
         orientation = socialPreset.orientation;
         orientationSelect.value = orientation;
         orientationSelect.disabled = true;
-
         outputWidth = trimWidth = socialPreset.width;
         outputHeight = trimHeight = socialPreset.height;
       } else {
@@ -735,23 +720,23 @@
 
         const spec = PRINT_SPECS[paper];
         const landscape = orientation === "LANDSCAPE";
-
         outputWidth = landscape ? spec.heightPx : spec.widthPx;
         outputHeight = landscape ? spec.widthPx : spec.heightPx;
 
-        const outputWidthMm = landscape ? spec.heightMm : spec.widthMm;
-        const outputHeightMm = landscape ? spec.widthMm : spec.heightMm;
-        const trimWidthMm = landscape ? spec.trimHeightMm : spec.trimWidthMm;
-        const trimHeightMm = landscape ? spec.trimWidthMm : spec.trimHeightMm;
+        const outWmm = landscape ? spec.heightMm : spec.widthMm;
+        const outHmm = landscape ? spec.widthMm : spec.heightMm;
+        const trimWmm = landscape ? spec.trimHeightMm : spec.trimWidthMm;
+        const trimHmm = landscape ? spec.trimWidthMm : spec.trimHeightMm;
 
-        trimWidth = Math.round(trimWidthMm * outputWidth / outputWidthMm);
-        trimHeight = Math.round(trimHeightMm * outputHeight / outputHeightMm);
+        trimWidth = Math.round(trimWmm * outputWidth / outWmm);
+        trimHeight = Math.round(trimHmm * outputHeight / outHmm);
         bleedLeft = Math.floor((outputWidth - trimWidth) / 2);
         bleedTop = Math.floor((outputHeight - trimHeight) / 2);
-        safeX = Math.ceil(BLEED_MM * trimWidth / trimWidthMm);
-        safeY = Math.ceil(BLEED_MM * trimHeight / trimHeightMm);
+        safeX = Math.ceil(BLEED_MM * trimWidth / trimWmm);
+        safeY = Math.ceil(BLEED_MM * trimHeight / trimHmm);
       }
 
+      // Canvasのwidth/height変更後に取得し直すContextを使う。
       canvas.width = outputWidth;
       canvas.height = outputHeight;
 
@@ -784,6 +769,7 @@
 
       trimGuide.classList.toggle("hidden", !isPrint);
       safeGuide.classList.toggle("hidden", !isPrint);
+
       if (!isPrint) return;
 
       trimGuide.style.left = `${bleedLeft}px`;
@@ -799,11 +785,7 @@
 
     function escapeHTML(value) {
       return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#39;"
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
       })[char]);
     }
 
@@ -841,14 +823,12 @@
           </div>
 
           <label class="field">タイトル
-            <input class="control" type="text" data-index="${index}" data-key="title"
-              value="${escapeHTML(item.title)}">
+            <input class="control" type="text" data-index="${index}" data-key="title" value="${escapeHTML(item.title)}">
           </label>
 
           <label class="field">値段（無料配布・Web展示は空欄）
             <input class="control" type="text" data-index="${index}" data-key="price"
-              value="${escapeHTML(item.price || "")}"
-              ${["無料配布","Web展示"].includes(item.category) ? "disabled" : ""}>
+              value="${escapeHTML(item.price || "")}" ${["無料配布","Web展示"].includes(item.category) ? "disabled" : ""}>
           </label>
 
           <label class="field">説明
@@ -857,8 +837,7 @@
 
           <label class="field">説明文フォントサイズ
             <input class="control" type="number" min="8" max="100" step="1"
-              data-index="${index}" data-key="descriptionFontSize"
-              value="${Number(item.descriptionFontSize) || 38}">
+              data-index="${index}" data-key="descriptionFontSize" value="${Number(item.descriptionFontSize) || 38}">
           </label>
 
           <label class="check-row" style="justify-content:flex-start">
@@ -867,8 +846,7 @@
           </label>
 
           <label class="field">個別画像
-            <input class="control" type="file" accept="image/*" data-image="${index}"
-              ${item.noImage ? "disabled" : ""}>
+            <input class="control" type="file" accept="image/*" data-image="${index}" ${item.noImage ? "disabled" : ""}>
           </label>
         `;
         root.appendChild(card);
@@ -888,12 +866,13 @@
           }
 
           if (key === "category") {
-            const price = root.querySelector(`[data-index="${index}"][data-key="price"]`);
+            const priceInput = root.querySelector(`[data-index="${index}"][data-key="price"]`);
             const noPrice = ["無料配布","Web展示"].includes(input.value);
-            if (price) {
-              price.disabled = noPrice;
+
+            if (priceInput) {
+              priceInput.disabled = noPrice;
               if (noPrice) {
-                price.value = "";
+                priceInput.value = "";
                 items[index].price = "";
               }
             }
@@ -986,12 +965,7 @@
       });
 
       const image = await loadImage(src);
-      return {
-        src,
-        image,
-        width:image.naturalWidth,
-        height:image.naturalHeight
-      };
+      return { src, image, width:image.naturalWidth, height:image.naturalHeight };
     }
 
     async function loadItemImage(index, file) {
@@ -1021,7 +995,7 @@
         const loaded = await Promise.all(selected.map(readImageFile));
 
         loaded.forEach((entry, index) => {
-          const imageData = {
+          const data = {
             image:entry.image,
             imageSrc:entry.src,
             imageWidth:entry.width,
@@ -1030,7 +1004,7 @@
           };
 
           if (index < items.length) {
-            Object.assign(items[index], imageData);
+            Object.assign(items[index], data);
           } else {
             items.push({
               category:"新刊",
@@ -1039,7 +1013,7 @@
               price:"¥ 500",
               desc:"",
               descriptionFontSize:38,
-              ...imageData
+              ...data
             });
           }
         });
@@ -1051,12 +1025,15 @@
       }
     }
 
-    function makePattern(style, color) {
+    function makePattern(style, color, backgroundColor) {
       const tile = document.createElement("canvas");
       tile.width = tile.height = 240;
       const patternContext = tile.getContext("2d");
-      patternContext.fillStyle = "#FFFFFF";
+
+      patternContext.fillStyle = backgroundColor;
       patternContext.fillRect(0, 0, tile.width, tile.height);
+
+      if (style === "solid") return tile;
 
       if (style === "dots") {
         patternContext.fillStyle = color;
@@ -1078,7 +1055,10 @@
         patternContext.restore();
       } else if (style === "border") {
         patternContext.fillStyle = color;
-        patternContext.fillRect(0, 0, 240, 120);
+        patternContext.fillRect(0, 0, 240, 24);
+        patternContext.fillRect(0, 216, 240, 24);
+        patternContext.fillRect(0, 0, 24, 240);
+        patternContext.fillRect(216, 0, 24, 240);
       } else if (style === "check") {
         patternContext.fillStyle = color;
         patternContext.fillRect(0, 0, 120, 120);
@@ -1103,20 +1083,24 @@
       }
 
       if (type === "pattern") {
-        context.fillStyle = "#FFFFFF";
+        const style = document.getElementById("patternStyleSelect").value;
+        const backgroundColor = style === "solid"
+          ? selectedPalette.background
+          : selectedPalette.background;
+
+        context.fillStyle = backgroundColor;
         context.fillRect(0, 0, outputWidth, outputHeight);
 
-        const pattern = context.createPattern(
-          makePattern(
-            document.getElementById("patternStyleSelect").value,
-            selectedPalette.hex
-          ),
-          "repeat"
-        );
+        if (style !== "solid") {
+          const pattern = context.createPattern(
+            makePattern(style, selectedPalette.hex, backgroundColor),
+            "repeat"
+          );
 
-        if (pattern) {
-          context.fillStyle = pattern;
-          context.fillRect(0, 0, outputWidth, outputHeight);
+          if (pattern) {
+            context.fillStyle = pattern;
+            context.fillRect(0, 0, outputWidth, outputHeight);
+          }
         }
         return;
       }
@@ -1175,11 +1159,10 @@
 
       for (let size = maxFont; size >= minFont; size -= Math.max(.5, maxFont / 100)) {
         context.font = `${weight} ${size}px ${family}`;
-        const candidateLines = wrapLines(context, text, width);
-
-        if (candidateLines.length * size * lineHeightRatio <= height) {
+        const candidate = wrapLines(context, text, width);
+        if (candidate.length * size * lineHeightRatio <= height) {
           fontSize = size;
-          lines = candidateLines;
+          lines = candidate;
           break;
         }
       }
@@ -1224,17 +1207,17 @@
           ? box.x + width
           : box.x;
 
-      lines.forEach((line) => {
+      for (const line of lines) {
         context.fillText(line, x, y, width);
         y += lineHeight;
-      });
+      }
 
       context.restore();
     }
 
     function drawHeader(context, social, headerHeight, landscape, eventStyle, circleStyle, spaceStyle) {
       const margin = social ? social.marginX : safeX + 8;
-      const textWidth = Math.max(1, trimWidth - margin * 2);
+      const width = Math.max(1, trimWidth - margin * 2);
 
       if (social) {
         const isPicsquare = paper === "PICSQUARE";
@@ -1246,28 +1229,21 @@
         const spaceHeight = Math.max(1, available - eventHeight - circleHeight - gap * 2);
         let y = top;
 
-        fitText(
-          context,
+        fitText(context,
           `${document.getElementById("eventDate").value} | ${document.getElementById("eventName").value}`,
-          { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:eventHeight },
-          { maxFont:eventStyle.size, minFont:7, color:eventStyle.color, background:eventStyle.background }
-        );
+          { x:bleedLeft + margin, y:bleedTop + y, width, height:eventHeight },
+          { maxFont:eventStyle.size, minFont:7, color:eventStyle.color, background:eventStyle.background });
 
         y += eventHeight + gap;
-        fitText(
-          context,
-          document.getElementById("circleName").value,
-          { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:circleHeight },
-          { maxFont:circleStyle.size, minFont:8, weight:"700", color:circleStyle.color, background:circleStyle.background }
-        );
+        fitText(context, document.getElementById("circleName").value,
+          { x:bleedLeft + margin, y:bleedTop + y, width, height:circleHeight },
+          { maxFont:circleStyle.size, minFont:8, weight:"700", color:circleStyle.color, background:circleStyle.background });
 
         y += circleHeight + gap;
         const space = document.getElementById("spaceNo").value;
         if (space) {
-          fitText(
-            context,
-            ` ${space} `,
-            { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:spaceHeight },
+          fitText(context, ` ${space} `,
+            { x:bleedLeft + margin, y:bleedTop + y, width, height:spaceHeight },
             {
               maxFont:spaceStyle.size,
               minFont:7,
@@ -1276,8 +1252,7 @@
               color:spaceStyle.color,
               background:spaceStyle.background,
               align:"center"
-            }
-          );
+            });
         }
         return;
       }
@@ -1293,28 +1268,21 @@
       const spaceHeight = rowHeight - eventHeight - circleHeight;
       let y = top;
 
-      fitText(
-        context,
+      fitText(context,
         `${document.getElementById("eventDate").value} | ${document.getElementById("eventName").value}`,
-        { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:eventHeight },
-        { maxFont:eventStyle.size, minFont:10 * scale, color:eventStyle.color, background:eventStyle.background }
-      );
+        { x:bleedLeft + margin, y:bleedTop + y, width, height:eventHeight },
+        { maxFont:eventStyle.size, minFont:10 * scale, color:eventStyle.color, background:eventStyle.background });
 
       y += eventHeight + gap;
-      fitText(
-        context,
-        document.getElementById("circleName").value,
-        { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:circleHeight },
-        { maxFont:circleStyle.size, minFont:12 * scale, weight:"700", color:circleStyle.color, background:circleStyle.background }
-      );
+      fitText(context, document.getElementById("circleName").value,
+        { x:bleedLeft + margin, y:bleedTop + y, width, height:circleHeight },
+        { maxFont:circleStyle.size, minFont:12 * scale, weight:"700", color:circleStyle.color, background:circleStyle.background });
 
       y += circleHeight + gap;
       const space = document.getElementById("spaceNo").value;
       if (space) {
-        fitText(
-          context,
-          ` ${space} `,
-          { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:spaceHeight },
+        fitText(context, ` ${space} `,
+          { x:bleedLeft + margin, y:bleedTop + y, width, height:spaceHeight },
           {
             maxFont:spaceStyle.size,
             minFont:10 * scale,
@@ -1323,8 +1291,7 @@
             color:spaceStyle.color,
             background:spaceStyle.background,
             align:"center"
-          }
-        );
+          });
       }
     }
 
@@ -1365,23 +1332,12 @@
       context.clip();
 
       const style = CATEGORY_STYLES[item.category] || CATEGORY_STYLES["新刊"];
-      const categoryHeight = Math.min(
-        config.categoryBand,
-        height * .16,
-        Math.max(18, width * .09)
-      );
-      const ageHeight = Math.min(
-        config.ageBand,
-        height * .11,
-        Math.max(15, width * .055)
-      );
+      const categoryHeight = Math.min(config.categoryBand, height * .16, Math.max(18, width * .09));
+      const ageHeight = Math.min(config.ageBand, height * .11, Math.max(15, width * .055));
 
       context.fillStyle = style.background;
       context.fillRect(x, y, width, categoryHeight);
-
-      fitText(
-        context,
-        item.category || "新刊",
+      fitText(context, item.category || "新刊",
         { x:x + padding, y:y + 1, width:Math.max(1, width - padding * 2), height:Math.max(1, categoryHeight - 2) },
         {
           maxFont:Math.min(categoryHeight * .78, width * .2),
@@ -1391,17 +1347,13 @@
           color:style.text,
           align:"center",
           lineHeight:1
-        }
-      );
+        });
 
       const ageY = y + categoryHeight;
       const isR18 = item.ageRating === "R18";
       context.fillStyle = isR18 ? "#991b1b" : "#e5f2e5";
       context.fillRect(x, ageY, width, ageHeight);
-
-      fitText(
-        context,
-        isR18 ? "R18" : "全年齢",
+      fitText(context, isR18 ? "R18" : "全年齢",
         { x:x + padding, y:ageY + 1, width:Math.max(1, width - padding * 2), height:Math.max(1, ageHeight - 2) },
         {
           maxFont:Math.min(ageHeight * .75, width * .16),
@@ -1411,8 +1363,7 @@
           color:isR18 ? "#ffffff" : "#174b26",
           align:"center",
           lineHeight:1
-        }
-      );
+        });
 
       const bodyY = ageY + ageHeight + padding;
       const bodyHeight = Math.max(1, height - categoryHeight - ageHeight - padding * 2);
@@ -1422,9 +1373,8 @@
       let imageBox = null;
 
       if (item.image && !item.noImage) {
-        const maxImageWidth = width * (landscape ? .38 : .36);
         const imageScale = Math.min(
-          maxImageWidth / Math.max(1, item.imageWidth),
+          width * (landscape ? .38 : .36) / Math.max(1, item.imageWidth),
           bodyHeight / Math.max(1, item.imageHeight)
         );
         const imageWidth = item.imageWidth * imageScale;
@@ -1442,24 +1392,17 @@
       }
 
       const parts = [];
-
       if (item.title) {
         parts.push({
-          text:item.title,
-          ratio:.42,
-          max:78 * config.textScale,
+          text:item.title, ratio:.42, max:78 * config.textScale,
           min:Math.max(5, 8 * config.textScale),
-          family:'"Noto Sans JP", sans-serif',
-          weight:"700",
-          color:"#0f172a"
+          family:'"Noto Sans JP", sans-serif', weight:"700", color:"#0f172a"
         });
       }
 
       if (!["無料配布","Web展示"].includes(item.category) && item.price) {
         parts.push({
-          text:item.price,
-          ratio:.28,
-          max:100 * config.textScale,
+          text:item.price, ratio:.28, max:100 * config.textScale,
           min:Math.max(5, 8 * config.textScale),
           family:'"M PLUS Rounded 1c", sans-serif',
           weight:"700",
@@ -1484,9 +1427,7 @@
 
       for (const part of parts) {
         const partHeight = Math.max(1, bodyHeight * part.ratio / Math.max(.01, ratioSum));
-        fitText(
-          context,
-          part.text,
+        fitText(context, part.text,
           { x:textX, y:cursorY, width:textWidth, height:partHeight },
           {
             maxFont:part.max,
@@ -1494,8 +1435,7 @@
             family:part.family,
             weight:part.weight,
             color:part.color
-          }
-        );
+          });
         cursorY += partHeight;
       }
 
@@ -1517,93 +1457,90 @@
     }
 
     function renderCanvas() {
-      if (!ctx || !canvas.width || !canvas.height) return;
+      try {
+        if (!canvas || !outputWidth || !outputHeight) return;
 
-      const token = ++renderToken;
-      ctx.setTransform(1, 0, 0, 1, 0, 0);
-      ctx.clearRect(0, 0, outputWidth, outputHeight);
-      drawBackground(ctx);
+        const token = ++renderToken;
+        const context = canvas.getContext("2d", { alpha:false });
+        if (!context) throw new Error("2Dプレビュー用Canvasを取得できません。");
 
-      const social = SOCIAL_LAYOUTS[paper] || null;
-      const isSocial = Boolean(social);
-      const landscape = orientation === "LANDSCAPE";
-      const headerHeight = social
-        ? social.header
-        : Math.round(trimHeight * (landscape ? .17 : .15));
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.clearRect(0, 0, outputWidth, outputHeight);
+        drawBackground(context);
 
-      const headerColor = document.getElementById("headerBgColor").value || "#333333";
-      const accentColor = document.getElementById("headerAccentColor").value || selectedPalette.accent;
+        const social = SOCIAL_LAYOUTS[paper] || null;
+        const landscape = orientation === "LANDSCAPE";
+        const headerHeight = social
+          ? social.header
+          : Math.round(trimHeight * (landscape ? .17 : .15));
 
-      // ヘッダー背景色を上・左右の塗り足しまで適用。
-      ctx.fillStyle = headerColor;
-      ctx.fillRect(0, 0, outputWidth, Math.min(outputHeight, bleedTop + headerHeight));
+        context.fillStyle = document.getElementById("headerBgColor").value || "#333333";
+        context.fillRect(0, 0, outputWidth, Math.min(outputHeight, bleedTop + headerHeight));
 
-      const accentHeight = social
-        ? Math.max(3, Math.round(headerHeight * .025))
-        : Math.max(8, Math.round(12 * trimWidth / 3307));
+        const accentHeight = social
+          ? Math.max(3, Math.round(headerHeight * .025))
+          : Math.max(8, Math.round(12 * trimWidth / 3307));
 
-      ctx.fillStyle = accentColor;
-      ctx.fillRect(
-        bleedLeft,
-        bleedTop + headerHeight - accentHeight,
-        trimWidth,
-        accentHeight
-      );
+        context.fillStyle = document.getElementById("headerAccentColor").value || selectedPalette.accent;
+        context.fillRect(bleedLeft, bleedTop + headerHeight - accentHeight, trimWidth, accentHeight);
 
-      const eventStyle = getHeaderStyle("eventInfo", social ? social.eventFont : 60, "#ffffff");
-      const circleStyle = getHeaderStyle("circleInfo", social ? social.circleFont : 150, "#ffffff");
-      const spaceStyle = getHeaderStyle("spaceInfo", social ? social.spaceFont : 90, "#ffffff");
+        const eventStyle = getHeaderStyle("eventInfo", social ? social.eventFont : 60, "#ffffff");
+        const circleStyle = getHeaderStyle("circleInfo", social ? social.circleFont : 150, "#ffffff");
+        const spaceStyle = getHeaderStyle("spaceInfo", social ? social.spaceFont : 90, "#ffffff");
 
-      drawHeader(ctx, social, headerHeight, landscape, eventStyle, circleStyle, spaceStyle);
+        drawHeader(context, social, headerHeight, landscape, eventStyle, circleStyle, spaceStyle);
 
-      let columns = 2;
-      if (paper === "WEB_LANDSCAPE") {
-        columns = items.length <= 1 ? 1 : 2;
-      } else if (isSocial) {
-        columns = items.length <= 3 ? 1 : 2;
-      } else if (landscape) {
-        columns = items.length <= 1 ? 1 : (items.length > 4 ? 3 : 2);
-      } else if (items.length <= 3) {
-        columns = 1;
+        let columns = 2;
+        if (paper === "WEB_LANDSCAPE") columns = items.length <= 1 ? 1 : 2;
+        else if (social) columns = items.length <= 3 ? 1 : 2;
+        else if (landscape) columns = items.length <= 1 ? 1 : (items.length > 4 ? 3 : 2);
+        else if (items.length <= 3) columns = 1;
+
+        const marginX = social ? social.marginX : safeX;
+        const marginY = social ? social.marginY : safeY;
+        const scale = trimWidth / 3307;
+        const gapX = social ? social.gapX : Math.round(40 * scale);
+        const gapY = social ? social.gapY : Math.round(40 * scale);
+        const padding = social ? social.padding : Math.round(25 * scale);
+        const startY = headerHeight + (social ? 10 : Math.max(24 * scale, safeY));
+        const rows = Math.max(1, Math.ceil(items.length / columns));
+
+        const cardWidth = Math.max(1,
+          (trimWidth - marginX * 2 - gapX * (columns - 1)) / columns);
+        const cardHeight = Math.max(1,
+          (trimHeight - startY - marginY - gapY * (rows - 1)) / rows);
+
+        const config = {
+          social:Boolean(social),
+          padding,
+          radius:social ? 12 : Math.max(12, 24 * scale),
+          categoryBand:social ? social.categoryBand : cardHeight * .14,
+          ageBand:social ? social.ageBand : cardHeight * .09,
+          borderWidth:social ? 2 : Math.max(2, 4 * scale),
+          textScale:social ? social.cardScale : scale
+        };
+
+        items.forEach((item, index) => {
+          if (token !== renderToken) return;
+
+          const row = Math.floor(index / columns);
+          const column = index % columns;
+          const x = bleedLeft + marginX + column * (cardWidth + gapX);
+          const y = bleedTop + startY + row * (cardHeight + gapY);
+
+          drawCard(context, item, x, y, cardWidth, cardHeight, config, landscape);
+        });
+      } catch (error) {
+        console.error("プレビューの描画に失敗しました。", error);
+        const context = canvas.getContext("2d");
+        if (context && canvas.width && canvas.height) {
+          context.fillStyle = "#fff1f1";
+          context.fillRect(0, 0, canvas.width, canvas.height);
+          context.fillStyle = "#991b1b";
+          context.font = "20px sans-serif";
+          context.fillText("プレビュー描画エラー。入力内容を確認してください。", 24, 40);
+        }
       }
-
-      const marginX = social ? social.marginX : safeX;
-      const marginY = social ? social.marginY : safeY;
-      const baseScale = trimWidth / 3307;
-      const gapX = social ? social.gapX : Math.round(40 * baseScale);
-      const gapY = social ? social.gapY : Math.round(40 * baseScale);
-      const padding = social ? social.padding : Math.round(25 * baseScale);
-      const startY = headerHeight + (social ? 10 : Math.max(24 * baseScale, safeY));
-      const rows = Math.max(1, Math.ceil(items.length / columns));
-
-      const cardWidth = Math.max(
-        1,
-        (trimWidth - marginX * 2 - gapX * (columns - 1)) / columns
-      );
-      const cardHeight = Math.max(
-        1,
-        (trimHeight - startY - marginY - gapY * (rows - 1)) / rows
-      );
-
-      const config = {
-        social:isSocial,
-        padding,
-        radius:social ? 12 : Math.max(12, 24 * baseScale),
-        categoryBand:social ? social.categoryBand : cardHeight * .14,
-        ageBand:social ? social.ageBand : cardHeight * .09,
-        borderWidth:social ? 2 : Math.max(2, 4 * baseScale),
-        textScale:social ? social.cardScale : baseScale
-      };
-
-      items.forEach((item, index) => {
-        if (token !== renderToken) return;
-
-        const row = Math.floor(index / columns);
-        const column = index % columns;
-        const x = bleedLeft + marginX + column * (cardWidth + gapX);
-        const y = bleedTop + startY + row * (cardHeight + gapY);
-        drawCard(ctx, item, x, y, cardWidth, cardHeight, config, landscape);
-      });
     }
 
     function applyPreviewScale(scale) {
@@ -1617,8 +1554,7 @@
       container.style.width = `${outputWidth * safeScale}px`;
       container.style.height = `${outputHeight * safeScale}px`;
 
-      document.getElementById("zoomDisplay").textContent =
-        `表示 ${Math.round(safeScale * 100)}%`;
+      document.getElementById("zoomDisplay").textContent = `表示 ${Math.round(safeScale * 100)}%`;
       document.getElementById("zoomSlider").value =
         String(Math.max(1, Math.min(200, Math.round(safeScale * 100))));
     }
@@ -1858,6 +1794,7 @@ document.getElementById("print").onclick=()=>window.print();
         stage.style.backgroundSize = "20px 20px";
       });
 
+      setupScaler();
       setupToolbarDrag();
       document.getElementById("printPreviewBtn").addEventListener("click", openPreview);
 
