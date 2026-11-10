@@ -94,7 +94,6 @@
       background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
     }
 
-    /* スマホでは設定欄の後にプレビューを表示 */
     @media (max-width: 767px) {
       #mainLayout {
         display: block;
@@ -180,7 +179,6 @@
       </div>
 
       <div id="settingsContent" class="flex-1 overflow-y-auto p-4 space-y-4">
-
         <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
           <h3 class="text-xs font-bold text-rose-400">レイアウト・用紙設定</h3>
 
@@ -210,6 +208,7 @@
 
         <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
           <h3 class="text-xs font-bold text-rose-400">背景デザイン</h3>
+
           <label class="block text-[11px] text-slate-400">
             背景の種類
             <select id="bgTypeSelect" class="form-control">
@@ -230,6 +229,7 @@
                 <option value="check">チェック</option>
               </select>
             </label>
+
             <div>
               <span class="block text-[11px] text-slate-400 mb-1.5">規定カラー</span>
               <div id="presetColorPalette" class="grid grid-cols-4 gap-1.5"></div>
@@ -255,14 +255,17 @@
 
         <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
           <h3 class="text-xs font-bold text-rose-400">イベント・サークル情報</h3>
+
           <label class="block text-[11px] text-slate-400">
             イベント日時
             <input id="eventDate" type="text" value="2026年12月30日(水)" class="form-control">
           </label>
+
           <label class="block text-[11px] text-slate-400">
             イベント名
             <input id="eventName" type="text" value="コミックマーケット109" class="form-control">
           </label>
+
           <div class="grid grid-cols-2 gap-2">
             <label class="block text-[11px] text-slate-400">
               サークル名
@@ -467,32 +470,10 @@
       PICREA: { width: 800 * 25.4 / 200, height: 1600 * 25.4 / 200 }
     };
 
-    // 出力寸法は縦向き基準。A2/A3は200dpi、A4は350dpi。
     const PRINT_EXPORT_SPECS = {
-      A2: {
-        widthMm: 426,
-        heightMm: 600,
-        widthPx: 3354,
-        heightPx: 4724,
-        trimWidthMm: 420,
-        trimHeightMm: 594
-      },
-      A3: {
-        widthMm: 303,
-        heightMm: 426,
-        widthPx: 2386,
-        heightPx: 3354,
-        trimWidthMm: 297,
-        trimHeightMm: 420
-      },
-      A4: {
-        widthMm: 216,
-        heightMm: 303,
-        widthPx: 2976,
-        heightPx: 4175,
-        trimWidthMm: 210,
-        trimHeightMm: 297
-      }
+      A2: { widthMm: 426, heightMm: 600, widthPx: 3354, heightPx: 4724, trimWidthMm: 420, trimHeightMm: 594 },
+      A3: { widthMm: 303, heightMm: 426, widthPx: 2386, heightPx: 3354, trimWidthMm: 297, trimHeightMm: 420 },
+      A4: { widthMm: 216, heightMm: 303, widthPx: 2976, heightPx: 4175, trimWidthMm: 210, trimHeightMm: 297 }
     };
 
     const SOCIAL_PRESETS = {
@@ -581,6 +562,7 @@
       setupResponsiveScaler();
       setupEventListeners();
       updateCanvasDimensions();
+      generateOshinagaki();
       lucide.createIcons();
     });
 
@@ -639,8 +621,8 @@
       } else {
         orientationSelect.disabled = false;
         currentOrientation = orientationSelect.value;
-
         const spec = SPECS[currentPaperSize];
+
         if (currentOrientation === "LANDSCAPE") {
           CANVAS_WIDTH = spec.width;
           CANVAS_HEIGHT = spec.height;
@@ -1089,26 +1071,24 @@
         evented: false
       });
 
-      // 領域に全文が収まる最大フォントサイズを二分探索
       let low = minFontSize;
       let high = maxSize;
       let best = null;
 
       for (let i = 0; i < 22; i += 1) {
-        const size = (low + high) / 2;
-        const candidate = create(content, size);
+        const fontSize = (low + high) / 2;
+        const candidate = create(content, fontSize);
 
         if (candidate.height <= safeHeight) {
           best = candidate;
-          low = size;
+          low = fontSize;
         } else {
-          high = size;
+          high = fontSize;
         }
       }
 
       if (best) return best;
 
-      // 最小サイズでも収まらないときは、文字列を省略して領域内に収める
       const chars = Array.from(content);
       let lowLength = 0;
       let highLength = chars.length;
@@ -1130,6 +1110,31 @@
       }
 
       return shortened;
+    }
+
+    function fittedTextbox(text, box, options = {}) {
+      const textbox = createFittedTextbox(
+        text,
+        box.width,
+        box.height,
+        Number(options.fontSize) || 24,
+        {
+          minFontSize: Number(options.minimum) || 8,
+          fontFamily: options.fontFamily || "Noto Sans JP",
+          fontWeight: options.fontWeight || "normal",
+          fill: options.fill || "#ffffff",
+          backgroundColor: options.backgroundColor || "",
+          padding: options.padding || 0,
+          lineHeight: options.lineHeight || 1
+        }
+      );
+
+      textbox.set({
+        left: box.left,
+        top: box.top
+      });
+
+      return textbox;
     }
 
     function getCategoryStyle(category) {
@@ -1266,27 +1271,6 @@
       });
     }
 
-    function fittedInfoTextbox(text, box, options) {
-      return createFittedTextbox(
-        text,
-        box.width,
-        box.height,
-        options.fontSize,
-        {
-          minFontSize: options.minimum || 8,
-          fontFamily: options.fontFamily || "Noto Sans JP",
-          fontWeight: options.fontWeight || "normal",
-          fill: options.fill,
-          backgroundColor: options.backgroundColor,
-          padding: options.padding || 0,
-          lineHeight: 1
-        }
-      ).set({
-        left: box.left,
-        top: box.top
-      });
-    }
-
     function drawSocialHeader(social, headerHeight, eventStyle, circleStyle, spaceStyle) {
       const margin = social.marginX;
       const width = CANVAS_WIDTH - margin * 2;
@@ -1302,7 +1286,7 @@
 
       let y = top;
 
-      canvas.add(fittedInfoTextbox(
+      canvas.add(fittedTextbox(
         `${document.getElementById("eventDate").value}  |  ${document.getElementById("eventName").value}`,
         { left: margin, top: y, width, height: eventHeight },
         {
@@ -1316,7 +1300,7 @@
 
       y += eventHeight + gap;
 
-      canvas.add(fittedInfoTextbox(
+      canvas.add(fittedTextbox(
         document.getElementById("circleName").value,
         { left: margin, top: y, width, height: circleHeight },
         {
@@ -1333,7 +1317,7 @@
 
       const spaceNo = document.getElementById("spaceNo").value;
       if (spaceNo) {
-        canvas.add(fittedInfoTextbox(
+        canvas.add(fittedTextbox(
           ` ${spaceNo} `,
           { left: margin, top: y, width, height: spaceHeight },
           {
@@ -1357,7 +1341,7 @@
       safeInsetY
     ) {
       const margin = Math.max(80, safeInsetX + 8);
-      const width = Math.max(1, CANVAS_WIDTH - margin * 2);
+      const width = CANVAS_WIDTH - margin * 2;
       const scale = Math.min(CANVAS_WIDTH / 3307, CANVAS_HEIGHT / 2339);
 
       if (landscape) {
@@ -1380,7 +1364,7 @@
           height: 84 * scale
         };
 
-        canvas.add(fittedInfoTextbox(
+        canvas.add(fittedTextbox(
           `${document.getElementById("eventDate").value}  |  ${document.getElementById("eventName").value}`,
           eventBox,
           {
@@ -1392,7 +1376,7 @@
           }
         ));
 
-        canvas.add(fittedInfoTextbox(
+        canvas.add(fittedTextbox(
           document.getElementById("circleName").value,
           circleBox,
           {
@@ -1407,7 +1391,7 @@
 
         const spaceNo = document.getElementById("spaceNo").value;
         if (spaceNo) {
-          canvas.add(fittedInfoTextbox(
+          canvas.add(fittedTextbox(
             ` ${spaceNo} `,
             spaceBox,
             {
@@ -1424,26 +1408,27 @@
         return;
       }
 
+      const safeY = Math.max(safeInsetY, 24);
       const eventBox = {
         left: margin,
-        top: Math.max(safeInsetY, 24),
+        top: safeY,
         width,
         height: 58
       };
       const circleBox = {
         left: margin,
-        top: Math.max(safeInsetY, 24) + 72,
+        top: safeY + 72,
         width,
         height: 120
       };
       const spaceBox = {
         left: margin,
-        top: Math.max(safeInsetY, 24) + 210,
+        top: safeY + 210,
         width,
         height: 84
       };
 
-      canvas.add(fittedInfoTextbox(
+      canvas.add(fittedTextbox(
         `${document.getElementById("eventDate").value}  |  ${document.getElementById("eventName").value}`,
         eventBox,
         {
@@ -1455,7 +1440,7 @@
         }
       ));
 
-      canvas.add(fittedInfoTextbox(
+      canvas.add(fittedTextbox(
         document.getElementById("circleName").value,
         circleBox,
         {
@@ -1470,7 +1455,7 @@
 
       const spaceNo = document.getElementById("spaceNo").value;
       if (spaceNo) {
-        canvas.add(fittedInfoTextbox(
+        canvas.add(fittedTextbox(
           ` ${spaceNo} `,
           spaceBox,
           {
@@ -1535,10 +1520,7 @@
         evented: false
       }));
 
-      const accentHeight = isSocial
-        ? Math.max(4, Math.round(headerHeight * .025))
-        : 12;
-
+      const accentHeight = isSocial ? Math.max(4, Math.round(headerHeight * .025)) : 12;
       canvas.add(new fabric.Rect({
         left: 0,
         top: headerHeight - accentHeight,
@@ -1569,22 +1551,9 @@
       );
 
       if (social) {
-        drawSocialHeader(
-          social,
-          headerHeight,
-          eventStyle,
-          circleStyle,
-          spaceStyle
-        );
+        drawSocialHeader(social, headerHeight, eventStyle, circleStyle, spaceStyle);
       } else {
-        drawPrintHeader(
-          landscape,
-          eventStyle,
-          circleStyle,
-          spaceStyle,
-          safeInsetX,
-          safeInsetY
-        );
+        drawPrintHeader(landscape, eventStyle, circleStyle, spaceStyle, safeInsetX, safeInsetY);
       }
 
       let columns = 2;
@@ -1600,12 +1569,8 @@
         columns = 1;
       }
 
-      const marginX = social
-        ? social.marginX
-        : Math.max(70, safeInsetX + 8);
-      const marginY = social
-        ? social.marginY
-        : Math.max(40, safeInsetY + 8);
+      const marginX = social ? social.marginX : Math.max(70, safeInsetX + 8);
+      const marginY = social ? social.marginY : Math.max(40, safeInsetY + 8);
       const gapX = social ? social.gapX : 40;
       const gapY = social ? social.gapY : 40;
       const padding = social ? social.padding : 25;
@@ -1772,7 +1737,6 @@
           );
         }
 
-        // 枠線は最後に描き、カード内容の上に表示
         canvas.add(new fabric.Rect({
           left: x,
           top: y,
@@ -1881,15 +1845,12 @@
       const outputHeightPx = landscape ? spec.widthPx : spec.heightPx;
       const outputWidthMm = landscape ? spec.heightMm : spec.widthMm;
       const outputHeightMm = landscape ? spec.widthMm : spec.heightMm;
+
       const trimWidthMm = landscape ? spec.trimHeightMm : spec.trimWidthMm;
       const trimHeightMm = landscape ? spec.trimWidthMm : spec.trimHeightMm;
 
-      const trimWidthPx = Math.round(
-        trimWidthMm * outputWidthPx / outputWidthMm
-      );
-      const trimHeightPx = Math.round(
-        trimHeightMm * outputHeightPx / outputHeightMm
-      );
+      const trimWidthPx = Math.round(trimWidthMm * outputWidthPx / outputWidthMm);
+      const trimHeightPx = Math.round(trimHeightMm * outputHeightPx / outputHeightMm);
 
       const horizontalBleed = outputWidthPx - trimWidthPx;
       const verticalBleed = outputHeightPx - trimHeightPx;
@@ -1902,7 +1863,6 @@
         canvas.toDataURL({ format: "png", multiplier: 1 })
       );
 
-      // 仕上がり領域を指定解像度にリサイズしてから塗り足しを作成
       const trimCanvas = document.createElement("canvas");
       trimCanvas.width = trimWidthPx;
       trimCanvas.height = trimHeightPx;
@@ -1934,7 +1894,6 @@
       const x = leftBleed;
       const y = topBleed;
 
-      // 仕上がり端のピクセルを塗り足し領域へ延長
       if (topBleed) {
         context.drawImage(
           trimCanvas, 0, 0, trimWidthPx, 1,
@@ -1992,15 +1951,6 @@
         heightMm: outputHeightMm,
         hasBleed: true
       };
-    }
-
-    function loadImage(url) {
-      return new Promise((resolve, reject) => {
-        const image = new Image();
-        image.onload = () => resolve(image);
-        image.onerror = () => reject(new Error("画像を読み込めませんでした。"));
-        image.src = url;
-      });
     }
 
     function setupDraggablePreviewToolbar() {
@@ -2106,9 +2056,9 @@ html,body{width:${output.widthMm}mm;height:${output.heightMm}mm;margin:0;padding
 <body>
 <div class="toolbar">
 <strong>プレビュー（${label}）</strong>
-<button id="actual" type="button">100%表示</button>
-<button id="fit" type="button">画面に合わせる</button>
-<button id="print" class="print" type="button">印刷</button>
+<button id="actual">100%表示</button>
+<button id="fit">画面に合わせる</button>
+<button id="print" class="print">印刷</button>
 <span>${output.widthPx} × ${output.heightPx}px</span>
 </div>
 <main class="preview"><div class="sheet"><img src="${output.dataUrl}" alt="出力プレビュー"></div></main>
