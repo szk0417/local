@@ -61,11 +61,6 @@
       line-height: 0;
     }
 
-    /*
-      Canvasは原寸のまま保持します。
-      このステージだけをCSS transformで拡大縮小し、
-      containerは表示倍率に合わせた大きさにします。
-    */
     #canvasStage {
       position: absolute;
       left: 0;
@@ -77,6 +72,7 @@
       display: block;
     }
 
+    /* 編集プレビュー専用の方眼。PNG/PDFには含まれません。 */
     .grid-overlay {
       position: absolute;
       inset: 0;
@@ -276,12 +272,13 @@
                 class="mt-1 h-9 w-full rounded border border-slate-700 bg-slate-800 p-1">
             </label>
           </div>
+
           <p class="text-[10px] text-slate-500">
             規定カラーを選ぶとおすすめ配色が適用されます。各色は個別に変更できます。
           </p>
         </section>
 
-        <!-- ヘッダー情報の文字・背景設定 -->
+        <!-- 情報ボックスの文字・背景設定 -->
         <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
           <h3 class="text-xs font-bold text-rose-400">
             情報ボックスの文字・背景設定
@@ -367,6 +364,7 @@
             <i data-lucide="images" class="w-3.5 h-3.5"></i>
             頒布物画像 一括アップロード
           </h3>
+
           <label class="flex flex-col items-center justify-center w-full h-20 border-2 border-dashed border-rose-500/50 hover:border-rose-400 rounded-xl cursor-pointer bg-slate-800/40 hover:bg-slate-800 transition p-2">
             <i data-lucide="upload-cloud" class="w-6 h-6 text-rose-400 mb-1"></i>
             <span class="text-xs text-slate-200 font-bold">画像をまとめて選択（複数可）</span>
@@ -516,16 +514,16 @@
       }
     };
 
-    const PAPER_MM = {
-      A2: { width: 420, height: 594 },
-      A3: { width: 297, height: 420 },
-      A4: { width: 210, height: 297 }
-    };
-
     const SPECS = {
       A2: { width: 4677, height: 3307 },
       A3: { width: 3307, height: 2339 },
       A4: { width: 2339, height: 1654 }
+    };
+
+    const PAPER_MM = {
+      A2: { width: 420, height: 594 },
+      A3: { width: 297, height: 420 },
+      A4: { width: 210, height: 297 }
     };
 
     let selectedPresetColor = PRESET_COLORS[0];
@@ -899,6 +897,7 @@
       reader.onload = (event) => {
         items[index].imageSrc = event.target.result;
         items[index].noImage = false;
+        renderFormItems();
         generateOshinagaki();
       };
       reader.readAsDataURL(file);
@@ -1170,6 +1169,32 @@
         }
       }
 
+      /*
+        非常に長い説明やタイトルで最小フォントでも収まらない場合は、
+        説明、続いてタイトルを省略してカード内に収めます。
+      */
+      if (best.totalHeight > availableHeight) {
+        let shortenedItem = { ...item };
+
+        while (shortenedItem.desc && best.totalHeight > availableHeight) {
+          const nextLength = Math.max(0, Math.floor(shortenedItem.desc.length * 0.8));
+          shortenedItem.desc = nextLength > 0
+            ? `${shortenedItem.desc.slice(0, nextLength)}…`
+            : "";
+
+          best = createItemTextBlock(shortenedItem, textWidth, low);
+        }
+
+        while (shortenedItem.title && best.totalHeight > availableHeight) {
+          const nextLength = Math.max(0, Math.floor(shortenedItem.title.length * 0.8));
+          shortenedItem.title = nextLength > 0
+            ? `${shortenedItem.title.slice(0, nextLength)}…`
+            : "";
+
+          best = createItemTextBlock(shortenedItem, textWidth, low);
+        }
+      }
+
       return best;
     }
 
@@ -1326,6 +1351,7 @@
       }
 
       let columns = 2;
+
       if (isLandscape) {
         if (items.length <= 1) columns = 1;
         else if (items.length > 4) columns = 3;
@@ -1384,11 +1410,9 @@
           };
 
           textX = imageBox.left + imageBox.width + 25;
-          textWidth = Math.max(
-            1,
-            posX + slotWidth - padding - textX
-          );
+          textWidth = Math.max(1, posX + slotWidth - padding - textX);
         } else {
+          // 画像なしなら画像領域を作らず、テキスト領域をカード幅いっぱいにします。
           textX = posX + padding;
           textWidth = Math.max(1, slotWidth - padding * 2);
         }
@@ -1427,12 +1451,15 @@
       canvas.renderAll();
     }
 
+    /*
+      キャンバスの論理サイズは変更せず、プレビュー用ステージを拡大縮小します。
+      このためPNG・PDFの出力サイズにはプレビュー倍率が影響しません。
+    */
     function applyPreviewScale(scale) {
       if (!canvas) return;
 
       const container = document.getElementById("canvasContainer");
       const stage = document.getElementById("canvasStage");
-      const overlay = document.getElementById("gridOverlay");
       const safeScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
 
       stage.style.width = `${CANVAS_WIDTH}px`;
@@ -1441,12 +1468,6 @@
 
       container.style.width = `${CANVAS_WIDTH * safeScale}px`;
       container.style.height = `${CANVAS_HEIGHT * safeScale}px`;
-      overlay.style.backgroundSize = [
-        `${100 * safeScale}px ${100 * safeScale}px`,
-        `${100 * safeScale}px ${100 * safeScale}px`,
-        `${20 * safeScale}px ${20 * safeScale}px`,
-        `${20 * safeScale}px ${20 * safeScale}px`
-      ].join(", ");
 
       canvas.calcOffset();
       canvas.requestRenderAll();
@@ -1510,10 +1531,6 @@
     }
 
     function getCanvasExportDataURL() {
-      /*
-        ステージだけがCSS変換されているので、
-        Fabricキャンバス自体は原寸のままPNGに書き出されます。
-      */
       return canvas.toDataURL({
         format: "png",
         multiplier: 1
@@ -1544,22 +1561,15 @@
   <title>印刷プレビュー</title>
   <style>
     * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      min-height: 100%;
-      font-family: sans-serif;
-    }
-    body {
-      background: #1e293b;
-      color: #f8fafc;
-    }
+    html, body { margin: 0; min-height: 100%; font-family: sans-serif; }
+    body { background: #1e293b; color: #f8fafc; }
     .toolbar {
       position: sticky;
       top: 0;
       z-index: 2;
       display: flex;
-      align-items: center;
       flex-wrap: wrap;
+      align-items: center;
       gap: 8px;
       padding: 10px 14px;
       background: #0f172a;
