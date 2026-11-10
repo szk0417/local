@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html lang="ja" class="h-full bg-slate-900">
+<html lang="ja">
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width,initial-scale=1.0">
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1">
 
 <title>
-高度同人おしながきエディタ
+同人おしながきエディタ
 </title>
 
 <script src="https://cdn.tailwindcss.com"></script>
@@ -19,38 +20,32 @@ content="width=device-width,initial-scale=1.0">
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <link
-href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+JP:wght@400;700;900&family=Shippori+Mincho:wght@600;800&family=Dela+Gothic+One&family=Kaisei+Decol:wght@700&family=Yuji+Syuku&display=swap"
+href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&family=M+PLUS+Rounded+1c:wght@400;700;800&family=Shippori+Mincho:wght@400;700&display=swap"
 rel="stylesheet">
 
 <style>
+
+html,
+body{
+height:100%;
+margin:0;
+overflow:hidden;
+background:#020617;
+}
 
 ::-webkit-scrollbar{
 width:6px;
 height:6px;
 }
 
-::-webkit-scrollbar-track{
-background:#0f172a;
-}
-
 ::-webkit-scrollbar-thumb{
 background:#334155;
 }
 
-.font-noto{
-font-family:'Noto Sans JP',sans-serif;
-}
-
-.font-mplus{
-font-family:'M PLUS Rounded 1c',sans-serif;
-}
-
-.font-shippori{
-font-family:'Shippori Mincho',serif;
-}
-
-body{
-overflow:hidden;
+.canvas-shadow{
+box-shadow:
+0 0 0 1px rgba(255,255,255,.1),
+0 20px 40px rgba(0,0,0,.4);
 }
 
 </style>
@@ -59,34 +54,41 @@ overflow:hidden;
 
 <body
 class="
-h-full
+h-screen
+bg-slate-950
 text-slate-100
-flex
-flex-col
-font-sans
 ">
 
 <header
 class="
-bg-slate-800
+h-16
 border-b
-border-slate-700
-px-4
-py-2.5
+border-slate-800
+bg-slate-900
 flex
 items-center
 justify-between
+px-4
 ">
-
-<div class="flex items-center gap-3">
 
 <div
 class="
+flex
+items-center
+gap-3
+">
+
+<div
+class="
+w-10
+h-10
+rounded-lg
 bg-gradient-to-r
 from-rose-500
 to-purple-600
-p-2
-rounded-lg
+flex
+items-center
+justify-center
 ">
 
 <i
@@ -99,70 +101,103 @@ class="w-5 h-5">
 <div>
 
 <h1
-class="font-bold">
+class="
+font-bold
+leading-none
+">
 同人おしながきエディタ
 </h1>
 
 <p
-id="paperSpecLabel"
-class="text-xs text-slate-400">
-
+id="paperLabel"
+class="
+text-xs
+text-slate-400
+">
 A3横 200dpi
-
 </p>
 
 </div>
 
 </div>
 
-<div class="flex gap-2">
+<div
+class="
+flex
+items-center
+gap-2
+">
 
 <button
 id="undoBtn"
-class="bg-slate-700 px-3 py-2 rounded">
-
+class="
+px-3
+py-2
+rounded
+bg-slate-700
+text-xs
+">
 Undo
-
 </button>
 
 <button
 id="redoBtn"
-class="bg-slate-700 px-3 py-2 rounded">
-
+class="
+px-3
+py-2
+rounded
+bg-slate-700
+text-xs
+">
 Redo
-
 </button>
 
 <button
 id="saveBtn"
-class="bg-blue-600 px-3 py-2 rounded">
-
+class="
+px-3
+py-2
+rounded
+bg-blue-600
+text-xs
+">
 保存
-
 </button>
 
 <button
 id="loadBtn"
-class="bg-indigo-600 px-3 py-2 rounded">
-
+class="
+px-3
+py-2
+rounded
+bg-indigo-600
+text-xs
+">
 読込
-
 </button>
 
 <button
-id="exportPng"
-class="bg-emerald-600 px-3 py-2 rounded">
-
+id="exportPNG"
+class="
+px-3
+py-2
+rounded
+bg-emerald-600
+text-xs
+">
 PNG
-
 </button>
 
 <button
-id="exportPdf"
-class="bg-rose-600 px-3 py-2 rounded">
-
+id="exportPDF"
+class="
+px-3
+py-2
+rounded
+bg-rose-600
+text-xs
+">
 PDF
-
 </button>
 
 </div>
@@ -171,15 +206,19 @@ PDF
 
 <div
 class="
-flex-1
+h-[calc(100vh-64px)]
 flex
 overflow-hidden
 ">
 
+<!-- 左ツールバー -->
+
 <aside
 class="
-w-[420px]
-bg-slate-800
+w-[300px]
+border-r
+border-slate-800
+bg-slate-900
 overflow-y-auto
 p-4
 space-y-4
@@ -187,16 +226,20 @@ space-y-4
 
 <div
 class="
-bg-slate-900
+bg-slate-800
 rounded-xl
-p-3
-space-y-3
+p-4
+space-y-2
 ">
 
 <h3
-class="text-rose-400 font-bold">
+class="
+font-bold
+text-rose-400
+text-sm
+">
 
-キャンバス設定
+キャンバス
 
 </h3>
 
@@ -204,62 +247,65 @@ class="text-rose-400 font-bold">
 id="orientationSelect"
 class="
 w-full
-bg-slate-800
+bg-slate-700
 p-2
 rounded
+text-sm
 ">
 
 <option value="LANDSCAPE">
-
 A3横
-
 </option>
 
 <option value="PORTRAIT">
-
 A3縦
-
 </option>
 
 </select>
 
 <input
 type="color"
-id="canvasBgPicker"
+id="canvasColor"
 value="#ffffff"
 class="w-full h-10">
 
 <input
 type="file"
-id="bgImageInput"
+id="backgroundInput"
 accept="image/*"
-class="w-full text-xs">
+class="
+w-full
+text-xs
+">
 
 <button
-id="clearBgBtn"
+id="clearBackgroundBtn"
 class="
 w-full
 bg-slate-700
 rounded
 py-2
+text-sm
 ">
-
 背景クリア
-
 </button>
 
 </div>
 
 <div
 class="
-bg-slate-900
+bg-slate-800
 rounded-xl
-p-3
+p-4
 space-y-2
 ">
 
 <h3
-class="text-rose-400 font-bold">
+class="
+font-bold
+text-rose-400
+text-sm
+">
 
 オブジェクト追加
 
@@ -270,301 +316,67 @@ id="addTextBtn"
 class="
 w-full
 bg-slate-700
-py-2
 rounded
+py-2
 ">
-
 テキスト追加
-
 </button>
 
 <button
-id="addBookCoverBtn"
+id="addCoverBtn"
 class="
 w-full
 bg-slate-700
-py-2
 rounded
+py-2
 ">
-
 表紙テンプレ
-
 </button>
 
 <input
 type="file"
+id="imageUpload"
 multiple
 accept="image/*"
-id="imageAddInput"
-class="w-full text-xs">
+class="
+w-full
+text-xs
+">
 
 </div>
-<!-- プロパティパネル -->
 
 <div
-id="propertyPanel"
 class="
-bg-slate-900
+bg-slate-800
 rounded-xl
-p-3
-space-y-3
-opacity-50
-pointer-events-none
+p-4
 ">
 
 <h3
 class="
-text-rose-400
 font-bold
-">
-
-選択オブジェクト
-
-</h3>
-
-<div id="textControls">
-
-<label
-class="block text-xs mb-1">
-フォント
-</label>
-
-<select
-id="fontFamilySelect"
-class="
-w-full
-bg-slate-800
-p-2
-rounded
-">
-
-<option value="Noto Sans JP">
-Noto Sans JP
-</option>
-
-<option value="M PLUS Rounded 1c">
-M PLUS Rounded
-</option>
-
-<option value="Shippori Mincho">
-Shippori Mincho
-</option>
-
-<option value="Dela Gothic One">
-Dela Gothic One
-</option>
-
-<option value="Kaisei Decol">
-Kaisei Decol
-</option>
-
-<option value="Yuji Syuku">
-Yuji Syuku
-</option>
-
-</select>
-
-<label
-class="
-block
-text-xs
-mt-3
-mb-1
-">
-
-文字サイズ
-
-</label>
-
-<input
-type="number"
-id="fontSizeInput"
-value="60"
-class="
-w-full
-bg-slate-800
-p-2
-rounded
-">
-
-<label
-class="
-block
-text-xs
-mt-3
-mb-1
-">
-
-文字色
-
-</label>
-
-<input
-type="color"
-id="textColorPicker"
-value="#0f172a"
-class="
-w-full
-h-10
-">
-
-<div class="flex gap-2 mt-3">
-
-<button
-id="toggleBoldBtn"
-class="
-flex-1
-bg-slate-700
-py-2
-rounded
-">
-
-太字
-
-</button>
-
-<button
-id="toggleItalicBtn"
-class="
-flex-1
-bg-slate-700
-py-2
-rounded
-">
-
-斜体
-
-</button>
-
-</div>
-
-</div>
-
-<div class="grid grid-cols-2 gap-2">
-
-<button
-id="bringForwardBtn"
-class="
-bg-slate-700
-py-2
-rounded
-">
-
-前面
-
-</button>
-
-<button
-id="sendBackwardsBtn"
-class="
-bg-slate-700
-py-2
-rounded
-">
-
-背面
-
-</button>
-
-</div>
-
-<button
-id="deleteObjectBtn"
-class="
-w-full
-bg-rose-600
-py-2
-rounded
-">
-
-削除
-
-</button>
-
-</div>
-
-<!-- 整列パネル -->
-
-<div
-class="
-bg-slate-900
-rounded-xl
-p-3
-space-y-3
-">
-
-<h3
-class="
 text-rose-400
-font-bold
+text-sm
+mb-2
 ">
 
-整列
+レイヤー
 
 </h3>
 
 <div
+id="layerPanel"
 class="
-grid
-grid-cols-3
-gap-2
+space-y-1
+text-xs
 ">
-
-<button
-onclick="alignObjects('left')"
-class="bg-slate-700 py-2 rounded text-xs">
-
-左
-
-</button>
-
-<button
-onclick="alignObjects('center')"
-class="bg-slate-700 py-2 rounded text-xs">
-
-中央
-
-</button>
-
-<button
-onclick="alignObjects('right')"
-class="bg-slate-700 py-2 rounded text-xs">
-
-右
-
-</button>
-
-<button
-onclick="alignObjects('top')"
-class="bg-slate-700 py-2 rounded text-xs">
-
-上
-
-</button>
-
-<button
-onclick="alignObjects('middle')"
-class="bg-slate-700 py-2 rounded text-xs">
-
-中
-
-</button>
-
-<button
-onclick="alignObjects('bottom')"
-class="bg-slate-700 py-2 rounded text-xs">
-
-下
-
-</button>
-
 </div>
 
 </div>
 
 </aside>
 
-<!-- ワークスペース -->
+<!-- 中央キャンバス -->
 
 <main
 id="workspace"
@@ -583,32 +395,16 @@ class="
 absolute
 top-4
 left-4
-z-10
-bg-slate-800
+z-20
+bg-slate-900/80
+rounded-full
 px-3
 py-1
-rounded-full
 text-xs
 ">
 
 <span id="zoomDisplay">
-
-表示:100%
-
-</span>
-
-<span
-class="mx-2">
-
-|
-
-</span>
-
-<span
-id="dimensionDisplay">
-
-A3横
-
+100%
 </span>
 
 </div>
@@ -616,20 +412,118 @@ A3横
 <div
 id="canvasContainer"
 class="
+canvas-shadow
 bg-white
-shadow-2xl
-border
-border-slate-700
 overflow-hidden
 ">
 
 <canvas
-id="oshinagakiCanvas">
+id="editorCanvas">
 </canvas>
 
 </div>
 
 </main>
+
+<!-- 右プロパティ -->
+
+<aside
+class="
+w-[320px]
+border-l
+border-slate-800
+bg-slate-900
+overflow-y-auto
+p-4
+">
+
+<div
+id="propertyPanel"
+class="
+space-y-3
+opacity-50
+pointer-events-none
+">
+
+<h3
+class="
+text-rose-400
+font-bold
+text-sm
+">
+
+オブジェクト設定
+
+</h3>
+
+<select
+id="fontFamily"
+class="
+w-full
+bg-slate-700
+p-2
+rounded
+">
+
+<option>
+Noto Sans JP
+</option>
+
+<option>
+M PLUS Rounded 1c
+</option>
+
+<option>
+Shippori Mincho
+</option>
+
+</select>
+
+<input
+type="number"
+id="fontSize"
+value="60"
+class="
+w-full
+bg-slate-700
+rounded
+p-2
+">
+
+<input
+type="color"
+id="fontColor"
+value="#000000"
+class="
+w-full
+h-10
+">
+
+<button
+id="boldBtn"
+class="
+w-full
+bg-slate-700
+rounded
+py-2
+">
+太字
+</button>
+
+<button
+id="deleteBtn"
+class="
+w-full
+bg-rose-600
+rounded
+py-2
+">
+削除
+</button>
+
+</div>
+
+</aside>
 
 </div>
 
@@ -637,27 +531,18 @@ id="oshinagakiCanvas">
 
 lucide.createIcons();
 
-const A3_SPECS = {
-
+const A3 = {
 width:3307,
 height:2339
-
 };
 
-let currentOrientation =
-"LANDSCAPE";
-
-let CANVAS_WIDTH =
-A3_SPECS.width;
-
-let CANVAS_HEIGHT =
-A3_SPECS.height;
-
 let canvas;
-let bgImageObj = null;
+let bgImage=null;
 
-const history = [];
-let historyIndex = -1;
+const history=[];
+let historyIndex=-1;
+let CANVAS_WIDTH = A3.width;
+let CANVAS_HEIGHT = A3.height;
 
 window.addEventListener(
 "DOMContentLoaded",
@@ -665,11 +550,11 @@ window.addEventListener(
 
 initCanvas();
 
-setupResponsiveScaler();
+setupResponsiveCanvas();
 
-setupEventListeners();
+setupHistory();
 
-addDefaultElements();
+setupLayerPanel();
 
 }
 );
@@ -678,7 +563,7 @@ function initCanvas(){
 
 canvas =
 new fabric.Canvas(
-"oshinagakiCanvas",
+"editorCanvas",
 {
 width:CANVAS_WIDTH,
 height:CANVAS_HEIGHT,
@@ -706,98 +591,324 @@ resetPropertyPanel
 
 canvas.on(
 "object:added",
-saveHistory
-);
-
-canvas.on(
-"object:modified",
-saveHistory
+()=>{
+saveHistory();
+refreshLayers();
+}
 );
 
 canvas.on(
 "object:removed",
-saveHistory
+()=>{
+saveHistory();
+refreshLayers();
+}
+);
+
+canvas.on(
+"object:modified",
+()=>{
+saveHistory();
+refreshLayers();
+}
 );
 
 }
-function addDefaultElements(){
 
-const headerBox =
-new fabric.Rect({
-left:0,
-top:0,
-width:CANVAS_WIDTH,
-height:380,
-fill:"#0f172a"
+function setupResponsiveCanvas(){
+
+const workspace =
+document.getElementById(
+"workspace"
+);
+
+const canvasContainer =
+document.getElementById(
+"canvasContainer"
+);
+
+function resizeCanvas(){
+
+const padding = 40;
+
+const availableWidth =
+workspace.clientWidth -
+padding;
+
+const availableHeight =
+workspace.clientHeight -
+padding;
+
+const scale =
+Math.min(
+availableWidth/CANVAS_WIDTH,
+availableHeight/CANVAS_HEIGHT
+);
+
+canvasContainer.style.width =
+`${CANVAS_WIDTH*scale}px`;
+
+canvasContainer.style.height =
+`${CANVAS_HEIGHT*scale}px`;
+
+canvas.setDimensions(
+{
+width:CANVAS_WIDTH*scale,
+height:CANVAS_HEIGHT*scale
+},
+{
+cssOnly:true
+}
+);
+
+canvas.setViewportTransform([
+scale,0,0,scale,0,0
+]);
+
+canvas.requestRenderAll();
+
+document
+.getElementById(
+"zoomDisplay"
+)
+.innerText =
+`${Math.round(scale*100)}%`;
+
+}
+
+window.addEventListener(
+"resize",
+resizeCanvas
+);
+
+setTimeout(
+resizeCanvas,
+100
+);
+
+}
+
+function setupLayerPanel(){
+
+refreshLayers();
+
+}
+
+function refreshLayers(){
+
+const panel =
+document.getElementById(
+"layerPanel"
+);
+
+panel.innerHTML="";
+
+canvas
+.getObjects()
+.slice()
+.reverse()
+.forEach((obj,index)=>{
+
+const div =
+document.createElement("button");
+
+div.className =
+"w-full text-left px-2 py-1 rounded bg-slate-700 hover:bg-slate-600";
+
+const type =
+obj.type || "object";
+
+div.textContent =
+`${index+1}. ${type}`;
+
+div.onclick=()=>{
+
+canvas.setActiveObject(obj);
+
+canvas.requestRenderAll();
+
+updatePropertyPanel();
+
+};
+
+panel.appendChild(div);
+
 });
 
-const circleText =
-new fabric.Textbox(
-"サークル名",
-{
-left:80,
-top:120,
-fontSize:130,
-fontWeight:"bold",
-fontFamily:"Noto Sans JP",
-fill:"#ffffff",
-width:1800
 }
-);
+function saveHistory(){
 
-const spaceBadge =
-new fabric.Textbox(
-"東7 あ-01a",
-{
-left:CANVAS_WIDTH-900,
-top:120,
-fontSize:85,
-fontWeight:"bold",
-fontFamily:"M PLUS Rounded 1c",
-fill:"#ffffff",
-backgroundColor:"#e11d48",
-padding:20
+const json =
+JSON.stringify(canvas);
+
+if(
+historyIndex>=0 &&
+history[historyIndex]===json
+){
+return;
 }
+
+history.splice(
+historyIndex+1
 );
 
-canvas.add(
-headerBox,
-circleText,
-spaceBadge
+history.push(json);
+
+historyIndex =
+history.length-1;
+
+}
+
+function setupHistory(){
+
+document
+.getElementById(
+"undoBtn"
+)
+.addEventListener(
+"click",
+undo
 );
 
+document
+.getElementById(
+"redoBtn"
+)
+.addEventListener(
+"click",
+redo
+);
+
+}
+
+function undo(){
+
+if(historyIndex<=0)
+return;
+
+historyIndex--;
+
+canvas.loadFromJSON(
+history[historyIndex],
+()=>{
 canvas.renderAll();
+refreshLayers();
+}
+);
+
+}
+
+function redo(){
+
+if(
+historyIndex>=
+history.length-1
+)
+return;
+
+historyIndex++;
+
+canvas.loadFromJSON(
+history[historyIndex],
+()=>{
+canvas.renderAll();
+refreshLayers();
+}
+);
 
 }
 
 document
-.getElementById("addTextBtn")
+.getElementById(
+"orientationSelect"
+)
+.addEventListener(
+"change",
+(e)=>{
+
+const value = e.target.value;
+
+if(value==="LANDSCAPE"){
+
+CANVAS_WIDTH =
+A3.width;
+
+CANVAS_HEIGHT =
+A3.height;
+
+document
+.getElementById(
+"paperLabel"
+)
+.innerText =
+"A3横 200dpi";
+
+}else{
+
+CANVAS_WIDTH =
+A3.height;
+
+CANVAS_HEIGHT =
+A3.width;
+
+document
+.getElementById(
+"paperLabel"
+)
+.innerText =
+"A3縦 200dpi";
+
+}
+
+canvas.setWidth(
+CANVAS_WIDTH
+);
+
+canvas.setHeight(
+CANVAS_HEIGHT
+);
+
+setupResponsiveCanvas();
+
+canvas.renderAll();
+
+}
+);
+document
+.getElementById(
+"addTextBtn"
+)
 .addEventListener(
 "click",
 ()=>{
 
 const text =
 new fabric.Textbox(
-"新規テキスト",
+"新刊タイトル",
 {
 left:300,
-top:600,
+top:300,
 width:800,
-fontSize:60,
-fill:"#0f172a",
-fontFamily:"Noto Sans JP"
+fontSize:72,
+fill:"#000000",
+fontFamily:
+"Noto Sans JP"
 }
 );
 
 canvas.add(text);
+
 canvas.setActiveObject(text);
-canvas.renderAll();
+
+canvas.requestRenderAll();
 
 }
 );
 
 document
-.getElementById("addBookCoverBtn")
+.getElementById(
+"addCoverBtn"
+)
 .addEventListener(
 "click",
 ()=>{
@@ -808,7 +919,7 @@ width:600,
 height:850,
 fill:"#ffffff",
 stroke:"#cbd5e1",
-strokeWidth:3,
+strokeWidth:4,
 rx:20,
 ry:20
 });
@@ -817,8 +928,8 @@ const label =
 new fabric.Text(
 "表紙画像",
 {
-fontSize:48,
-fill:"#64748b",
+fontSize:64,
+fill:"#94a3b8",
 originX:"center",
 originY:"center"
 }
@@ -828,8 +939,8 @@ const group =
 new fabric.Group(
 [rect,label],
 {
-left:200,
-top:500
+left:300,
+top:400
 }
 );
 
@@ -839,49 +950,49 @@ canvas.add(group);
 );
 
 document
-.getElementById("imageAddInput")
+.getElementById(
+"imageUpload"
+)
 .addEventListener(
 "change",
 (e)=>{
 
-const files=
-Array.from(e.target.files);
+const files =
+Array.from(
+e.target.files
+);
 
 files.forEach(
 (file,index)=>{
 
-const reader=
+const reader =
 new FileReader();
 
 reader.onload=
-(evt)=>{
+(ev)=>{
 
 fabric.Image.fromURL(
-evt.target.result,
-
+ev.target.result,
 (img)=>{
-
-const maxWidth=700;
-const maxHeight=900;
 
 const scale=
 Math.min(
-maxWidth/img.width,
-maxHeight/img.height,
+700/img.width,
+900/img.height,
 1
 );
 
 img.set({
-left:200+(index*40),
-top:500+(index*40),
+left:150+
+(index*40),
+top:300+
+(index*40),
 scaleX:scale,
-scaleY:scale,
-cornerSize:20,
-transparentCorners:false
+scaleY:scale
 });
 
 canvas.add(img);
-canvas.setActiveObject(img);
+
 canvas.renderAll();
 
 }
@@ -889,90 +1000,75 @@ canvas.renderAll();
 
 };
 
-reader.readAsDataURL(file);
+reader.readAsDataURL(
+file
+);
+
+});
 
 }
 );
-
-e.target.value='';
-
-}
-);
-
 document
-.getElementById("bgImageInput")
+.getElementById(
+"backgroundInput"
+)
 .addEventListener(
 "change",
 (e)=>{
 
-const file=e.target.files[0];
+const file =
+e.target.files[0];
 
 if(!file)return;
 
-const reader=
+const reader =
 new FileReader();
 
 reader.onload=
-(evt)=>{
+(ev)=>{
 
 fabric.Image.fromURL(
-evt.target.result,
-
+ev.target.result,
 (img)=>{
 
-bgImageObj=img;
+bgImage = img;
 
-updateBackground();
+canvas
+.setBackgroundImage(
+img,
+canvas.renderAll.bind(canvas),
+{
+scaleX:
+CANVAS_WIDTH /
+img.width,
+
+scaleY:
+CANVAS_HEIGHT /
+img.height
+}
+);
 
 }
 );
 
 };
 
-reader.readAsDataURL(file);
+reader.readAsDataURL(
+file
+);
 
 }
 );
 
-function updateBackground(){
-
-if(bgImageObj){
-
-canvas.setBackgroundImage(
-bgImageObj,
-canvas.renderAll.bind(canvas),
-{
-scaleX:
-CANVAS_WIDTH/bgImageObj.width,
-
-scaleY:
-CANVAS_HEIGHT/bgImageObj.height
-}
-);
-
-}else{
-
-canvas.setBackgroundColor(
 document
 .getElementById(
-"canvasBgPicker"
+"clearBackgroundBtn"
 )
-.value,
-
-canvas.renderAll.bind(canvas)
-);
-
-}
-
-}
-
-document
-.getElementById("clearBgBtn")
 .addEventListener(
 "click",
 ()=>{
 
-bgImageObj=null;
+bgImage=null;
 
 canvas.setBackgroundImage(
 null,
@@ -983,58 +1079,63 @@ canvas.renderAll.bind(canvas)
 );
 
 document
-.getElementById("canvasBgPicker")
+.getElementById(
+"canvasColor"
+)
 .addEventListener(
 "input",
-updateBackground
+(e)=>{
+
+canvas.setBackgroundColor(
+e.target.value,
+canvas.renderAll.bind(canvas)
+);
+
+}
 );
 function updatePropertyPanel(){
 
-const active=
+const obj =
 canvas.getActiveObject();
 
-if(!active){
+if(!obj)return;
 
-resetPropertyPanel();
-return;
-
-}
-
-document
-.getElementById(
+const panel =
+document.getElementById(
 "propertyPanel"
-)
-.classList.remove(
+);
+
+panel.classList.remove(
 "opacity-50",
 "pointer-events-none"
 );
 
 if(
-active.type==="textbox" ||
-active.type==="text"
+obj.type==="textbox"||
+obj.type==="text"
 ){
 
 document
 .getElementById(
-"fontFamilySelect"
-).value=
-active.fontFamily ||
+"fontFamily"
+)
+.value =
+obj.fontFamily ||
 "Noto Sans JP";
 
 document
 .getElementById(
-"fontSizeInput"
-).value=
-Math.round(
-active.fontSize||60
-);
+"fontSize"
+)
+.value =
+obj.fontSize || 60;
 
 document
 .getElementById(
-"textColorPicker"
-).value=
-active.fill||
-"#000000";
+"fontColor"
+)
+.value =
+obj.fill || "#000000";
 
 }
 
@@ -1055,13 +1156,13 @@ document
 
 document
 .getElementById(
-"fontFamilySelect"
+"fontFamily"
 )
 .addEventListener(
 "change",
 (e)=>{
 
-const obj=
+const obj =
 canvas.getActiveObject();
 
 if(!obj)return;
@@ -1078,13 +1179,13 @@ canvas.renderAll();
 
 document
 .getElementById(
-"fontSizeInput"
+"fontSize"
 )
 .addEventListener(
 "input",
 (e)=>{
 
-const obj=
+const obj =
 canvas.getActiveObject();
 
 if(!obj)return;
@@ -1101,13 +1202,13 @@ canvas.renderAll();
 
 document
 .getElementById(
-"textColorPicker"
+"fontColor"
 )
 .addEventListener(
 "input",
 (e)=>{
 
-const obj=
+const obj =
 canvas.getActiveObject();
 
 if(!obj)return;
@@ -1124,23 +1225,20 @@ canvas.renderAll();
 
 document
 .getElementById(
-"toggleBoldBtn"
+"deleteBtn"
 )
 .addEventListener(
 "click",
 ()=>{
 
-const obj=
-canvas.getActiveObject();
+const objs =
+canvas.getActiveObjects();
 
-if(!obj)return;
-
-obj.set(
-"fontWeight",
-obj.fontWeight==="bold"
-?"normal"
-:"bold"
+objs.forEach(
+o=>canvas.remove(o)
 );
+
+canvas.discardActiveObject();
 
 canvas.renderAll();
 
@@ -1149,155 +1247,82 @@ canvas.renderAll();
 
 document
 .getElementById(
-"toggleItalicBtn"
+"exportPNG"
 )
 .addEventListener(
 "click",
 ()=>{
 
-const obj=
-canvas.getActiveObject();
+const data =
+canvas.toDataURL({
+format:"png",
+multiplier:2
+});
 
-if(!obj)return;
+const a =
+document.createElement("a");
 
-obj.set(
-"fontStyle",
-obj.fontStyle==="italic"
-?"normal"
-:"italic"
-);
+a.href=data;
 
-canvas.renderAll();
+a.download=
+"oshinagaki.png";
 
-}
-);
-
-function alignObjects(type){
-
-const obj=
-canvas.getActiveObject();
-
-if(!obj)return;
-
-const rect=
-obj.getBoundingRect();
-
-switch(type){
-
-case "left":
-obj.set("left",0);
-break;
-
-case "center":
-obj.set(
-"left",
-(CANVAS_WIDTH-rect.width)/2
-);
-break;
-
-case "right":
-obj.set(
-"left",
-CANVAS_WIDTH-rect.width
-);
-break;
-
-case "top":
-obj.set("top",0);
-break;
-
-case "middle":
-obj.set(
-"top",
-(CANVAS_HEIGHT-rect.height)/2
-);
-break;
-
-case "bottom":
-obj.set(
-"top",
-CANVAS_HEIGHT-rect.height
-);
-break;
+a.click();
 
 }
-
-canvas.renderAll();
-
-}
-function saveHistory(){
-
-const json=
-JSON.stringify(canvas);
-
-if(
-historyIndex>=0 &&
-history[historyIndex]===json
-){
-return;
-}
-
-history.splice(
-historyIndex+1
 );
-
-history.push(json);
-
-historyIndex=
-history.length-1;
-
-}
-
-function undo(){
-
-if(historyIndex<=0)
-return;
-
-historyIndex--;
-
-canvas.loadFromJSON(
-history[historyIndex],
-()=>{
-canvas.renderAll();
-}
-);
-
-}
-
-function redo(){
-
-if(
-historyIndex>=
-history.length-1
-)return;
-
-historyIndex++;
-
-canvas.loadFromJSON(
-history[historyIndex],
-()=>{
-canvas.renderAll();
-}
-);
-
-}
 
 document
-.getElementById("undoBtn")
+.getElementById(
+"exportPDF"
+)
 .addEventListener(
 "click",
-undo
+()=>{
+
+const data =
+canvas.toDataURL({
+format:"png",
+multiplier:2
+});
+
+const {jsPDF} =
+window.jspdf;
+
+const pdf =
+new jsPDF(
+CANVAS_WIDTH>
+CANVAS_HEIGHT
+?"landscape"
+:"portrait",
+"mm",
+"a3"
+);
+
+pdf.addImage(
+data,
+"PNG",
+0,
+0,
+pdf.internal
+.pageSize
+.getWidth(),
+pdf.internal
+.pageSize
+.getHeight()
+);
+
+pdf.save(
+"oshinagaki.pdf"
+);
+
+}
 );
 
 document
-.getElementById("redoBtn")
-.addEventListener(
-"click",
-redo
-);
-
-document
-.getElementById("saveBtn")
+.getElementById(
+"saveBtn"
+)
 .addEventListener(
 "click",
 ()=>{
@@ -1307,262 +1332,38 @@ localStorage.setItem(
 JSON.stringify(canvas)
 );
 
-alert("保存しました");
+alert(
+"保存しました"
+);
 
 }
 );
 
 document
-.getElementById("loadBtn")
+.getElementById(
+"loadBtn"
+)
 .addEventListener(
 "click",
 ()=>{
 
-const json=
+const data =
 localStorage.getItem(
 "oshinagaki-project"
 );
 
-if(!json)return;
+if(!data)return;
 
 canvas.loadFromJSON(
-json,
-()=>canvas.renderAll()
-);
-
-}
-);
-
-document
-.getElementById(
-"deleteObjectBtn"
-)
-.addEventListener(
-"click",
+data,
 ()=>{
-
-const objs=
-canvas.getActiveObjects();
-
-objs.forEach(
-o=>canvas.remove(o)
-);
-
-canvas.discardActiveObject();
-
 canvas.renderAll();
-
-}
-);
-
-document
-.getElementById(
-"bringForwardBtn"
-)
-.addEventListener(
-"click",
-()=>{
-
-const obj=
-canvas.getActiveObject();
-
-if(!obj)return;
-
-canvas.bringForward(obj);
-
-canvas.renderAll();
-
-}
-);
-
-document
-.getElementById(
-"sendBackwardsBtn"
-)
-.addEventListener(
-"click",
-()=>{
-
-const obj=
-canvas.getActiveObject();
-
-if(!obj)return;
-
-canvas.sendBackwards(obj);
-
-canvas.renderAll();
-
-}
-);
-function setupResponsiveScaler(){
-
-const workspace=
-document.getElementById(
-"workspace"
-);
-
-const canvasContainer=
-document.getElementById(
-"canvasContainer"
-);
-
-function fitCanvas(){
-
-const availableWidth=
-workspace.clientWidth-40;
-
-const availableHeight=
-workspace.clientHeight-40;
-
-const scale=
-Math.min(
-availableWidth/
-CANVAS_WIDTH,
-
-availableHeight/
-CANVAS_HEIGHT
-);
-
-canvasContainer.style.width=
-`${CANVAS_WIDTH*scale}px`;
-
-canvasContainer.style.height=
-`${CANVAS_HEIGHT*scale}px`;
-
-canvas.setViewportTransform([
-scale,
-0,
-0,
-scale,
-0,
-0
-]);
-
-canvas.requestRenderAll();
-
-document
-.getElementById(
-"zoomDisplay"
-)
-.innerText=
-`表示:${Math.round(scale*100)}%`;
-
-}
-
-window.addEventListener(
-"resize",
-fitCanvas
-);
-
-setTimeout(
-fitCanvas,
-100
-);
-
-}
-
-function setupEventListeners(){
-
-window.addEventListener(
-"keydown",
-(e)=>{
-
-if(
-e.key==="Delete" ||
-e.key==="Backspace"
-){
-
-const objs=
-canvas.getActiveObjects();
-
-objs.forEach(
-o=>canvas.remove(o)
-);
-
-canvas.discardActiveObject();
-canvas.renderAll();
-
-}
-
-}
-);
-
-document
-.getElementById(
-"exportPng"
-)
-.addEventListener(
-"click",
-()=>{
-
-canvas.discardActiveObject();
-canvas.renderAll();
-
-const png=
-canvas.toDataURL({
-format:"png",
-multiplier:2
-});
-
-const a=
-document.createElement("a");
-
-a.href=png;
-
-a.download=
-`oshinagaki_${Date.now()}.png`;
-
-a.click();
-
-}
-);
-
-document
-.getElementById(
-"exportPdf"
-)
-.addEventListener(
-"click",
-()=>{
-
-canvas.discardActiveObject();
-canvas.renderAll();
-
-const image=
-canvas.toDataURL({
-format:"png",
-multiplier:2
-});
-
-const {jsPDF}=
-window.jspdf;
-
-const pdf=
-new jsPDF(
-currentOrientation==="LANDSCAPE"
-?"landscape"
-:"portrait",
-"mm",
-"a3"
-);
-
-pdf.addImage(
-image,
-"PNG",
-0,
-0,
-pdf.internal.pageSize.getWidth(),
-pdf.internal.pageSize.getHeight()
-);
-
-pdf.save(
-`oshinagaki_${Date.now()}.pdf`
-);
-
+refreshLayers();
 }
 );
 
 }
+);
 
 </script>
 
