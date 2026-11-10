@@ -4,10 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>同人おしながきジェネレーター</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
-
   <style>
     * { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; }
@@ -17,7 +13,7 @@
       overflow: hidden;
       background: #0f172a;
       color: #e2e8f0;
-      font-family: "Noto Sans JP", sans-serif;
+      font-family: "Noto Sans JP", "Yu Gothic", Meiryo, sans-serif;
     }
     button, input, select, textarea { font: inherit; }
     button { cursor: pointer; }
@@ -41,7 +37,7 @@
       place-items: center;
       border-radius: 9px;
       background: linear-gradient(120deg, #f43f5e, #9333ea);
-      color: #fff;
+      color: white;
       font-size: 19px;
     }
     .brand h1 { margin: 0; font-size: 14px; line-height: 1.3; }
@@ -58,13 +54,12 @@
       border: 0;
       border-radius: 7px;
       padding: 8px 10px;
-      color: #fff;
+      color: white;
       font-size: 11px;
       font-weight: 700;
     }
     .button-print { background: #475569; }
     .button-png { background: #059669; }
-    .button-pdf { background: #e11d48; }
 
     #mainLayout { display: flex; flex: 1 1 auto; min-height: 0; overflow: hidden; }
     #settingsPanel {
@@ -117,7 +112,6 @@
       color: #e2e8f0;
       font-size: 11px;
     }
-    .control:disabled { opacity: .5; }
     .color-control {
       width: 48px;
       height: 31px;
@@ -223,7 +217,7 @@
       flex: none;
       overflow: hidden;
       border: 1px solid #475569;
-      background: #fff;
+      background: white;
       box-shadow: 0 15px 40px rgba(0, 0, 0, .45);
       line-height: 0;
     }
@@ -317,7 +311,7 @@
       <div class="brand-icon" aria-hidden="true">✦</div>
       <div style="min-width:0">
         <h1>同人おしながきジェネレーター</h1>
-        <p id="paperSpecLabel">準備中…</p>
+        <p id="paperSpecLabel">A3縦・赤色ドット</p>
       </div>
     </div>
     <div class="top-actions">
@@ -345,7 +339,6 @@
             </label>
             <label class="field">レイアウト
               <select id="paperSizeSelect" name="paperSize" class="control">
-                <option value="A2">A2 (200dpi)</option>
                 <option value="A3" selected>A3 (200dpi)</option>
                 <option value="A4">A4 (350dpi)</option>
                 <option value="WEB_PORTRAIT">X用縦書き (960 × 1280px)</option>
@@ -371,7 +364,7 @@
             CUDO推奨配色セットの色
             <div id="presetColorPalette" class="palette"></div>
             <small style="display:block;margin-top:5px;color:#64748b">
-              初期表示は赤色ドットパターンです。色名ラベルも併用しています。
+              初期表示は赤色ドットです。色名ラベルも併用しています。
             </small>
           </div>
           <div id="patternControls">
@@ -431,50 +424,40 @@
         <section class="section">
           <h2>ヘッダー文字設定</h2>
           <div class="two-col">
-            <label class="field">イベント情報サイズ
+            <label class="field">イベント名サイズ
               <input id="eventInfoFontSize" name="eventInfoFontSize" type="number" min="8" max="300" value="60" class="control">
             </label>
             <label class="field">イベント文字色
               <input id="eventInfoTextColor" name="eventInfoTextColor" type="color" value="#ffffff" class="color-control">
             </label>
           </div>
+
+          <hr style="border-color:#334155;margin:10px 0">
+
+          <div class="two-col">
+            <label class="field">スペース番号サイズ
+              <input id="spaceInfoFontSize" name="spaceInfoFontSize" type="number" min="8" max="300" value="120" class="control">
+            </label>
+            <label class="field">スペース文字色
+              <input id="spaceInfoTextColor" name="spaceInfoTextColor" type="color" value="#ffffff" class="color-control">
+            </label>
+          </div>
           <label class="check-row">
-            イベント情報の背景色
-            <input id="eventInfoBgEnabled" name="eventInfoBgEnabled" type="checkbox">
-            <input id="eventInfoBgColor" name="eventInfoBgColor" type="color" value="#ffffff" class="color-control">
+            スペース番号の背景色
+            <input id="spaceInfoBgEnabled" name="spaceInfoBgEnabled" type="checkbox">
+            <input id="spaceInfoBgColor" name="spaceInfoBgColor" type="color" value="#FF4B00" class="color-control">
           </label>
 
           <hr style="border-color:#334155;margin:10px 0">
 
           <div class="two-col">
             <label class="field">サークル名サイズ
-              <input id="circleInfoFontSize" name="circleInfoFontSize" type="number" min="8" max="400" value="150" class="control">
+              <input id="circleInfoFontSize" name="circleInfoFontSize" type="number" min="8" max="400" value="120" class="control">
             </label>
             <label class="field">サークル文字色
               <input id="circleInfoTextColor" name="circleInfoTextColor" type="color" value="#ffffff" class="color-control">
             </label>
           </div>
-          <label class="check-row">
-            サークル名の背景色
-            <input id="circleInfoBgEnabled" name="circleInfoBgEnabled" type="checkbox">
-            <input id="circleInfoBgColor" name="circleInfoBgColor" type="color" value="#ffffff" class="color-control">
-          </label>
-
-          <hr style="border-color:#334155;margin:10px 0">
-
-          <div class="two-col">
-            <label class="field">スペース番号サイズ
-              <input id="spaceInfoFontSize" name="spaceInfoFontSize" type="number" min="8" max="300" value="90" class="control">
-            </label>
-            <label class="field">スペース文字色
-              <input id="spaceInfoTextColor" name="spaceInfoTextColor" type="color" value="#111111" class="color-control">
-            </label>
-          </div>
-          <label class="check-row">
-            スペース番号の背景色
-            <input id="spaceInfoBgEnabled" name="spaceInfoBgEnabled" type="checkbox" checked>
-            <input id="spaceInfoBgColor" name="spaceInfoBgColor" type="color" value="#FF4B00" class="color-control">
-          </label>
         </section>
 
         <section class="section">
@@ -541,7 +524,6 @@
     };
 
     const PRINT_SPECS = {
-      A2: { widthMm:426, heightMm:600, widthPx:3354, heightPx:4724, trimWidthMm:420, trimHeightMm:594 },
       A3: { widthMm:303, heightMm:426, widthPx:2386, heightPx:3354, trimWidthMm:297, trimHeightMm:420 },
       A4: { widthMm:216, heightMm:303, widthPx:2976, heightPx:4175, trimWidthMm:210, trimHeightMm:297 }
     };
@@ -554,16 +536,31 @@
     };
 
     const SOCIAL_LAYOUTS = {
-      WEB_PORTRAIT: { header:250, marginX:28, marginY:22, gapX:16, gapY:16, padding:12, eventFont:18, circleFont:32, spaceFont:16, cardScale:.55, categoryBand:46, ageBand:28 },
-      WEB_LANDSCAPE: { header:160, marginX:28, marginY:18, gapX:16, gapY:16, padding:11, eventFont:14, circleFont:24, spaceFont:13, cardScale:.48, categoryBand:38, ageBand:24 },
-      PICSQUARE: { header:143, marginX:16, marginY:16, gapX:12, gapY:12, padding:8, eventFont:10, circleFont:18, spaceFont:10, cardScale:.35, categoryBand:34, ageBand:21 },
-      PICREA: { header:270, marginX:24, marginY:22, gapX:16, gapY:16, padding:12, eventFont:15, circleFont:28, spaceFont:15, cardScale:.50, categoryBand:44, ageBand:28 }
+      WEB_PORTRAIT: {
+        header:250, marginX:28, marginY:22, gapX:16, gapY:16, padding:12,
+        eventFont:30, spaceFont:50, circleFont:50, cardScale:.55,
+        categoryBand:46, ageBand:28
+      },
+      WEB_LANDSCAPE: {
+        header:160, marginX:28, marginY:18, gapX:16, gapY:16, padding:11,
+        eventFont:30, spaceFont:50, circleFont:50, cardScale:.48,
+        categoryBand:38, ageBand:24
+      },
+      PICSQUARE: {
+        header:143, marginX:16, marginY:16, gapX:12, gapY:12, padding:8,
+        eventFont:20, spaceFont:30, circleFont:30, cardScale:.35,
+        categoryBand:34, ageBand:21
+      },
+      PICREA: {
+        header:270, marginX:24, marginY:22, gapX:16, gapY:16, padding:12,
+        eventFont:30, spaceFont:50, circleFont:50, cardScale:.50,
+        categoryBand:44, ageBand:28
+      }
     };
 
     const BLEED_MM = 3;
     const canvas = document.getElementById("previewCanvas");
 
-    // 初期状態: A3縦 + 赤色ドット
     let selectedPalette = PALETTES[0];
     let paper = "A3";
     let orientation = "PORTRAIT";
@@ -597,13 +594,19 @@
     initialize();
 
     function initialize() {
-      buildPalette();
-      renderItems();
-      bindEvents();
-      updateLayout();
+      try {
+        buildPalette();
+        renderItems();
+        bindEvents();
+        updateLayout();
 
-      if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(renderCanvas).catch(() => {});
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(renderCanvas).catch(() => {});
+        }
+      } catch (error) {
+        console.error("初期化エラー:", error);
+        const label = document.getElementById("paperSpecLabel");
+        if (label) label.textContent = `初期化エラー: ${error.message}`;
       }
     }
 
@@ -640,15 +643,20 @@
         button.addEventListener("click", () => {
           selectedPalette = preset;
           root.querySelectorAll("button").forEach((el) => el.classList.remove("selected"));
-          button.classList.add("selected");
+
+          const selectedButton = root.querySelector(
+            `button[title="${preset.name}（CUDO推奨配色セット）"]`
+          );
+          if (selectedButton) selectedButton.classList.add("selected");
 
           if (getEl("bgTypeSelect").value === "color") {
             getEl("bgColorPicker").value = preset.background;
           }
+
           getEl("headerBgColor").value = preset.header;
           getEl("headerAccentColor").value = preset.accent;
           getEl("spaceInfoBgColor").value = preset.space;
-          getEl("spaceInfoTextColor").value = getReadableTextColor(preset.space);
+          getEl("spaceInfoTextColor").value = "#ffffff";
           renderCanvas();
         });
 
@@ -658,11 +666,12 @@
 
     function applyHeaderDefaults(social) {
       const sizes = social
-        ? { event:social.eventFont, circle:social.circleFont, space:social.spaceFont }
-        : { event:60, circle:150, space:90 };
+        ? { event:social.eventFont, space:social.spaceFont, circle:social.circleFont }
+        : { event:60, space:120, circle:120 };
+
       getEl("eventInfoFontSize").value = sizes.event;
-      getEl("circleInfoFontSize").value = sizes.circle;
       getEl("spaceInfoFontSize").value = sizes.space;
+      getEl("circleInfoFontSize").value = sizes.circle;
     }
 
     function updateLayout() {
@@ -718,7 +727,7 @@
       getEl("paperSpecLabel").textContent = label;
       getEl("dimensionDisplay").textContent = label;
       getEl("layoutHelp").textContent = socialPreset
-        ? "SNS向けサイズ。印刷用の塗り足し・安全ガイドはありません。"
+        ? "指定フォントサイズを上限に、ヘッダー領域に合わせて自動調整します。"
         : "白線＝仕上がり範囲、赤点線＝3mm安全マージンです。";
 
       previewMode = "fit";
@@ -794,8 +803,7 @@
             <textarea id="item-${index}-desc" name="item-${index}-desc" class="control" data-index="${index}" data-key="desc" rows="3">${escapeHTML(item.desc)}</textarea>
           </label>
           <label class="field">説明文フォントサイズ
-            <input id="item-${index}-descriptionFontSize" name="item-${index}-descriptionFontSize" class="control" type="number" min="8" max="100" step="1"
-              data-index="${index}" data-key="descriptionFontSize" value="${Number(item.descriptionFontSize) || 38}">
+            <input id="item-${index}-descriptionFontSize" name="item-${index}-descriptionFontSize" class="control" type="number" min="8" max="100" step="1" data-index="${index}" data-key="descriptionFontSize" value="${Number(item.descriptionFontSize) || 38}">
           </label>
           <label class="check-row" style="justify-content:flex-start">
             <input id="item-${index}-noImage" name="item-${index}-noImage" type="checkbox" data-noimage="${index}" ${item.noImage ? "checked" : ""}>
@@ -834,6 +842,7 @@
           }
           renderCanvas();
         };
+
         input.addEventListener("input", update);
         input.addEventListener("change", update);
       });
@@ -849,7 +858,6 @@
           const index = Number(input.dataset.noimage);
           if (!items[index]) return;
           items[index].noImage = input.checked;
-
           const fileInput = root.querySelector(`[data-image="${index}"]`);
           if (fileInput) {
             fileInput.disabled = input.checked;
@@ -938,7 +946,7 @@
       try {
         const loaded = await Promise.all(selected.map(readImageFile));
         loaded.forEach((entry, index) => {
-          const imageData = {
+          const data = {
             image:entry.image,
             imageSrc:entry.src,
             imageWidth:entry.width,
@@ -946,13 +954,13 @@
             noImage:false
           };
           if (index < items.length) {
-            Object.assign(items[index], imageData);
+            Object.assign(items[index], data);
           } else {
             items.push({
               category:"新刊", ageRating:"全年齢",
               title:`新刊アイテム ${index + 1}`, price:"¥ 500",
               desc:"", descriptionFontSize:38,
-              ...imageData
+              ...data
             });
           }
         });
@@ -1039,13 +1047,23 @@
       context.fillRect(0, 0, outputWidth, outputHeight);
     }
 
+    /*
+      背景色欄の有無にかかわらず安全に取得する。
+      スペース背景はチェックOFFなら常に透明。
+    */
     function getHeaderStyle(prefix, defaultSize, defaultColor) {
-      const rawSize = Number.parseInt(getEl(`${prefix}FontSize`).value, 10);
-      const enabled = getEl(`${prefix}BgEnabled`).checked;
+      const sizeElement = document.getElementById(`${prefix}FontSize`);
+      const colorElement = document.getElementById(`${prefix}TextColor`);
+      const enabledElement = document.getElementById(`${prefix}BgEnabled`);
+      const backgroundElement = document.getElementById(`${prefix}BgColor`);
+
+      const parsedSize = Number.parseInt(sizeElement ? sizeElement.value : "", 10);
       return {
-        size:Number.isFinite(rawSize) ? rawSize : defaultSize,
-        color:getEl(`${prefix}TextColor`).value || defaultColor,
-        background:enabled ? getEl(`${prefix}BgColor`).value : ""
+        size:Number.isFinite(parsedSize) ? parsedSize : defaultSize,
+        color:(colorElement && colorElement.value) || defaultColor,
+        background:enabledElement && enabledElement.checked && backgroundElement
+          ? backgroundElement.value
+          : ""
       };
     }
 
@@ -1076,33 +1094,44 @@
       const width = Math.max(1, box.width);
       const height = Math.max(1, box.height);
 
-      let fontSize = minFont;
-      let lines = [];
+      let low = minFont;
+      let high = maxFont;
+      let chosen = minFont;
+      let chosenLines = null;
 
-      for (let size = maxFont; size >= minFont; size -= Math.max(.5, maxFont / 100)) {
+      for (let i = 0; i < 18; i++) {
+        const size = (low + high) / 2;
         context.font = `${weight} ${size}px ${family}`;
-        const candidate = wrapLines(context, text, width);
-        if (candidate.length * size * lineHeightRatio <= height) {
-          fontSize = size;
-          lines = candidate;
-          break;
+        const lines = wrapLines(context, text, width);
+        const fitsHeight = lines.length * size * lineHeightRatio <= height;
+
+        if (fitsHeight) {
+          chosen = size;
+          chosenLines = lines;
+          low = size;
+        } else {
+          high = size;
         }
       }
 
-      if (!lines.length) {
-        context.font = `${weight} ${minFont}px ${family}`;
-        lines = wrapLines(context, text, width);
-        const maxLines = Math.max(1, Math.floor(height / (minFont * lineHeightRatio)));
-        if (lines.length > maxLines) {
-          lines = lines.slice(0, maxLines);
-          const chars = Array.from(lines[maxLines - 1] || "");
-          while (chars.length && context.measureText(`${chars.join("")}…`).width > width) chars.pop();
-          lines[maxLines - 1] = `${chars.join("")}…`;
+      if (!chosenLines) {
+        chosen = minFont;
+        context.font = `${weight} ${chosen}px ${family}`;
+        chosenLines = wrapLines(context, text, width);
+
+        const maxLines = Math.max(1, Math.floor(height / (chosen * lineHeightRatio)));
+        if (chosenLines.length > maxLines) {
+          chosenLines = chosenLines.slice(0, maxLines);
+          const chars = Array.from(chosenLines[maxLines - 1] || "");
+          while (chars.length && context.measureText(`${chars.join("")}…`).width > width) {
+            chars.pop();
+          }
+          chosenLines[maxLines - 1] = `${chars.join("")}…`;
         }
       }
 
-      const lineHeight = fontSize * lineHeightRatio;
-      let y = box.y + Math.max(0, (height - lines.length * lineHeight) / 2);
+      const lineHeight = chosen * lineHeightRatio;
+      let y = box.y + Math.max(0, (height - chosenLines.length * lineHeight) / 2);
 
       context.save();
       context.beginPath();
@@ -1114,7 +1143,7 @@
         context.fillRect(box.x, box.y, width, height);
       }
 
-      context.font = `${weight} ${fontSize}px ${family}`;
+      context.font = `${weight} ${chosen}px ${family}`;
       context.fillStyle = options.color || "#111111";
       context.textBaseline = "top";
       context.textAlign = options.align || "left";
@@ -1123,83 +1152,84 @@
         ? box.x + width / 2
         : options.align === "right" ? box.x + width : box.x;
 
-      lines.forEach((line) => {
+      chosenLines.forEach((line) => {
         context.fillText(line, x, y, width);
         y += lineHeight;
       });
       context.restore();
     }
 
-    function drawHeader(context, social, headerHeight, landscape, eventStyle, circleStyle, spaceStyle) {
+    /*
+      配置順: イベント名・日時 → スペース番号 → サークル名。
+      左揃え。入力欄のサイズは各レイアウトの最大フォントサイズとして使用。
+    */
+    function drawHeader(context, social, headerHeight, landscape, eventStyle, spaceStyle, circleStyle) {
       const margin = social ? social.marginX : safeX + 8;
       const width = Math.max(1, trimWidth - margin * 2);
+      const eventName = getEl("eventName").value.trim();
+      const eventDate = getEl("eventDate").value.trim();
+      const eventText = [eventName, eventDate].filter(Boolean).join("\n");
 
       if (social) {
-        const compact = paper === "PICSQUARE";
-        const top = compact ? 5 : Math.max(6, headerHeight * .04);
-        const usable = Math.max(1, headerHeight - top * 2);
-        const gap = compact ? 2 : Math.max(3, usable * .025);
-        const eventHeight = compact ? 29 : usable * .25;
-        const circleHeight = compact ? 44 : usable * .34;
-        const spaceHeight = Math.max(1, usable - eventHeight - circleHeight - gap * 2);
+        const top = paper === "PICSQUARE" ? 4 : Math.max(6, headerHeight * .035);
+        const available = Math.max(1, headerHeight - top * 2);
+        const gap = paper === "PICSQUARE" ? 1 : Math.max(2, available * .018);
+        const eventHeight = available * .34;
+        const spaceHeight = available * .31;
+        const circleHeight = Math.max(1, available - eventHeight - spaceHeight - gap * 2);
         let y = top;
 
-        fitText(context,
-          `${getEl("eventDate").value} | ${getEl("eventName").value}`,
+        fitText(context, eventText,
           { x:bleedLeft + margin, y:bleedTop + y, width, height:eventHeight },
-          { maxFont:eventStyle.size, minFont:7, color:eventStyle.color, background:eventStyle.background });
+          { maxFont:eventStyle.size, minFont:6, color:eventStyle.color, background:eventStyle.background });
 
         y += eventHeight + gap;
+        fitText(context, getEl("spaceNo").value,
+          { x:bleedLeft + margin, y:bleedTop + y, width, height:spaceHeight },
+          {
+            maxFont:spaceStyle.size, minFont:6, weight:"700",
+            family:'"M PLUS Rounded 1c", sans-serif',
+            color:spaceStyle.color, background:spaceStyle.background, align:"left", lineHeight:1
+          });
+
+        y += spaceHeight + gap;
         fitText(context, getEl("circleName").value,
           { x:bleedLeft + margin, y:bleedTop + y, width, height:circleHeight },
-          { maxFont:circleStyle.size, minFont:8, weight:"700", color:circleStyle.color, background:circleStyle.background });
-
-        y += circleHeight + gap;
-        const space = getEl("spaceNo").value;
-        if (space) {
-          fitText(context, ` ${space} `,
-            { x:bleedLeft + margin, y:bleedTop + y, width, height:spaceHeight },
-            {
-              maxFont:spaceStyle.size, minFont:7, weight:"700",
-              family:'"M PLUS Rounded 1c", sans-serif',
-              color:spaceStyle.color, background:spaceStyle.background, align:"center"
-            });
-        }
+          {
+            maxFont:circleStyle.size, minFont:6, weight:"700",
+            color:circleStyle.color, background:circleStyle.background, align:"left", lineHeight:1
+          });
         return;
       }
 
       const scale = Math.min(trimWidth / 3307, trimHeight / 2339);
-      const top = Math.max(safeY, headerHeight * .055);
-      const bottom = Math.max(safeY, 10 * scale);
+      const top = Math.max(safeY, headerHeight * .04);
+      const bottom = Math.max(safeY, 8 * scale);
       const available = Math.max(1, headerHeight - top - bottom);
-      const gap = Math.max(5 * scale, available * .055);
-      const rowHeight = Math.max(1, available - gap * 2);
-      const eventHeight = rowHeight * .24;
-      const circleHeight = rowHeight * .43;
-      const spaceHeight = rowHeight - eventHeight - circleHeight;
+      const gap = Math.max(3 * scale, available * .04);
+      const rowHeight = Math.max(1, (available - gap * 2) / 3);
       let y = top;
 
-      fitText(context,
-        `${getEl("eventDate").value} | ${getEl("eventName").value}`,
-        { x:bleedLeft + margin, y:bleedTop + y, width, height:eventHeight },
-        { maxFont:eventStyle.size, minFont:10 * scale, color:eventStyle.color, background:eventStyle.background });
+      fitText(context, eventText,
+        { x:bleedLeft + margin, y:bleedTop + y, width, height:rowHeight },
+        { maxFont:eventStyle.size, minFont:8 * scale, color:eventStyle.color, background:eventStyle.background });
 
-      y += eventHeight + gap;
+      y += rowHeight + gap;
+      fitText(context, getEl("spaceNo").value,
+        { x:bleedLeft + margin, y:bleedTop + y, width, height:rowHeight },
+        {
+          maxFont:spaceStyle.size, minFont:8 * scale, weight:"700",
+          family:'"M PLUS Rounded 1c", sans-serif',
+          color:spaceStyle.color, background:spaceStyle.background, align:"left", lineHeight:1
+        });
+
+      y += rowHeight + gap;
       fitText(context, getEl("circleName").value,
-        { x:bleedLeft + margin, y:bleedTop + y, width, height:circleHeight },
-        { maxFont:circleStyle.size, minFont:12 * scale, weight:"700", color:circleStyle.color, background:circleStyle.background });
-
-      y += circleHeight + gap;
-      const space = getEl("spaceNo").value;
-      if (space) {
-        fitText(context, ` ${space} `,
-          { x:bleedLeft + margin, y:bleedTop + y, width, height:spaceHeight },
-          {
-            maxFont:spaceStyle.size, minFont:10 * scale, weight:"700",
-            family:'"M PLUS Rounded 1c", sans-serif',
-            color:spaceStyle.color, background:spaceStyle.background, align:"center"
-          });
-      }
+        { x:bleedLeft + margin, y:bleedTop + y, width, height:rowHeight },
+        {
+          maxFont:circleStyle.size, minFont:8 * scale, weight:"700",
+          color:circleStyle.color, align:"left", lineHeight:1
+        });
     }
 
     function roundedRect(context, x, y, width, height, radius, fill, stroke, lineWidth = 1) {
@@ -1279,6 +1309,7 @@
         );
         const imageWidth = item.imageWidth * imageScale;
         const imageHeight = item.imageHeight * imageScale;
+
         imageBox = {
           x:x + padding,
           y:bodyY + (bodyHeight - imageHeight) / 2,
@@ -1320,10 +1351,7 @@
         const partHeight = Math.max(1, bodyHeight * part.ratio / Math.max(.01, ratioSum));
         fitText(context, part.text,
           { x:textX, y:cursorY, width:textWidth, height:partHeight },
-          {
-            maxFont:part.max, minFont:part.min,
-            family:part.family, weight:part.weight, color:part.color
-          });
+          { maxFont:part.max, minFont:part.min, family:part.family, weight:part.weight, color:part.color });
         cursorY += partHeight;
       }
 
@@ -1369,9 +1397,10 @@
         context.fillRect(bleedLeft, bleedTop + headerHeight - accentHeight, trimWidth, accentHeight);
 
         const eventStyle = getHeaderStyle("eventInfo", social ? social.eventFont : 60, "#ffffff");
-        const circleStyle = getHeaderStyle("circleInfo", social ? social.circleFont : 150, "#ffffff");
-        const spaceStyle = getHeaderStyle("spaceInfo", social ? social.spaceFont : 90, "#ffffff");
-        drawHeader(context, social, headerHeight, landscape, eventStyle, circleStyle, spaceStyle);
+        const spaceStyle = getHeaderStyle("spaceInfo", social ? social.spaceFont : 120, "#ffffff");
+        const circleStyle = getHeaderStyle("circleInfo", social ? social.circleFont : 120, "#ffffff");
+
+        drawHeader(context, social, headerHeight, landscape, eventStyle, spaceStyle, circleStyle);
 
         let columns = 2;
         if (paper === "WEB_LANDSCAPE") columns = items.length <= 1 ? 1 : 2;
@@ -1413,6 +1442,8 @@
         });
       } catch (error) {
         console.error("プレビュー描画エラー:", error);
+        const label = document.getElementById("paperSpecLabel");
+        if (label) label.textContent = `描画エラー: ${error.message}`;
       }
     }
 
@@ -1530,33 +1561,23 @@
     }
 
     function openPrintDialog() {
-      /*
-        jsPDFなどのeval依存ライブラリを使わず、ブラウザー標準の印刷画面を開く。
-        印刷先で「PDFに保存」を選択できます。
-      */
-      const output = {
-        widthMm:orientation === "LANDSCAPE"
-          ? PRINT_SPECS[paper].heightMm
-          : PRINT_SPECS[paper].widthMm,
-        heightMm:orientation === "LANDSCAPE"
-          ? PRINT_SPECS[paper].widthMm
-          : PRINT_SPECS[paper].heightMm
-      };
+      const isSocial = Boolean(SOCIAL_PRESETS[paper]);
+      const spec = PRINT_SPECS[paper];
 
-      if (SOCIAL_PRESETS[paper]) {
-        output.widthMm = outputWidth * 25.4 / 200;
-        output.heightMm = outputHeight * 25.4 / 200;
-      }
+      const widthMm = isSocial
+        ? outputWidth * 25.4 / 200
+        : (orientation === "LANDSCAPE" ? spec.heightMm : spec.widthMm);
+      const heightMm = isSocial
+        ? outputHeight * 25.4 / 200
+        : (orientation === "LANDSCAPE" ? spec.widthMm : spec.heightMm);
 
-      const imageData = canvas.toDataURL("image/png");
-      const printWindow = window.open("", "_blank");
-
-      if (!printWindow) {
+      const popup = window.open("", "_blank");
+      if (!popup) {
         alert("印刷プレビューを開けません。ブラウザーのポップアップを許可してください。");
         return;
       }
 
-      const doc = printWindow.document;
+      const doc = popup.document;
       doc.title = "印刷プレビュー";
       doc.documentElement.lang = "ja";
 
@@ -1566,25 +1587,25 @@
 
       const style = doc.createElement("style");
       style.textContent = `
-        @page { size: ${output.widthMm}mm ${output.heightMm}mm; margin: 0; }
+        @page { size: ${widthMm}mm ${heightMm}mm; margin: 0; }
         html, body { margin: 0; padding: 0; }
         body { background: #fff; }
-        img { display: block; width: ${output.widthMm}mm; height: ${output.heightMm}mm; }
+        img { display: block; width: ${widthMm}mm; height: ${heightMm}mm; }
         @media screen {
           body { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: #1e293b; }
-          img { width: min(90vw, ${output.widthMm}mm); height: auto; box-shadow: 0 8px 30px #0008; }
+          img { width: min(90vw, ${widthMm}mm); height: auto; box-shadow: 0 8px 30px #0008; }
         }
       `;
       doc.head.appendChild(style);
 
       const image = doc.createElement("img");
       image.alt = "印刷用プレビュー";
-      image.src = imageData;
+      image.src = canvas.toDataURL("image/png");
       doc.body.appendChild(image);
 
       image.addEventListener("load", () => {
-        printWindow.focus();
-        printWindow.print();
+        popup.focus();
+        popup.print();
       }, { once:true });
     }
 
@@ -1598,9 +1619,11 @@
 
       [
         "headerBgColor", "headerAccentColor",
-        "eventInfoFontSize", "eventInfoTextColor", "eventInfoBgEnabled", "eventInfoBgColor",
-        "circleInfoFontSize", "circleInfoTextColor", "circleInfoBgEnabled", "circleInfoBgColor",
-        "spaceInfoFontSize", "spaceInfoTextColor", "spaceInfoBgEnabled", "spaceInfoBgColor"
+        "eventInfoFontSize", "eventInfoTextColor",
+        "eventInfoBgEnabled", "eventInfoBgColor",
+        "spaceInfoFontSize", "spaceInfoTextColor",
+        "spaceInfoBgEnabled", "spaceInfoBgColor",
+        "circleInfoFontSize", "circleInfoTextColor"
       ].forEach((id) => {
         const element = getEl(id);
         element.addEventListener("input", renderCanvas);
