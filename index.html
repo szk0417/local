@@ -13,7 +13,12 @@
 
   <style>
     * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
     body {
       display: flex;
       flex-direction: column;
@@ -22,6 +27,7 @@
       color: #e2e8f0;
       font-family: "Noto Sans JP", sans-serif;
     }
+
     button, input, select, textarea { font: inherit; }
     button { cursor: pointer; }
 
@@ -35,7 +41,14 @@
       border-bottom: 1px solid #334155;
       background: #1e293b;
     }
-    .brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+    }
+
     .brand-icon {
       display: grid;
       width: 34px;
@@ -44,10 +57,16 @@
       place-items: center;
       border-radius: 9px;
       background: linear-gradient(120deg, #f43f5e, #9333ea);
-      color: #fff;
+      color: white;
       font-size: 19px;
     }
-    .brand h1 { margin: 0; font-size: 14px; line-height: 1.3; }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
     .brand p {
       overflow: hidden;
       margin: 2px 0 0;
@@ -56,7 +75,13 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .top-actions { display: flex; flex: 0 0 auto; gap: 6px; }
+
+    .top-actions {
+      display: flex;
+      flex: 0 0 auto;
+      gap: 6px;
+    }
+
     .button {
       display: inline-flex;
       align-items: center;
@@ -65,15 +90,22 @@
       border: 0;
       border-radius: 7px;
       padding: 8px 10px;
-      color: #fff;
+      color: white;
       font-size: 11px;
       font-weight: 700;
     }
+
     .button-print { background: #475569; }
     .button-png { background: #059669; }
     .button-pdf { background: #e11d48; }
 
-    #mainLayout { display: flex; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+    #mainLayout {
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
+
     #settingsPanel {
       display: flex;
       flex: 0 0 410px;
@@ -83,6 +115,7 @@
       border-right: 1px solid #334155;
       background: #1e293b;
     }
+
     .panel-heading {
       display: flex;
       flex: 0 0 auto;
@@ -94,6 +127,7 @@
       font-size: 12px;
       font-weight: 700;
     }
+
     .panel-heading small {
       border: 1px solid #166534;
       border-radius: 999px;
@@ -102,7 +136,13 @@
       color: #4ade80;
       font-size: 9px;
     }
-    #settingsContent { flex: 1 1 auto; overflow: auto; padding: 14px; }
+
+    #settingsContent {
+      flex: 1 1 auto;
+      overflow: auto;
+      padding: 14px;
+    }
+
     .section {
       margin-bottom: 12px;
       border: 1px solid #334155;
@@ -110,9 +150,22 @@
       padding: 12px;
       background: rgba(15, 23, 42, .65);
     }
-    .section h2 { margin: 0 0 10px; color: #fb7185; font-size: 12px; }
-    .field { display: block; margin-bottom: 9px; color: #94a3b8; font-size: 10px; }
+
+    .section h2 {
+      margin: 0 0 10px;
+      color: #fb7185;
+      font-size: 12px;
+    }
+
+    .field {
+      display: block;
+      margin-bottom: 9px;
+      color: #94a3b8;
+      font-size: 10px;
+    }
+
     .field:last-child { margin-bottom: 0; }
+
     .control {
       display: block;
       width: 100%;
@@ -124,7 +177,9 @@
       color: #e2e8f0;
       font-size: 11px;
     }
+
     .control:disabled { opacity: .5; }
+
     .color-control {
       width: 48px;
       height: 31px;
@@ -134,8 +189,19 @@
       padding: 3px;
       background: #1e293b;
     }
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .palette {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+    }
+
     .palette button {
       display: flex;
       align-items: center;
@@ -148,8 +214,16 @@
       color: #cbd5e1;
       font-size: 9px;
     }
+
     .palette button.selected { outline: 2px solid #f43f5e; }
-    .swatch { width: 12px; height: 12px; flex: 0 0 auto; border-radius: 50%; }
+
+    .swatch {
+      width: 12px;
+      height: 12px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+    }
+
     .check-row {
       display: flex;
       align-items: center;
@@ -158,7 +232,9 @@
       color: #94a3b8;
       font-size: 10px;
     }
+
     .check-row input[type="checkbox"] { accent-color: #f43f5e; }
+
     .upload-box {
       display: block;
       border: 2px dashed #9f1239;
@@ -169,8 +245,21 @@
       text-align: center;
       cursor: pointer;
     }
-    .upload-box span { display: block; margin-top: 4px; font-size: 11px; font-weight: 700; }
-    .upload-box small { display: block; margin-top: 3px; color: #94a3b8; font-size: 9px; }
+
+    .upload-box span {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .upload-box small {
+      display: block;
+      margin-top: 3px;
+      color: #94a3b8;
+      font-size: 9px;
+    }
+
     .item-card {
       margin-bottom: 10px;
       border: 1px solid #334155;
@@ -178,6 +267,7 @@
       padding: 10px;
       background: #0f172a;
     }
+
     .item-card-head {
       display: flex;
       align-items: center;
@@ -187,6 +277,7 @@
       font-size: 10px;
       font-weight: 700;
     }
+
     .item-card-head button {
       border: 0;
       border-radius: 5px;
@@ -195,8 +286,14 @@
       color: #e2e8f0;
       font-size: 10px;
     }
+
     .item-card-head button:disabled { opacity: .4; }
-    .delete-item { margin-left: 4px; background: transparent !important; color: #fb7185 !important; }
+    .delete-item {
+      margin-left: 4px;
+      background: transparent !important;
+      color: #fb7185 !important;
+    }
+
     .add-item {
       width: 100%;
       border: 1px solid #475569;
@@ -219,21 +316,24 @@
       padding: 48px 20px 20px;
       background: #020617;
     }
+
     #canvasContainer {
       position: relative;
       flex: none;
       overflow: hidden;
       border: 1px solid #475569;
-      background: #fff;
+      background: white;
       box-shadow: 0 15px 40px rgba(0, 0, 0, .45);
       line-height: 0;
     }
+
     #canvasStage {
       position: absolute;
       top: 0;
       left: 0;
       transform-origin: top left;
     }
+
     #gridOverlay {
       position: absolute;
       inset: 0;
@@ -246,12 +346,14 @@
         linear-gradient(to bottom, rgba(15,23,42,.1) 1px, transparent 1px);
       background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
     }
+
     .guide {
       position: absolute;
       z-index: 11;
       pointer-events: none;
       border: 1px dashed rgba(15, 23, 42, .65);
     }
+
     #trimGuide { outline: 1px solid rgba(255,255,255,.55); }
     #safeGuide { border-color: rgba(225, 29, 72, .9); }
     .hidden { display: none !important; }
@@ -268,6 +370,7 @@
       color: #cbd5e1;
       font-size: 10px;
     }
+
     #previewToolbar {
       position: absolute;
       z-index: 12;
@@ -283,6 +386,7 @@
       box-shadow: 0 6px 20px rgba(0, 0, 0, .35);
       font-size: 10px;
     }
+
     #previewToolbar button {
       border: 0;
       border-radius: 5px;
@@ -291,6 +395,7 @@
       color: #e2e8f0;
       font-size: 10px;
     }
+
     #previewToolbarDrag { cursor: grab; touch-action: none; }
     #previewToolbarDrag:active { cursor: grabbing; }
 
@@ -301,14 +406,17 @@
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
       }
+
       #settingsPanel {
         width: 100%;
         max-height: none;
         overflow: visible;
         border-right: 0;
       }
+
       #settingsContent { overflow: visible; }
       #workspace { width: 100%; height: 75vh; min-height: 480px; }
+
       #previewToolbar {
         top: auto;
         right: 10px;
@@ -317,6 +425,7 @@
         justify-content: center;
       }
     }
+
     @media (max-width: 420px) {
       .topbar { padding-right: 6px; padding-left: 6px; }
       .button { gap: 3px; padding: 7px 6px; font-size: 10px; }
@@ -382,15 +491,13 @@
               <option value="color">単色カラー</option>
             </select>
           </label>
-
           <div class="field">
             CMYK向け推奨配色
             <div id="presetColorPalette" class="palette"></div>
             <small style="display:block;margin-top:5px;color:#64748b">
-              選択すると無地背景とヘッダーに配色を適用します。表示色はCMYK値のRGB近似です。
+              表示色はCMYK配色の画面表示用近似です。印刷色は印刷条件で変わります。
             </small>
           </div>
-
           <div id="patternControls">
             <label class="field">パターン
               <select id="patternStyleSelect" class="control">
@@ -402,16 +509,14 @@
               </select>
             </label>
           </div>
-
           <div id="customBgControls" class="hidden">
             <label class="field">背景画像を選択
               <input id="customBgInput" type="file" accept="image/*" class="control">
             </label>
           </div>
-
           <div id="singleColorControls" class="hidden">
             <label class="field">背景色
-              <input id="bgColorPicker" type="color" value="#ffebee" class="color-control">
+              <input id="bgColorPicker" type="color" value="#fff1f1" class="color-control">
             </label>
           </div>
         </section>
@@ -441,7 +546,7 @@
               <input id="eventInfoFontSize" type="number" min="8" max="300" value="60" class="control">
             </label>
             <label class="field">イベント文字色
-              <input id="eventInfoTextColor" type="color" value="#b71c1c" class="color-control">
+              <input id="eventInfoTextColor" type="color" value="#ffffff" class="color-control">
             </label>
           </div>
           <label class="check-row">
@@ -449,13 +554,15 @@
             <input id="eventInfoBgEnabled" type="checkbox">
             <input id="eventInfoBgColor" type="color" value="#ffffff" class="color-control">
           </label>
+
           <hr style="border-color:#334155;margin:10px 0">
+
           <div class="two-col">
             <label class="field">サークル名サイズ
               <input id="circleInfoFontSize" type="number" min="8" max="400" value="150" class="control">
             </label>
             <label class="field">サークル文字色
-              <input id="circleInfoTextColor" type="color" value="#880e4f" class="color-control">
+              <input id="circleInfoTextColor" type="color" value="#ffffff" class="color-control">
             </label>
           </div>
           <label class="check-row">
@@ -463,7 +570,9 @@
             <input id="circleInfoBgEnabled" type="checkbox">
             <input id="circleInfoBgColor" type="color" value="#ffffff" class="color-control">
           </label>
+
           <hr style="border-color:#334155;margin:10px 0">
+
           <div class="two-col">
             <label class="field">スペース番号サイズ
               <input id="spaceInfoFontSize" type="number" min="8" max="300" value="90" class="control">
@@ -475,7 +584,7 @@
           <label class="check-row">
             スペース番号の背景色
             <input id="spaceInfoBgEnabled" type="checkbox" checked>
-            <input id="spaceInfoBgColor" type="color" value="#c2185b" class="color-control">
+            <input id="spaceInfoBgColor" type="color" value="#c41230" class="color-control">
           </label>
         </section>
 
@@ -507,7 +616,9 @@
       <div id="previewToolbar">
         <button id="previewToolbarDrag" type="button" aria-label="操作バーを移動" title="ドラッグして移動">↕</button>
         <button id="fitCanvasBtn" type="button">全体表示</button>
-        <label>倍率 <input id="zoomSlider" type="range" min="1" max="200" value="100" style="width:70px;vertical-align:middle"></label>
+        <label>倍率
+          <input id="zoomSlider" type="range" min="1" max="200" value="100" style="width:70px;vertical-align:middle">
+        </label>
         <label><input id="toggleGrid" type="checkbox"> 方眼</label>
       </div>
 
@@ -523,18 +634,14 @@
   </div>
 
   <script>
-    /*
-      推奨色は印刷で使われるCMYKの組み合わせを基準にしたRGB近似。
-      例: C0 M100 Y100 K0 は赤系。実際の色は印刷条件で変わります。
-    */
     const PRESET_COLORS = [
-      { name: "赤", hex: "#ed1c24", background: "#fff1f1", header: "#b5121b", accent: "#ed1c24", eventText: "#9b1118", circleText: "#7a102c", space: "#c41230", cmyk: "0,100,100,0" },
-      { name: "桃", hex: "#e84a8a", background: "#fff0f5", header: "#8f1648", accent: "#d81b60", eventText: "#8f1648", circleText: "#65123d", space: "#ad1457", cmyk: "0,75,25,0" },
-      { name: "橙", hex: "#f7941d", background: "#fff5e8", header: "#a84300", accent: "#e87500", eventText: "#8c3900", circleText: "#653300", space: "#b84d00", cmyk: "0,50,100,0" },
-      { name: "緑", hex: "#39b54a", background: "#eef8ef", header: "#155c25", accent: "#278c39", eventText: "#155c25", circleText: "#104b35", space: "#1d6b30", cmyk: "70,0,100,0" },
-      { name: "青", hex: "#0072bc", background: "#edf5fb", header: "#0b3d70", accent: "#0068a8", eventText: "#0b3d70", circleText: "#073b5c", space: "#075a96", cmyk: "100,60,0,0" },
-      { name: "紫", hex: "#92278f", background: "#f7eff7", header: "#4e1452", accent: "#84217e", eventText: "#4e1452", circleText: "#351044", space: "#70206c", cmyk: "50,100,0,0" },
-      { name: "灰", hex: "#666666", background: "#f1f1f1", header: "#333333", accent: "#595959", eventText: "#333333", circleText: "#222222", space: "#4a4a4a", cmyk: "0,0,0,60" }
+      { name: "赤", hex: "#ed1c24", background: "#fff1f1", header: "#b5121b", accent: "#ed1c24", space: "#c41230", cmyk: "0,100,100,0" },
+      { name: "桃", hex: "#e84a8a", background: "#fff0f5", header: "#8f1648", accent: "#d81b60", space: "#ad1457", cmyk: "0,75,25,0" },
+      { name: "橙", hex: "#f7941d", background: "#fff5e8", header: "#a84300", accent: "#e87500", space: "#b84d00", cmyk: "0,50,100,0" },
+      { name: "緑", hex: "#39b54a", background: "#eef8ef", header: "#155c25", accent: "#278c39", space: "#1d6b30", cmyk: "70,0,100,0" },
+      { name: "青", hex: "#0072bc", background: "#edf5fb", header: "#0b3d70", accent: "#0068a8", space: "#075a96", cmyk: "100,60,0,0" },
+      { name: "紫", hex: "#92278f", background: "#f7eff7", header: "#4e1452", accent: "#84217e", space: "#70206c", cmyk: "50,100,0,0" },
+      { name: "灰", hex: "#666666", background: "#f1f1f1", header: "#333333", accent: "#595959", space: "#4a4a4a", cmyk: "0,0,0,60" }
     ];
 
     const CATEGORY_STYLES = {
@@ -544,19 +651,6 @@
       "Web展示": { background: "#00695c", text: "#ffffff" }
     };
 
-    const SPECS = {
-      A2: { width: 4677, height: 3307 },
-      A3: { width: 3307, height: 2339 },
-      A4: { width: 2339, height: 1654 }
-    };
-
-    const PAPER_MM = {
-      A2: { width: 420, height: 594 },
-      A3: { width: 297, height: 420 },
-      A4: { width: 210, height: 297 }
-    };
-
-    // 縦向き基準。mmとpixelはいずれも塗り足し込み。
     const PRINT_EXPORT_SPECS = {
       A2: { widthMm: 426, heightMm: 600, widthPx: 3354, heightPx: 4724, trimWidthMm: 420, trimHeightMm: 594 },
       A3: { widthMm: 303, heightMm: 426, widthPx: 2386, heightPx: 3354, trimWidthMm: 297, trimHeightMm: 420 },
@@ -582,23 +676,16 @@
     let selectedPresetColor = PRESET_COLORS[0];
     let currentPaperSize = "A3";
     let currentOrientation = "LANDSCAPE";
-
-    // Canvasは印刷時も塗り足し込みの実出力サイズ。
-    let CANVAS_WIDTH = SPECS.A3.width;
-    let CANVAS_HEIGHT = SPECS.A3.height;
-
-    // DESIGN_* は仕上がり範囲。印刷時の全オブジェクト配置はbleed offsetを加える。
+    let CANVAS_WIDTH = 2386;
+    let CANVAS_HEIGHT = 3354;
     let DESIGN_WIDTH = CANVAS_WIDTH;
     let DESIGN_HEIGHT = CANVAS_HEIGHT;
     let BLEED_LEFT = 0;
     let BLEED_TOP = 0;
-    let BLEED_RIGHT = 0;
-    let BLEED_BOTTOM = 0;
     let SAFE_X = 0;
     let SAFE_Y = 0;
-
     let canvas;
-    let customBackgroundImage = null;
+    let customBackgroundElement = null;
     let generationId = 0;
     let imageLoadPromises = [];
     let previewZoomMode = "fit";
@@ -647,7 +734,7 @@
       setupScaler();
       setupEvents();
       updateDimensions();
-      lucide.createIcons();
+      if (window.lucide) lucide.createIcons();
     }
 
     function setupPalette() {
@@ -667,7 +754,6 @@
           root.querySelectorAll("button").forEach((el) => el.classList.remove("selected"));
           button.classList.add("selected");
 
-          // 推奨色は無地背景とヘッダーにまとめて反映。
           document.getElementById("bgTypeSelect").value = "color";
           document.getElementById("patternControls").classList.add("hidden");
           document.getElementById("customBgControls").classList.add("hidden");
@@ -688,38 +774,32 @@
 
     function applyHeaderFontDefaults() {
       const social = SOCIAL_LAYOUTS[currentPaperSize];
-      let defaults;
+      let values;
 
       if (social) {
-        defaults = {
-          event: social.eventFont,
-          circle: social.circleFont,
-          space: social.spaceFont
-        };
+        values = { event: social.eventFont, circle: social.circleFont, space: social.spaceFont };
       } else {
-        const areaScale = Math.sqrt((DESIGN_WIDTH * DESIGN_HEIGHT) / (3307 * 2339));
-        const printScale = Math.max(.9, Math.min(1.25, areaScale));
-        defaults = {
-          event: Math.round(60 * printScale),
-          circle: Math.round(150 * printScale),
-          space: Math.round(90 * printScale)
+        const scale = Math.max(.9, Math.min(1.25, Math.sqrt((DESIGN_WIDTH * DESIGN_HEIGHT) / (3307 * 2339))));
+        values = {
+          event: Math.round(60 * scale),
+          circle: Math.round(150 * scale),
+          space: Math.round(90 * scale)
         };
       }
 
-      document.getElementById("eventInfoFontSize").value = defaults.event;
-      document.getElementById("circleInfoFontSize").value = defaults.circle;
-      document.getElementById("spaceInfoFontSize").value = defaults.space;
+      document.getElementById("eventInfoFontSize").value = values.event;
+      document.getElementById("circleInfoFontSize").value = values.circle;
+      document.getElementById("spaceInfoFontSize").value = values.space;
     }
 
     function updateGuidePositions() {
       const trimGuide = document.getElementById("trimGuide");
       const safeGuide = document.getElementById("safeGuide");
-      const print = Boolean(PRINT_EXPORT_SPECS[currentPaperSize]);
+      const isPrint = Boolean(PRINT_EXPORT_SPECS[currentPaperSize]);
 
-      trimGuide.classList.toggle("hidden", !print);
-      safeGuide.classList.toggle("hidden", !print);
-
-      if (!print) return;
+      trimGuide.classList.toggle("hidden", !isPrint);
+      safeGuide.classList.toggle("hidden", !isPrint);
+      if (!isPrint) return;
 
       trimGuide.style.left = `${BLEED_LEFT}px`;
       trimGuide.style.top = `${BLEED_TOP}px`;
@@ -734,44 +814,41 @@
 
     function updateDimensions() {
       currentPaperSize = document.getElementById("paperSizeSelect").value;
-      const orientationSelect = document.getElementById("orientationSelect");
+      const orientation = document.getElementById("orientationSelect");
       const social = SOCIAL_PRESETS[currentPaperSize];
 
-      BLEED_LEFT = BLEED_TOP = BLEED_RIGHT = BLEED_BOTTOM = 0;
-      SAFE_X = SAFE_Y = 0;
+      BLEED_LEFT = 0;
+      BLEED_TOP = 0;
+      SAFE_X = 0;
+      SAFE_Y = 0;
 
       if (social) {
         currentOrientation = social.orientation;
-        orientationSelect.value = social.orientation;
-        orientationSelect.disabled = true;
-
+        orientation.value = social.orientation;
+        orientation.disabled = true;
         CANVAS_WIDTH = DESIGN_WIDTH = social.width;
         CANVAS_HEIGHT = DESIGN_HEIGHT = social.height;
       } else {
-        orientationSelect.disabled = false;
-        currentOrientation = orientationSelect.value;
+        orientation.disabled = false;
+        currentOrientation = orientation.value;
 
         const spec = PRINT_EXPORT_SPECS[currentPaperSize];
         const landscape = currentOrientation === "LANDSCAPE";
         CANVAS_WIDTH = landscape ? spec.heightPx : spec.widthPx;
         CANVAS_HEIGHT = landscape ? spec.widthPx : spec.heightPx;
 
-        const outputWidthMm = landscape ? spec.heightMm : spec.widthMm;
-        const outputHeightMm = landscape ? spec.widthMm : spec.heightMm;
-        const trimWidthMm = landscape ? spec.trimHeightMm : spec.trimWidthMm;
-        const trimHeightMm = landscape ? spec.trimWidthMm : spec.trimHeightMm;
+        const outWmm = landscape ? spec.heightMm : spec.widthMm;
+        const outHmm = landscape ? spec.widthMm : spec.heightMm;
+        const trimWmm = landscape ? spec.trimHeightMm : spec.trimWidthMm;
+        const trimHmm = landscape ? spec.trimWidthMm : spec.trimHeightMm;
 
-        DESIGN_WIDTH = Math.round(trimWidthMm * CANVAS_WIDTH / outputWidthMm);
-        DESIGN_HEIGHT = Math.round(trimHeightMm * CANVAS_HEIGHT / outputHeightMm);
-
+        DESIGN_WIDTH = Math.round(trimWmm * CANVAS_WIDTH / outWmm);
+        DESIGN_HEIGHT = Math.round(trimHmm * CANVAS_HEIGHT / outHmm);
         BLEED_LEFT = Math.floor((CANVAS_WIDTH - DESIGN_WIDTH) / 2);
-        BLEED_RIGHT = CANVAS_WIDTH - DESIGN_WIDTH - BLEED_LEFT;
         BLEED_TOP = Math.floor((CANVAS_HEIGHT - DESIGN_HEIGHT) / 2);
-        BLEED_BOTTOM = CANVAS_HEIGHT - DESIGN_HEIGHT - BLEED_TOP;
 
-        // 文字・カードの安全マージンは仕上がり端から最低3mm。
-        SAFE_X = Math.ceil(BLEED_MM * DESIGN_WIDTH / trimWidthMm);
-        SAFE_Y = Math.ceil(BLEED_MM * DESIGN_HEIGHT / trimHeightMm);
+        SAFE_X = Math.ceil(BLEED_MM * DESIGN_WIDTH / trimWmm);
+        SAFE_Y = Math.ceil(BLEED_MM * DESIGN_HEIGHT / trimHmm);
       }
 
       canvas.setDimensions({ width: CANVAS_WIDTH, height: CANVAS_HEIGHT });
@@ -790,8 +867,8 @@
       document.getElementById("paperSpecLabel").textContent = label;
       document.getElementById("dimensionDisplay").textContent = label;
       document.getElementById("layoutHelp").textContent = social
-        ? "SNS向けサイズ。印刷用の塗り足し・安全ガイドはありません。"
-        : "プレビューは塗り足し込み。白線＝仕上がり、赤点線＝文字・カードの安全範囲です。";
+        ? "SNS向けサイズ。塗り足し・印刷用安全ガイドはありません。"
+        : "プレビュー全体が塗り足し込み。白線＝仕上がり範囲、赤点線＝安全マージンです。";
 
       previewZoomMode = "fit";
       if (resizeCanvasToFit) resizeCanvasToFit();
@@ -870,7 +947,6 @@
             <input class="control" type="file" accept="image/*" data-image="${index}" ${item.noImage ? "disabled" : ""}>
           </label>
         `;
-
         container.appendChild(card);
       });
 
@@ -900,15 +976,12 @@
           }
           generate();
         };
-
         input.addEventListener("input", update);
         input.addEventListener("change", update);
       });
 
       container.querySelectorAll("[data-image]").forEach((input) => {
-        input.addEventListener("change", () => {
-          uploadItemImage(Number(input.dataset.image), input.files?.[0]);
-        });
+        input.addEventListener("change", () => uploadItemImage(Number(input.dataset.image), input.files?.[0]));
       });
 
       container.querySelectorAll("[data-noimage]").forEach((input) => {
@@ -984,7 +1057,12 @@
       });
 
       const image = await loadImage(dataUrl);
-      return { src: dataUrl, width: image.naturalWidth, height: image.naturalHeight };
+      return {
+        src: dataUrl,
+        width: image.naturalWidth,
+        height: image.naturalHeight,
+        element: image
+      };
     }
 
     async function uploadItemImage(index, file) {
@@ -1010,15 +1088,17 @@
 
       try {
         const loaded = await Promise.all(selected.map(readImageFile));
+
         loaded.forEach((image, index) => {
-          const data = {
+          const fields = {
             imageSrc: image.src,
             imageWidth: image.width,
             imageHeight: image.height,
             noImage: false
           };
+
           if (index < items.length) {
-            Object.assign(items[index], data);
+            Object.assign(items[index], fields);
           } else {
             items.push({
               category: "新刊",
@@ -1027,10 +1107,11 @@
               price: "¥ 500",
               desc: "",
               descriptionFontSize: 38,
-              ...data
+              ...fields
             });
           }
         });
+
         renderItems();
         generate();
       } catch (error) {
@@ -1069,110 +1150,91 @@
         ctx.fillRect(0, 0, 120, 120);
         ctx.fillRect(120, 120, 120, 120);
       }
-
       return pattern;
     }
 
+    /*
+      背景はFabricのオブジェクトとして最初に追加する。
+      これにより、後続のヘッダー・カード・画像に隠れず、塗り足し全体にも表示される。
+    */
     function addFullBleedBackground() {
       const type = document.getElementById("bgTypeSelect").value;
+      let backgroundObject;
 
-      // CSS canvas背景色はviewport transformに影響されず出力全体を塗る。
       if (type === "color") {
-        canvas.setBackgroundImage(null);
-        canvas.setBackgroundColor(document.getElementById("bgColorPicker").value);
-        return;
-      }
-
-      canvas.setBackgroundColor("#ffffff");
-      canvas.setBackgroundImage(null);
-
-      if (type === "pattern") {
-        const pattern = new fabric.Pattern({
-          source: makePattern(
-            document.getElementById("patternStyleSelect").value,
-            selectedPresetColor.hex
-          ),
-          repeat: "repeat"
+        backgroundObject = new fabric.Rect({
+          left: 0,
+          top: 0,
+          width: CANVAS_WIDTH,
+          height: CANVAS_HEIGHT,
+          fill: document.getElementById("bgColorPicker").value
         });
-
-        // 背景パターンはviewport transformに依存しないよう全出力寸法の画像にする。
-        const bg = document.createElement("canvas");
-        bg.width = CANVAS_WIDTH;
-        bg.height = CANVAS_HEIGHT;
-        const ctx = bg.getContext("2d");
-        const fill = ctx.createPattern(
-          makePattern(
-            document.getElementById("patternStyleSelect").value,
-            selectedPresetColor.hex
-          ),
-          "repeat"
+      } else if (type === "pattern") {
+        const tile = makePattern(
+          document.getElementById("patternStyleSelect").value,
+          selectedPresetColor.hex
         );
-        if (fill) {
-          ctx.fillStyle = fill;
-          ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-        }
-        canvas.setBackgroundImage(new fabric.Image(bg), canvas.renderAll.bind(canvas), {
-          originX: "left",
-          originY: "top",
+        backgroundObject = new fabric.Rect({
           left: 0,
-          top: 0
+          top: 0,
+          width: CANVAS_WIDTH,
+          height: CANVAS_HEIGHT,
+          fill: new fabric.Pattern({ source: tile, repeat: "repeat" })
         });
-        return;
+      } else if (type === "custom" && customBackgroundElement) {
+        const bgCanvas = document.createElement("canvas");
+        bgCanvas.width = CANVAS_WIDTH;
+        bgCanvas.height = CANVAS_HEIGHT;
+        const ctx = bgCanvas.getContext("2d");
+
+        // 画像を出力全体へ伸ばし、塗り足しにも背景を適用。
+        ctx.drawImage(customBackgroundElement, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        backgroundObject = new fabric.Image(bgCanvas, {
+          left: 0,
+          top: 0,
+          selectable: false,
+          evented: false
+        });
+      } else {
+        backgroundObject = new fabric.Rect({
+          left: 0,
+          top: 0,
+          width: CANVAS_WIDTH,
+          height: CANVAS_HEIGHT,
+          fill: "#ffffff"
+        });
       }
 
-      if (type === "custom" && customBackgroundImage) {
-        const element = customBackgroundImage.getElement();
-        const bg = document.createElement("canvas");
-        bg.width = CANVAS_WIDTH;
-        bg.height = CANVAS_HEIGHT;
-        const ctx = bg.getContext("2d");
+      backgroundObject.set({
+        selectable: false,
+        evented: false,
+        excludeFromExport: false
+      });
 
-        // 背景画像は出力全体まで広げ、塗り足し部分に空白を作らない。
-        ctx.drawImage(element, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-        canvas.setBackgroundImage(new fabric.Image(bg), canvas.renderAll.bind(canvas), {
-          originX: "left",
-          originY: "top",
-          left: 0,
-          top: 0
-        });
-      }
+      canvas.add(backgroundObject);
+      canvas.sendToBack(backgroundObject);
     }
 
     function getInfoStyle(prefix, defaultSize, defaultColor, maxSize) {
-      const size = Number.parseInt(document.getElementById(`${prefix}FontSize`).value, 10);
+      const value = Number.parseInt(document.getElementById(`${prefix}FontSize`).value, 10);
       const enabled = document.getElementById(`${prefix}BgEnabled`).checked;
 
       return {
-        fontSize: Number.isFinite(size) ? Math.min(Math.max(8, size), maxSize) : defaultSize,
+        fontSize: Number.isFinite(value) ? Math.min(Math.max(8, value), maxSize) : defaultSize,
         fill: document.getElementById(`${prefix}TextColor`).value || defaultColor,
         backgroundColor: enabled ? document.getElementById(`${prefix}BgColor`).value : ""
       };
     }
 
     function addDesignObject(object) {
-      // レイアウト座標は仕上がり範囲基準。出力canvasではbleed分移動する。
       object.set({
         left: (object.left || 0) + BLEED_LEFT,
-        top: (object.top || 0) + BLEED_TOP
+        top: (object.top || 0) + BLEED_TOP,
+        selectable: false,
+        evented: false
       });
       canvas.add(object);
       return object;
-    }
-
-    function addHeaderBackground(headerHeight, color) {
-      /*
-        ヘッダー背景は上端の塗り足しまで延長。
-        左右の塗り足しにも背景色が続く。
-      */
-      canvas.add(new fabric.Rect({
-        left: 0,
-        top: 0,
-        width: CANVAS_WIDTH,
-        height: Math.min(CANVAS_HEIGHT, BLEED_TOP + headerHeight),
-        fill: color,
-        selectable: false,
-        evented: false
-      }));
     }
 
     function createFittedTextbox(text, width, maxHeight, maxFontSize, options = {}) {
@@ -1205,6 +1267,7 @@
       for (let i = 0; i < 22; i += 1) {
         const size = (low + high) / 2;
         const candidate = create(content, size);
+
         if (candidate.height <= safeHeight) {
           best = candidate;
           low = size;
@@ -1267,17 +1330,27 @@
 
       if (item.title) {
         parts.push({
-          text: item.title, max: 78 * scale, min: Math.max(5, 8 * scale),
-          ratio: .42, gap: 8 * scale, family: "Noto Sans JP",
-          weight: "bold", fill: "#0f172a"
+          text: item.title,
+          max: 78 * scale,
+          min: Math.max(5, 8 * scale),
+          ratio: .42,
+          gap: 8 * scale,
+          family: "Noto Sans JP",
+          weight: "bold",
+          fill: "#0f172a"
         });
       }
 
       if (!["無料配布", "Web展示"].includes(item.category) && item.price) {
         parts.push({
-          text: item.price, max: 100 * scale, min: Math.max(5, 8 * scale),
-          ratio: .28, gap: 7 * scale, family: "M PLUS Rounded 1c",
-          weight: "bold", fill: categoryStyle.background
+          text: item.price,
+          max: 100 * scale,
+          min: Math.max(5, 8 * scale),
+          ratio: .28,
+          gap: 7 * scale,
+          family: "M PLUS Rounded 1c",
+          weight: "bold",
+          fill: categoryStyle.background
         });
       }
 
@@ -1285,8 +1358,12 @@
         parts.push({
           text: item.desc,
           max: Math.max(8, Math.min(100, Number(item.descriptionFontSize) || 38)) * scale,
-          min: Math.max(4, 7 * scale), ratio: .30, gap: 0,
-          family: "Noto Sans JP", weight: "normal", fill: "#475569"
+          min: Math.max(4, 7 * scale),
+          ratio: .30,
+          gap: 0,
+          family: "Noto Sans JP",
+          weight: "normal",
+          fill: "#475569"
         });
       }
 
@@ -1309,21 +1386,23 @@
     }
 
     function drawHeader(social, headerHeight, landscape, eventStyle, circleStyle, spaceStyle) {
+      const widthBase = social ? DESIGN_WIDTH : DESIGN_WIDTH;
+      const margin = social ? social.marginX : Math.max(80, SAFE_X + 8);
+      const textWidth = Math.max(1, widthBase - margin * 2);
+
       if (social) {
-        const margin = social.marginX;
-        const width = Math.max(1, DESIGN_WIDTH - margin * 2);
         const isPicsquare = currentPaperSize === "PICSQUARE";
         const top = isPicsquare ? 5 : Math.max(6, Math.round(headerHeight * .04));
-        const usable = Math.max(1, headerHeight - top * 2);
-        const gap = isPicsquare ? 2 : Math.max(3, Math.round(usable * .025));
-        const eventHeight = isPicsquare ? 29 : Math.round(usable * .25);
-        const circleHeight = isPicsquare ? 44 : Math.round(usable * .34);
-        const spaceHeight = Math.max(1, usable - eventHeight - circleHeight - gap * 2);
-
+        const available = Math.max(1, headerHeight - top * 2);
+        const gap = isPicsquare ? 2 : Math.max(3, Math.round(available * .025));
+        const eventHeight = isPicsquare ? 29 : Math.round(available * .25);
+        const circleHeight = isPicsquare ? 44 : Math.round(available * .34);
+        const spaceHeight = Math.max(1, available - eventHeight - circleHeight - gap * 2);
         let y = top;
+
         addDesignObject(fittedTextbox(
           `${document.getElementById("eventDate").value} | ${document.getElementById("eventName").value}`,
-          { left: margin, top: y, width, height: eventHeight },
+          { left: margin, top: y, width: textWidth, height: eventHeight },
           {
             fontSize: eventStyle.fontSize, minimum: 7, fontFamily: "Noto Sans JP",
             fill: eventStyle.fill, backgroundColor: eventStyle.backgroundColor, lineHeight: 1
@@ -1333,7 +1412,7 @@
         y += eventHeight + gap;
         addDesignObject(fittedTextbox(
           document.getElementById("circleName").value,
-          { left: margin, top: y, width, height: circleHeight },
+          { left: margin, top: y, width: textWidth, height: circleHeight },
           {
             fontSize: circleStyle.fontSize, minimum: 8, fontFamily: "Noto Sans JP",
             fontWeight: "bold", fill: circleStyle.fill,
@@ -1346,7 +1425,7 @@
         if (spaceNo) {
           addDesignObject(fittedTextbox(
             ` ${spaceNo} `,
-            { left: margin, top: y, width, height: spaceHeight },
+            { left: margin, top: y, width: textWidth, height: spaceHeight },
             {
               fontSize: spaceStyle.fontSize, minimum: 7,
               fontFamily: "M PLUS Rounded 1c", fontWeight: "bold",
@@ -1359,8 +1438,6 @@
       }
 
       const scale = Math.min(DESIGN_WIDTH / 3307, DESIGN_HEIGHT / 2339);
-      const margin = Math.max(80, SAFE_X + 8);
-      const width = Math.max(1, DESIGN_WIDTH - margin * 2);
       const innerTop = Math.max(SAFE_Y, Math.round(headerHeight * .055));
       const available = Math.max(1, headerHeight - innerTop - Math.max(SAFE_Y, 10));
       const gap = Math.max(5, Math.round(available * .055));
@@ -1372,7 +1449,7 @@
 
       addDesignObject(fittedTextbox(
         `${document.getElementById("eventDate").value} | ${document.getElementById("eventName").value}`,
-        { left: margin, top: y, width, height: eventHeight },
+        { left: margin, top: y, width: textWidth, height: eventHeight },
         {
           fontSize: eventStyle.fontSize, minimum: 10 * scale,
           fontFamily: "Noto Sans JP", fill: eventStyle.fill,
@@ -1383,7 +1460,7 @@
       y += eventHeight + gap;
       addDesignObject(fittedTextbox(
         document.getElementById("circleName").value,
-        { left: margin, top: y, width, height: circleHeight },
+        { left: margin, top: y, width: textWidth, height: circleHeight },
         {
           fontSize: circleStyle.fontSize, minimum: 12 * scale,
           fontFamily: "Noto Sans JP", fontWeight: "bold",
@@ -1397,7 +1474,7 @@
       if (spaceNo) {
         addDesignObject(fittedTextbox(
           ` ${spaceNo} `,
-          { left: margin, top: y, width, height: spaceHeight },
+          { left: margin, top: y, width: textWidth, height: spaceHeight },
           {
             fontSize: spaceStyle.fontSize, minimum: 10 * scale,
             fontFamily: "M PLUS Rounded 1c", fontWeight: "bold",
@@ -1408,7 +1485,7 @@
       }
     }
 
-    function addFabricImage(item, box, generation, anchor) {
+    function addFabricImage(item, box, generation, textAnchor) {
       if (!item.imageSrc || item.noImage) return Promise.resolve();
 
       return new Promise((resolve) => {
@@ -1420,8 +1497,8 @@
 
           const scale = Math.min(box.width / image.width, box.height / image.height);
           image.set({
-            left: box.left + (box.width - image.width * scale) / 2,
-            top: box.top + (box.height - image.height * scale) / 2,
+            left: box.left + (box.width - image.width * scale) / 2 + BLEED_LEFT,
+            top: box.top + (box.height - image.height * scale) / 2 + BLEED_TOP,
             scaleX: scale,
             scaleY: scale,
             shadow: new fabric.Shadow({
@@ -1431,16 +1508,9 @@
             evented: false
           });
 
-          const index = anchor ? canvas.getObjects().indexOf(anchor) : -1;
-          if (index >= 0) {
-            image.set({
-              left: image.left + BLEED_LEFT,
-              top: image.top + BLEED_TOP
-            });
-            canvas.insertAt(image, index, false);
-          } else {
-            addDesignObject(image);
-          }
+          const anchorIndex = textAnchor ? canvas.getObjects().indexOf(textAnchor) : -1;
+          if (anchorIndex >= 0) canvas.insertAt(image, anchorIndex, false);
+          else canvas.add(image);
 
           canvas.requestRenderAll();
           resolve();
@@ -1454,6 +1524,8 @@
       const generation = ++generationId;
       imageLoadPromises = [];
       canvas.clear();
+
+      // 背景を先に追加。その後の全オブジェクトは背景の上に描画される。
       addFullBleedBackground();
 
       const social = SOCIAL_LAYOUTS[currentPaperSize] || null;
@@ -1466,14 +1538,23 @@
       const headerColor = document.getElementById("headerBgColor").value || "#3b0a1e";
       const accentColor = document.getElementById("headerAccentColor").value || selectedPresetColor.accent;
 
-      addHeaderBackground(headerHeight, headerColor);
+      // ヘッダー背景色は上端の塗り足し領域まで延長。
+      canvas.add(new fabric.Rect({
+        left: 0,
+        top: 0,
+        width: CANVAS_WIDTH,
+        height: Math.min(CANVAS_HEIGHT, BLEED_TOP + headerHeight),
+        fill: headerColor,
+        selectable: false,
+        evented: false
+      }));
 
-      // ヘッダーのアクセント帯は仕上がり範囲内に配置する。
+      const accentHeight = social ? Math.max(3, Math.round(headerHeight * .025)) : 12;
       addDesignObject(new fabric.Rect({
         left: 0,
-        top: headerHeight - (social ? Math.max(3, Math.round(headerHeight * .025)) : 12),
+        top: headerHeight - accentHeight,
         width: DESIGN_WIDTH,
-        height: social ? Math.max(3, Math.round(headerHeight * .025)) : 12,
+        height: accentHeight,
         fill: accentColor,
         selectable: false,
         evented: false
@@ -1505,7 +1586,6 @@
         columns = 1;
       }
 
-      // 文字・カードの外周は、印刷時に仕上がり端から3mm以上離す。
       const marginX = social ? social.marginX : SAFE_X;
       const marginY = social ? social.marginY : SAFE_Y;
       const gapX = social ? social.gapX : 40;
@@ -1540,7 +1620,7 @@
         const style = getCategoryStyle(item.category);
         const isR18 = item.ageRating === "R18";
 
-        // 帯の高さもレイアウトごとにカード高さ・幅から決める。
+        // 帯の高さは各レイアウトのカード幅・高さに基づいて調整する。
         const categoryHeight = Math.min(
           social ? social.categoryBand : cardHeight * .14,
           cardHeight * .16,
@@ -1567,7 +1647,6 @@
           selectable: false, evented: false
         }));
 
-        // カテゴリ帯の文字は、帯の縦横に収まる最大サイズにする。
         const categoryLabel = createFittedTextbox(
           item.category || "新刊",
           Math.max(1, cardWidth - padding * 2),
@@ -1618,12 +1697,12 @@
         let textWidth;
 
         if (hasImage) {
-          const imageWidth = item.imageWidth || 1;
-          const imageHeight = item.imageHeight || 1;
+          const sourceWidth = item.imageWidth || 1;
+          const sourceHeight = item.imageHeight || 1;
           const maxImageWidth = cardWidth * (landscape ? .38 : .36);
-          const imageScale = Math.min(maxImageWidth / imageWidth, bodyHeight / imageHeight);
-          const displayWidth = imageWidth * imageScale;
-          const displayHeight = imageHeight * imageScale;
+          const imageScale = Math.min(maxImageWidth / sourceWidth, bodyHeight / sourceHeight);
+          const displayWidth = sourceWidth * imageScale;
+          const displayHeight = sourceHeight * imageScale;
           const imageGap = social ? 10 : 25;
 
           imageBox = {
@@ -1662,13 +1741,15 @@
 
         addDesignObject(new fabric.Rect({
           left: x, top: y, width: cardWidth, height: cardHeight,
-          fill: "rgba(255,255,255,0)", stroke: "#cbd5e1",
-          strokeWidth: social ? 2 : 4, rx: radius, ry: radius,
+          fill: "rgba(255,255,255,0)",
+          stroke: "#cbd5e1",
+          strokeWidth: social ? 2 : 4,
+          rx: radius, ry: radius,
           selectable: false, evented: false
         }));
       });
 
-      canvas.renderAll();
+      canvas.requestRenderAll();
     }
 
     function applyPreviewScale(scale) {
@@ -1726,11 +1807,9 @@
         if (generation === generationId) break;
       }
 
-      canvas.renderAll();
+      canvas.requestRenderAll();
 
       const social = SOCIAL_PRESETS[currentPaperSize];
-      const isPrint = Boolean(PRINT_EXPORT_SPECS[currentPaperSize]);
-
       if (social) {
         return {
           dataUrl: canvas.toDataURL({ format: "png", multiplier: 1 }),
@@ -1743,9 +1822,8 @@
       }
 
       const spec = PRINT_EXPORT_SPECS[currentPaperSize];
-      if (!isPrint || !spec) throw new Error("出力サイズが未定義です。");
-
       const landscape = currentOrientation === "LANDSCAPE";
+
       return {
         dataUrl: canvas.toDataURL({ format: "png", multiplier: 1 }),
         widthPx: CANVAS_WIDTH,
@@ -1764,11 +1842,11 @@
 
       handle.addEventListener("pointerdown", (event) => {
         event.preventDefault();
-        const t = toolbar.getBoundingClientRect();
-        const w = workspace.getBoundingClientRect();
+        const toolbarRect = toolbar.getBoundingClientRect();
+        const workspaceRect = workspace.getBoundingClientRect();
 
-        toolbar.style.left = `${t.left - w.left}px`;
-        toolbar.style.top = `${t.top - w.top}px`;
+        toolbar.style.left = `${toolbarRect.left - workspaceRect.left}px`;
+        toolbar.style.top = `${toolbarRect.top - workspaceRect.top}px`;
         toolbar.style.right = "auto";
         toolbar.style.bottom = "auto";
 
@@ -1776,17 +1854,17 @@
           id: event.pointerId,
           x: event.clientX,
           y: event.clientY,
-          left: t.left - w.left,
-          top: t.top - w.top
+          left: toolbarRect.left - workspaceRect.left,
+          top: toolbarRect.top - workspaceRect.top
         };
         handle.setPointerCapture(event.pointerId);
       });
 
       handle.addEventListener("pointermove", (event) => {
         if (!drag || drag.id !== event.pointerId) return;
-        const r = workspace.getBoundingClientRect();
-        toolbar.style.left = `${Math.max(0, Math.min(r.width - toolbar.offsetWidth, drag.left + event.clientX - drag.x))}px`;
-        toolbar.style.top = `${Math.max(0, Math.min(r.height - toolbar.offsetHeight, drag.top + event.clientY - drag.y))}px`;
+        const rect = workspace.getBoundingClientRect();
+        toolbar.style.left = `${Math.max(0, Math.min(rect.width - toolbar.offsetWidth, drag.left + event.clientX - drag.x))}px`;
+        toolbar.style.top = `${Math.max(0, Math.min(rect.height - toolbar.offsetHeight, drag.top + event.clientY - drag.y))}px`;
       });
 
       const finish = (event) => {
@@ -1893,12 +1971,7 @@ document.getElementById("print").onclick=()=>window.print();
         if (!file) return;
         try {
           const loaded = await readImageFile(file);
-          customBackgroundImage = await new Promise((resolve, reject) => {
-            fabric.Image.fromURL(loaded.src, (image) => {
-              if (image) resolve(image);
-              else reject(new Error("背景画像を開けませんでした。"));
-            });
-          });
+          customBackgroundElement = loaded.element;
           generate();
         } catch (error) {
           alert(error.message);
