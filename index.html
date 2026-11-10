@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>自動おしながきジェネレーター (A3/A4 200dpi)</title>
+  <title>高度同人おしながき作成エディタ (A3 200dpi)</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -13,41 +13,50 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Google Fonts -->
+  
+  <!-- フリーフォント読み込み (Google Fonts) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+JP:wght@500;700;900&family=Shippori+Mincho:wght@600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+JP:wght@400;700;900&family=Shippori+Mincho:wght@600;800&family=Dela+Gothic+One&family=Kaisei+Decol:wght@700&family=Yuji+Syuku&display=swap" rel="stylesheet">
 
   <style>
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #0f172a; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: #475569; }
+    
+    /* Google Font を Fabric.js 側で正しく取得・反映させるためのクラス設定 */
+    .font-noto { font-family: 'Noto Sans JP', sans-serif; }
+    .font-mplus { font-family: 'M PLUS Rounded 1c', sans-serif; }
+    .font-shippori { font-family: 'Shippori Mincho', serif; }
+    .font-dela { font-family: 'Dela Gothic One', cursive; }
+    .font-kaisei { font-family: 'Kaisei Decol', serif; }
+    .font-yuji { font-family: 'Yuji Syuku', serif; }
   </style>
 </head>
 <body class="h-full text-slate-100 flex flex-col font-sans select-none overflow-hidden">
 
   <!-- ヘッダー -->
-  <header class="bg-slate-800 border-b border-slate-700 px-4 py-3 flex items-center justify-between shrink-0">
+  <header class="bg-slate-800 border-b border-slate-700 px-4 py-2.5 flex items-center justify-between shrink-0">
     <div class="flex items-center gap-2.5">
       <div class="bg-gradient-to-r from-rose-500 to-purple-600 p-2 rounded-lg shadow">
-        <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
+        <i data-lucide="layout-dashboard" class="w-5 h-5 text-white"></i>
       </div>
       <div>
-        <h1 class="text-base font-bold leading-tight">自動おしながきジェネレーター</h1>
-        <p class="text-[11px] text-slate-400" id="paperSpecLabel">A3横 (3307 × 2339px / 200dpi)</p>
+        <h1 class="text-base font-bold leading-tight">自由編集型 同人おしながきエディタ</h1>
+        <p class="text-[11px] text-slate-400" id="paperSpecLabel">A3サイズ 200dpi (3307 × 2339px / 白無地キャンバス)</p>
       </div>
     </div>
 
-    <!-- 出力ボタン -->
+    <!-- 出力・操作ボタン -->
     <div class="flex items-center gap-2">
-      <button id="exportPng" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
+      <button id="exportPng" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
         <i data-lucide="image" class="w-4 h-4"></i>
-        <span>PNG画像で保存</span>
+        <span>PNG出力</span>
       </button>
       <button id="exportPdf" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
         <i data-lucide="file-text" class="w-4 h-4"></i>
-        <span>PDFで保存</span>
+        <span>A3 PDF出力</span>
       </button>
     </div>
   </header>
@@ -55,154 +64,143 @@
   <!-- メインコンテンツ -->
   <div class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
 
-    <!-- 左側：入力フォームパネル -->
-    <aside class="w-full md:w-[440px] lg:w-[480px] bg-slate-800 border-r border-slate-700 flex flex-col shrink-0 overflow-hidden">
-      <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
-        <h2 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
-          <i data-lucide="sliders" class="w-4 h-4 text-rose-400"></i> デザイン・情報設定
-        </h2>
-        <span class="text-[10px] text-emerald-400 bg-emerald-950 border border-emerald-800 px-2 py-0.5 rounded-full flex items-center gap-1">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> リアルタイム反映中
-        </span>
-      </div>
-
-      <div class="flex-1 overflow-y-auto p-4 space-y-5">
+    <!-- 左側：オブジェクト操作パネル -->
+    <aside class="w-full md:w-[380px] lg:w-[420px] bg-slate-800 border-r border-slate-700 flex flex-col shrink-0 overflow-hidden">
+      
+      <div class="flex-1 overflow-y-auto p-4 space-y-4">
         
-        <!-- レイアウト＆用紙サイズ選択 -->
-        <div class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
-          <span class="text-xs font-bold text-rose-400 block mb-1 flex items-center gap-1">
-            <i data-lucide="layout" class="w-3.5 h-3.5"></i> ■ レイアウト・用紙設定
+        <!-- 1. 用紙・キャンバス基本設定 -->
+        <div class="space-y-2.5 bg-slate-900/60 p-3 rounded-xl border border-slate-700/60">
+          <span class="text-xs font-bold text-rose-400 flex items-center gap-1">
+            <i data-lucide="settings" class="w-3.5 h-3.5"></i> ■ キャンバス・用紙設定
           </span>
-
           <div class="grid grid-cols-2 gap-2">
             <div>
-              <label class="block text-[11px] text-slate-400 mb-1">用紙向き</label>
-              <select id="orientationSelect" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-rose-500">
-                <option value="LANDSCAPE">横向き (Landscape)</option>
-                <option value="PORTRAIT">縦向き (Portrait)</option>
+              <label class="block text-[10px] text-slate-400 mb-1">用紙向き</label>
+              <select id="orientationSelect" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-rose-500">
+                <option value="LANDSCAPE">横向き (A3横)</option>
+                <option value="PORTRAIT">縦向き (A3縦)</option>
               </select>
             </div>
             <div>
-              <label class="block text-[11px] text-slate-400 mb-1">用紙サイズ</label>
-              <select id="paperSizeSelect" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-rose-500">
-                <option value="A3">A3 (200dpi)</option>
-                <option value="A4">A4 (200dpi)</option>
-              </select>
+              <label class="block text-[10px] text-slate-400 mb-1">キャンバス色</label>
+              <input type="color" id="canvasBgPicker" value="#ffffff" class="w-full h-8 bg-slate-800 border border-slate-700 rounded-lg cursor-pointer p-0.5">
             </div>
           </div>
-        </div>
-
-        <!-- 背景デザイン設定 -->
-        <div class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
-          <span class="text-xs font-bold text-rose-400 block mb-1 flex items-center gap-1">
-            <i data-lucide="palette" class="w-3.5 h-3.5"></i> ■ 背景デザイン設定
-          </span>
 
           <div>
-            <label class="block text-[11px] text-slate-400 mb-1">背景の種類</label>
-            <select id="bgTypeSelect" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-rose-500">
-              <option value="pattern">パターン柄を選択</option>
-              <option value="custom">背景画像をアップロード</option>
-              <option value="color">単色カラー</option>
-            </select>
-          </div>
-
-          <!-- パターン選定エリア -->
-          <div id="patternControls" class="space-y-2.5">
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">パターン柄</label>
-              <select id="patternStyleSelect" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-rose-500">
-                <option value="dots">可愛いドットパターン (水玉)</option>
-                <option value="stripes">太めのストライプ (縦縞)</option>
-                <option value="diagonal">太めの斜めストライプ</option>
-                <option value="border">太めのボーダー (横縞)</option>
-                <option value="tartan">タータンチェック</option>
-              </select>
+            <label class="block text-[10px] text-slate-400 mb-1">背景画像を選択・アップロード</label>
+            <div class="flex gap-2">
+              <input type="file" id="bgImageInput" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[11px] file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600 cursor-pointer">
+              <button id="clearBgBtn" class="bg-slate-700 hover:bg-slate-600 text-[11px] px-2 rounded shrink-0 border border-slate-600 text-slate-300">背景クリア</button>
             </div>
-
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">パターンの規定カラー</label>
-              <div class="grid grid-cols-4 gap-1.5" id="presetColorPalette">
-                <!-- カラーボタン動的生成 -->
-              </div>
-            </div>
-          </div>
-
-          <!-- カスタム背景画像アップロード -->
-          <div id="customBgControls" class="hidden">
-            <label class="block text-[11px] text-slate-400 mb-1">背景画像ファイル</label>
-            <input type="file" id="customBgInput" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:bg-rose-500 file:text-white hover:file:bg-rose-400 cursor-pointer">
-          </div>
-
-          <!-- 単色背景カラー -->
-          <div id="singleColorControls" class="hidden flex items-center gap-2">
-            <label class="text-[11px] text-slate-400">背景色:</label>
-            <input type="color" id="bgColorPicker" value="#f8fafc" class="w-10 h-8 bg-slate-800 border border-slate-700 rounded cursor-pointer p-0.5">
           </div>
         </div>
 
-        <!-- 一括画像アップロード -->
-        <div class="space-y-2.5 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
-          <span class="text-xs font-bold text-rose-400 block mb-1 flex items-center gap-1">
-            <i data-lucide="images" class="w-3.5 h-3.5"></i> ■ 頒布物画像 一括アップロード
-          </span>
-          <label class="flex flex-col items-center justify-center w-full h-24 border-2 border-dashed border-rose-500/50 hover:border-rose-400 rounded-xl cursor-pointer bg-slate-800/40 hover:bg-slate-800 transition p-2">
-            <i data-lucide="upload-cloud" class="w-7 h-7 text-rose-400 mb-1"></i>
-            <span class="text-xs text-slate-200 font-bold">画像をまとめて選択 (複数可)</span>
-            <span class="text-[10px] text-slate-400">※順番通りに各頒布物枠へ割り当てられます</span>
-            <input type="file" id="batchImageInput" accept="image/*" multiple class="hidden">
-          </label>
-        </div>
-
-        <!-- イベント＆サークル基本情報 -->
-        <div class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
-          <span class="text-xs font-bold text-rose-400 block mb-1 flex items-center gap-1">
-            <i data-lucide="info" class="w-3.5 h-3.5"></i> ■ イベント・サークル情報
+        <!-- 2. オブジェクト追加エリア -->
+        <div class="space-y-2.5 bg-slate-900/60 p-3 rounded-xl border border-slate-700/60">
+          <span class="text-xs font-bold text-rose-400 flex items-center gap-1">
+            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> ■ オブジェクト追加
           </span>
           
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">イベント日時</label>
-            <input type="text" id="eventDate" value="2026年12月30日(水)" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-rose-500">
-          </div>
-
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">イベント名</label>
-            <input type="text" id="eventName" value="コミックマーケット109" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-rose-500">
-          </div>
-
           <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">サークル名</label>
-              <input type="text" id="circleName" value="暁の稜線" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-rose-500">
-            </div>
-            <div>
-              <label class="block text-[11px] text-slate-400 mb-1">スペース番号</label>
-              <input type="text" id="spaceNo" value="東7ホール あ-01a" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-rose-500">
-            </div>
+            <button id="addTextBtn" class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs py-2 px-3 rounded-lg border border-slate-600 flex items-center justify-center gap-1.5 font-bold transition">
+              <i data-lucide="type" class="w-4 h-4 text-rose-400"></i> テキスト追加
+            </button>
+            <label class="bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs py-2 px-3 rounded-lg border border-slate-600 flex items-center justify-center gap-1.5 font-bold cursor-pointer transition">
+              <i data-lucide="image-plus" class="w-4 h-4 text-emerald-400"></i> 画像追加
+              <input type="file" id="imageAddInput" accept="image/*" multiple class="hidden">
+            </label>
           </div>
         </div>
 
-        <!-- 頒布物リスト -->
-        <div>
-          <div class="flex justify-between items-center mb-2">
+        <!-- 3. 選択中オブジェクトのプロパティ設定 -->
+        <div id="propertyPanel" class="space-y-3 bg-slate-900/60 p-3 rounded-xl border border-slate-700/60 opacity-50 pointer-events-none transition-all">
+          <div class="flex justify-between items-center border-b border-slate-700/80 pb-2">
             <span class="text-xs font-bold text-rose-400 flex items-center gap-1">
-              <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i> ■ 頒布物一覧
+              <i data-lucide="sliders" class="w-3.5 h-3.5"></i> ■ 選択オブジェクト設定
             </span>
-            <button id="addItemBtn" class="bg-slate-700 hover:bg-slate-600 text-xs px-2.5 py-1 rounded-lg border border-slate-600 text-slate-200 flex items-center gap-1">
-              <i data-lucide="plus" class="w-3.5 h-3.5"></i> 頒布物を追加
+            <button id="deleteObjectBtn" class="bg-rose-500/20 hover:bg-rose-500/40 text-rose-300 border border-rose-500/50 text-[11px] px-2 py-0.5 rounded flex items-center gap-1">
+              <i data-lucide="trash-2" class="w-3 h-3"></i> 削除
             </button>
           </div>
 
-          <div id="itemsContainer" class="space-y-3">
-            <!-- 動的追加項目エリア -->
+          <!-- テキスト専用プロパティ -->
+          <div id="textControls" class="space-y-2.5">
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-1">フリーフォント選択</label>
+              <select id="fontFamilySelect" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-slate-200 focus:outline-none focus:ring-1 focus:ring-rose-500">
+                <option value="Noto Sans JP">Noto Sans JP (標準ゴシック)</option>
+                <option value="M PLUS Rounded 1c">M PLUS Rounded (丸ゴシック)</option>
+                <option value="Shippori Mincho">しっぽり明朝 (明朝体)</option>
+                <option value="Dela Gothic One">Dela Gothic One (極太ポップ)</option>
+                <option value="Kaisei Decol">Kaisei Decol (可愛い明朝)</option>
+                <option value="Yuji Syuku">祐司 宿 (毛筆・和風)</option>
+              </select>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block text-[10px] text-slate-400 mb-1">文字サイズ</label>
+                <input type="number" id="fontSizeInput" min="10" max="300" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-200">
+              </div>
+              <div>
+                <label class="block text-[10px] text-slate-400 mb-1">文字色</label>
+                <input type="color" id="textColorPicker" class="w-full h-7 bg-slate-800 border border-slate-700 rounded cursor-pointer p-0.5">
+              </div>
+            </div>
+
+            <div class="flex gap-2">
+              <button id="toggleBoldBtn" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs py-1 rounded text-slate-300 font-bold">太字</button>
+              <button id="toggleItalicBtn" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs py-1 rounded text-slate-300 italic">斜体</button>
+            </div>
+          </div>
+
+          <!-- 重ね順調整 -->
+          <div class="pt-1 border-t border-slate-800 grid grid-cols-2 gap-2">
+            <button id="bringForwardBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[11px] py-1 rounded text-slate-300 flex items-center justify-center gap-1">
+              <i data-lucide="arrow-up" class="w-3 h-3"></i> 前面へ移動
+            </button>
+            <button id="sendBackwardsBtn" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[11px] py-1 rounded text-slate-300 flex items-center justify-center gap-1">
+              <i data-lucide="arrow-down" class="w-3 h-3"></i> 背面へ移動
+            </button>
+          </div>
+        </div>
+
+        <!-- 4. 整列配置ツール -->
+        <div class="space-y-2.5 bg-slate-900/60 p-3 rounded-xl border border-slate-700/60">
+          <span class="text-xs font-bold text-rose-400 flex items-center gap-1">
+            <i data-lucide="align-center" class="w-3.5 h-3.5"></i> ■ 整列配置ツール
+          </span>
+          <p class="text-[10px] text-slate-400">キャンバス全体または複数選択した要素を揃えます</p>
+          
+          <div class="grid grid-cols-3 gap-1.5">
+            <button onclick="alignObjects('left')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] py-1.5 rounded flex items-center justify-center gap-1" title="左揃え">
+              <i data-lucide="align-start-vertical" class="w-3.5 h-3.5"></i> 左揃え
+            </button>
+            <button onclick="alignObjects('center')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] py-1.5 rounded flex items-center justify-center gap-1" title="左右中央揃え">
+              <i data-lucide="align-center-vertical" class="w-3.5 h-3.5"></i> 左右中央
+            </button>
+            <button onclick="alignObjects('right')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] py-1.5 rounded flex items-center justify-center gap-1" title="右揃え">
+              <i data-lucide="align-end-vertical" class="w-3.5 h-3.5"></i> 右揃え
+            </button>
+            <button onclick="alignObjects('top')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] py-1.5 rounded flex items-center justify-center gap-1" title="上揃え">
+              <i data-lucide="align-start-horizontal" class="w-3.5 h-3.5"></i> 上揃え
+            </button>
+            <button onclick="alignObjects('middle')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] py-1.5 rounded flex items-center justify-center gap-1" title="上下中央揃え">
+              <i data-lucide="align-center-horizontal" class="w-3.5 h-3.5"></i> 上下中央
+            </button>
+            <button onclick="alignObjects('bottom')" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] py-1.5 rounded flex items-center justify-center gap-1" title="下揃え">
+              <i data-lucide="align-end-horizontal" class="w-3.5 h-3.5"></i> 下揃え
+            </button>
           </div>
         </div>
 
       </div>
     </aside>
 
-    <!-- 右側：リアルタイムプレビューパネル -->
-    <main id="workspace" class="flex-1 bg-slate-950 flex flex-col items-center justify-center p-3 sm:p-5 overflow-hidden relative min-h-0">
+    <!-- 右側：リアルタイムエディタ・キャンバスワークスペース -->
+    <main id="workspace" class="flex-1 bg-slate-950 flex flex-col items-center justify-center p-3 sm:p-5 overflow-hidden relative min-h-0 select-none">
       <div class="absolute top-3 left-3 z-10 bg-slate-800/80 backdrop-blur border border-slate-700 rounded-full px-3 py-1 text-[11px] text-slate-300 flex items-center gap-2 shadow">
         <span id="zoomDisplay">表示: 100%</span>
         <span class="text-slate-600">|</span>
@@ -219,461 +217,343 @@
   <script>
     lucide.createIcons();
 
-    // 規定カラーリスト（赤・ピンク・オレンジ・緑・青・紫・グレー）
-    const PRESET_COLORS = [
-      { name: '赤', hex: '#fca5a5', main: '#e11d48' },
-      { name: 'ピンク', hex: '#f472b6', main: '#db2777' },
-      { name: 'オレンジ', hex: '#fdba74', main: '#ea580c' },
-      { name: '緑', hex: '#86efac', main: '#16a34a' },
-      { name: '青', hex: '#93c5fd', main: '#2563eb' },
-      { name: '紫', hex: '#d8b4fe', main: '#9333ea' },
-      { name: 'グレー', hex: '#cbd5e1', main: '#475569' }
-    ];
-
-    let selectedPresetColor = PRESET_COLORS[0];
-
-    // 用紙スペック
-    const SPECS = {
-      A3: { width: 3307, height: 2339 },
-      A4: { width: 2339, height: 1654 }
+    // 用紙解像度定義 (A3 200dpi)
+    const A3_SPECS = {
+      width: 3307,
+      height: 2339
     };
 
-    let currentOrientation = 'LANDSCAPE'; // 'LANDSCAPE' or 'PORTRAIT'
-    let currentPaperSize = 'A3';
-    let CANVAS_WIDTH = SPECS.A3.width;
-    let CANVAS_HEIGHT = SPECS.A3.height;
+    let currentOrientation = 'LANDSCAPE'; // LANDSCAPE or PORTRAIT
+    let CANVAS_WIDTH = A3_SPECS.width;
+    let CANVAS_HEIGHT = A3_SPECS.height;
 
     let canvas;
-    let customBgImageObj = null;
-
-    // 初期頒布物データ
-    let items = [
-      {
-        badge: '新 刊',
-        title: '新刊サンプルタイトル',
-        price: '¥ 1,000',
-        desc: '文庫サイズ / 120P / 全年齢\n特製ノベルティステッカー付き',
-        imageSrc: null
-      },
-      {
-        badge: '既 刊',
-        title: '既刊イラスト集',
-        price: '¥ 500',
-        desc: 'B5 / 24P / フルカラー\n過去イラストまとめ冊子',
-        imageSrc: null
-      }
-    ];
+    let bgImageObj = null;
 
     window.addEventListener('DOMContentLoaded', () => {
       initCanvas();
-      setupColorPalette();
-      renderFormItems();
+      setupResponsiveScaler();
       setupEventListeners();
-      updateCanvasDimensions();
+      addDefaultElements();
     });
 
+    // Fabric.js キャンバスの初期化
     function initCanvas() {
       canvas = new fabric.Canvas('oshinagakiCanvas', {
         width: CANVAS_WIDTH,
         height: CANVAS_HEIGHT,
         backgroundColor: '#ffffff',
-        selection: false
+        preserveObjectStacking: true // 選択時も重ね順を保持
       });
+
+      // オブジェクト選択イベント設定
+      canvas.on('selection:created', updatePropertyPanel);
+      canvas.on('selection:updated', updatePropertyPanel);
+      canvas.on('selection:cleared', resetPropertyPanel);
+      canvas.on('object:modified', () => canvas.renderAll());
     }
 
-    // パターン用プレセットカラーパレットの構築
-    function setupColorPalette() {
-      const container = document.getElementById('presetColorPalette');
-      container.innerHTML = '';
-      PRESET_COLORS.forEach((c, idx) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `flex items-center gap-1 p-1 rounded border border-slate-700 text-[10px] text-slate-300 hover:bg-slate-700 ${idx === 0 ? 'ring-2 ring-rose-500 bg-slate-800' : 'bg-slate-900'}`;
-        btn.innerHTML = `<span class="w-3 h-3 rounded-full shrink-0" style="background:${c.hex}"></span><span>${c.name}</span>`;
-        btn.onclick = () => {
-          document.querySelectorAll('#presetColorPalette button').forEach(b => b.classList.remove('ring-2', 'ring-rose-500', 'bg-slate-800'));
-          btn.classList.add('ring-2', 'ring-rose-500', 'bg-slate-800');
-          selectedPresetColor = c;
-          generateOshinagaki();
+    // デフォルトのサンプル要素を追加
+    function addDefaultElements() {
+      // ヘッダー背景（濃紺）
+      const headerBox = new fabric.Rect({
+        left: 0, top: 0, width: CANVAS_WIDTH, height: 380,
+        fill: '#0f172a', selectable: true
+      });
+
+      // サークル名テキスト
+      const circleText = new fabric.Textbox('サークル名テキスト', {
+        left: 80, top: 120, fontSize: 130, fontWeight: 'bold',
+        fontFamily: 'Noto Sans JP', fill: '#ffffff', width: 1800
+      });
+
+      // スペース番号バッジ
+      const spaceBadge = new fabric.Textbox(' 東7 あ-01a ', {
+        left: CANVAS_WIDTH - 850, top: 110, fontSize: 85, fontWeight: 'bold',
+        fontFamily: 'M PLUS Rounded 1c', fill: '#ffffff', backgroundColor: '#e11d48',
+        padding: 20, rx: 15, ry: 15
+      });
+
+      // サンプル新刊カード枠
+      const cardBg = new fabric.Rect({
+        left: 80, top: 480, width: 1500, height: 800,
+        fill: '#ffffff', stroke: '#cbd5e1', strokeWidth: 4, rx: 24, ry: 24
+      });
+
+      const cardTitle = new fabric.Textbox('新刊サンプルタイトル', {
+        left: 650, top: 580, fontSize: 60, fontWeight: 'bold',
+        fontFamily: 'Noto Sans JP', fill: '#0f172a', width: 850
+      });
+
+      const cardPrice = new fabric.Text('¥ 1,000', {
+        left: 650, top: 700, fontSize: 80, fontWeight: 'bold',
+        fontFamily: 'M PLUS Rounded 1c', fill: '#e11d48'
+      });
+
+      canvas.add(headerBox, circleText, spaceBadge, cardBg, cardTitle, cardPrice);
+      canvas.renderAll();
+    }
+
+    // ★ オブジェクト追加処理 ★
+
+    // テキスト追加
+    document.getElementById('addTextBtn').addEventListener('click', () => {
+      const text = new fabric.Textbox('新規テキスト', {
+        left: CANVAS_WIDTH / 2 - 200,
+        top: CANVAS_HEIGHT / 2 - 50,
+        fontSize: 60,
+        fontFamily: 'Noto Sans JP',
+        fill: '#0f172a',
+        width: 600
+      });
+      canvas.add(text);
+      canvas.setActiveObject(text);
+      canvas.renderAll();
+    });
+
+    // 画像追加（適切な縦横比にリサイズして読み込み）
+    document.getElementById('imageAddInput').addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      files.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          fabric.Image.fromURL(evt.target.result, (img) => {
+            // 長辺が600px程度に収まるようにデフォルトスケール計算
+            const maxDim = 600;
+            const scale = Math.min(maxDim / img.width, maxDim / img.height);
+
+            img.set({
+              left: 100 + (index * 40),
+              top: 500 + (index * 40),
+              scaleX: scale,
+              scaleY: scale,
+              cornerSize: 24,
+              transparentCorners: false
+            });
+            canvas.add(img);
+            canvas.setActiveObject(img);
+            canvas.renderAll();
+          });
         };
-        container.appendChild(btn);
+        reader.readAsDataURL(file);
       });
+      e.target.value = ''; // リセット
+    });
+
+    // 背景画像設定
+    document.getElementById('bgImageInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        fabric.Image.fromURL(evt.target.result, (img) => {
+          bgImageObj = img;
+          updateBackground();
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById('clearBgBtn').addEventListener('click', () => {
+      bgImageObj = null;
+      document.getElementById('bgImageInput').value = '';
+      canvas.setBackgroundImage(null, canvas.renderAll.bind(canvas));
+    });
+
+    function updateBackground() {
+      if (bgImageObj) {
+        canvas.setBackgroundImage(bgImageObj, canvas.renderAll.bind(canvas), {
+          scaleX: CANVAS_WIDTH / bgImageObj.width,
+          scaleY: CANVAS_HEIGHT / bgImageObj.height
+        });
+      } else {
+        const color = document.getElementById('canvasBgPicker').value;
+        canvas.setBackgroundColor(color, canvas.renderAll.bind(canvas));
+      }
     }
 
-    function updateCanvasDimensions() {
-      currentOrientation = document.getElementById('orientationSelect').value;
-      currentPaperSize = document.getElementById('paperSizeSelect').value;
+    document.getElementById('canvasBgPicker').addEventListener('input', updateBackground);
 
-      const spec = SPECS[currentPaperSize];
-      if (currentOrientation === 'LANDSCAPE') {
-        CANVAS_WIDTH = spec.width;
-        CANVAS_HEIGHT = spec.height;
+    // ★ 選択オブジェクトのプロパティ同期＆リアルタイム編集 ★
+    function updatePropertyPanel() {
+      const activeObj = canvas.getActiveObject();
+      const panel = document.getElementById('propertyPanel');
+
+      if (!activeObj) {
+        resetPropertyPanel();
+        return;
+      }
+
+      panel.classList.remove('opacity-50', 'pointer-events-none');
+
+      const textControls = document.getElementById('textControls');
+      if (activeObj.type === 'textbox' || activeObj.type === 'text') {
+        textControls.classList.remove('hidden');
+        document.getElementById('fontFamilySelect').value = activeObj.fontFamily || 'Noto Sans JP';
+        document.getElementById('fontSizeInput').value = Math.round(activeObj.fontSize || 40);
+        document.getElementById('textColorPicker').value = activeObj.fill || '#000000';
       } else {
-        CANVAS_WIDTH = spec.height;
-        CANVAS_HEIGHT = spec.width;
+        textControls.classList.add('hidden');
+      }
+    }
+
+    function resetPropertyPanel() {
+      const panel = document.getElementById('propertyPanel');
+      panel.classList.add('opacity-50', 'pointer-events-none');
+    }
+
+    // リアルタイム反映プロパティイベント
+    document.getElementById('fontFamilySelect').addEventListener('change', (e) => {
+      const activeObj = canvas.getActiveObject();
+      if (activeObj && (activeObj.type === 'textbox' || activeObj.type === 'text')) {
+        activeObj.set('fontFamily', e.target.value);
+        canvas.renderAll();
+      }
+    });
+
+    document.getElementById('fontSizeInput').addEventListener('input', (e) => {
+      const activeObj = canvas.getActiveObject();
+      if (activeObj && (activeObj.type === 'textbox' || activeObj.type === 'text')) {
+        activeObj.set('fontSize', parseInt(e.target.value, 10) || 20);
+        canvas.renderAll();
+      }
+    });
+
+    document.getElementById('textColorPicker').addEventListener('input', (e) => {
+      const activeObj = canvas.getActiveObject();
+      if (activeObj) {
+        activeObj.set('fill', e.target.value);
+        canvas.renderAll();
+      }
+    });
+
+    document.getElementById('toggleBoldBtn').addEventListener('click', () => {
+      const activeObj = canvas.getActiveObject();
+      if (activeObj && (activeObj.type === 'textbox' || activeObj.type === 'text')) {
+        const isBold = activeObj.fontWeight === 'bold';
+        activeObj.set('fontWeight', isBold ? 'normal' : 'bold');
+        canvas.renderAll();
+      }
+    });
+
+    document.getElementById('toggleItalicBtn').addEventListener('click', () => {
+      const activeObj = canvas.getActiveObject();
+      if (activeObj && (activeObj.type === 'textbox' || activeObj.type === 'text')) {
+        const isItalic = activeObj.fontStyle === 'italic';
+        activeObj.set('fontStyle', isItalic ? 'normal' : 'italic');
+        canvas.renderAll();
+      }
+    });
+
+    // 重ね順＆削除
+    document.getElementById('deleteObjectBtn').addEventListener('click', () => {
+      const activeObjects = canvas.getActiveObjects();
+      if (activeObjects.length > 0) {
+        activeObjects.forEach(obj => canvas.remove(obj));
+        canvas.discardActiveObject();
+        canvas.renderAll();
+      }
+    });
+
+    document.getElementById('bringForwardBtn').addEventListener('click', () => {
+      const activeObj = canvas.getActiveObject();
+      if (activeObj) {
+        canvas.bringForward(activeObj);
+        canvas.renderAll();
+      }
+    });
+
+    document.getElementById('sendBackwardsBtn').addEventListener('click', () => {
+      const activeObj = canvas.getActiveObject();
+      if (activeObj) {
+        canvas.sendBackwards(activeObj);
+        canvas.renderAll();
+      }
+    });
+
+    // ★ 整列配置機能 ★
+    function alignObjects(action) {
+      const activeObj = canvas.getActiveObject();
+      if (!activeObj) return;
+
+      if (activeObj.type === 'activeSelection') {
+        // 複数選択されたオブジェクト間での整列
+        const groupBound = activeObj.getBoundingRect();
+        activeObj.forEachObject((obj) => {
+          const itemBound = obj.getBoundingRect();
+          switch (action) {
+            case 'left':
+              obj.set('left', -activeObj.width / 2 + obj.width * obj.scaleX / 2);
+              break;
+            case 'center':
+              obj.set('left', 0);
+              break;
+            case 'right':
+              obj.set('left', activeObj.width / 2 - obj.width * obj.scaleX / 2);
+              break;
+            case 'top':
+              obj.set('top', -activeObj.height / 2 + obj.height * obj.scaleY / 2);
+              break;
+            case 'middle':
+              obj.set('top', 0);
+              break;
+            case 'bottom':
+              obj.set('top', activeObj.height / 2 - obj.height * obj.scaleY / 2);
+              break;
+          }
+        });
+      } else {
+        // 単一オブジェクトのキャンバス全体での整列
+        const bound = activeObj.getBoundingRect();
+        switch (action) {
+          case 'left':
+            activeObj.set('left', 0);
+            break;
+          case 'center':
+            activeObj.set('left', (CANVAS_WIDTH - bound.width) / 2);
+            break;
+          case 'right':
+            activeObj.set('left', CANVAS_WIDTH - bound.width);
+            break;
+          case 'top':
+            activeObj.set('top', 0);
+            break;
+          case 'middle':
+            activeObj.set('top', (CANVAS_HEIGHT - bound.height) / 2);
+            break;
+          case 'bottom':
+            activeObj.set('top', CANVAS_HEIGHT - bound.height);
+            break;
+        }
+      }
+      canvas.renderAll();
+    }
+
+    // ★ 用紙縦横切替 ★
+    function updateDimensions() {
+      currentOrientation = document.getElementById('orientationSelect').value;
+
+      if (currentOrientation === 'LANDSCAPE') {
+        CANVAS_WIDTH = A3_SPECS.width;
+        CANVAS_HEIGHT = A3_SPECS.height;
+      } else {
+        CANVAS_WIDTH = A3_SPECS.height;
+        CANVAS_HEIGHT = A3_SPECS.width;
       }
 
       canvas.setWidth(CANVAS_WIDTH);
       canvas.setHeight(CANVAS_HEIGHT);
 
-      const label = `${currentPaperSize}${currentOrientation === 'LANDSCAPE' ? '横' : '縦'} (${CANVAS_WIDTH}×${CANVAS_HEIGHT}px / 200dpi)`;
+      const label = `A3${currentOrientation === 'LANDSCAPE' ? '横' : '縦'} (${CANVAS_WIDTH}×${CANVAS_HEIGHT}px / 200dpi)`;
       document.getElementById('paperSpecLabel').innerText = label;
       document.getElementById('dimensionDisplay').innerText = label;
 
+      updateBackground();
       setupResponsiveScaler();
-      generateOshinagaki();
     }
 
-    function renderFormItems() {
-      const container = document.getElementById('itemsContainer');
-      container.innerHTML = '';
-
-      items.forEach((item, idx) => {
-        const itemEl = document.createElement('div');
-        itemEl.className = 'bg-slate-900/80 border border-slate-700/80 p-3 rounded-xl space-y-2 relative group';
-        itemEl.innerHTML = `
-          <div class="flex justify-between items-center">
-            <span class="text-[11px] font-bold text-slate-400">頒布物 #${idx + 1}</span>
-            ${items.length > 1 ? `<button onclick="removeItem(${idx})" class="text-rose-400 hover:text-rose-300 text-xs flex items-center gap-0.5"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i> 削除</button>` : ''}
-          </div>
-          
-          <div class="grid grid-cols-3 gap-2">
-            <div class="col-span-1">
-              <input type="text" value="${item.badge}" oninput="updateItem(${idx}, 'badge', this.value)" placeholder="新刊/既刊" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-rose-400 font-bold">
-            </div>
-            <div class="col-span-2">
-              <input type="text" value="${item.price}" oninput="updateItem(${idx}, 'price', this.value)" placeholder="価格 (例: ¥500)" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200">
-            </div>
-          </div>
-
-          <div>
-            <input type="text" value="${item.title}" oninput="updateItem(${idx}, 'title', this.value)" placeholder="作品タイトル" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-200 font-bold">
-          </div>
-
-          <div>
-            <textarea oninput="updateItem(${idx}, 'desc', this.value)" placeholder="説明文（サイズ、P数等）" class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1 text-xs text-slate-300 h-14 resize-none">${item.desc}</textarea>
-          </div>
-
-          <div>
-            <label class="block text-[10px] text-slate-400 mb-1">個別に画像を選択</label>
-            <input type="file" accept="image/*" onchange="handleSingleImageUpload(${idx}, this)" class="w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600 cursor-pointer">
-          </div>
-        `;
-        container.appendChild(itemEl);
-      });
-      lucide.createIcons();
-    }
-
-    function addItem() {
-      items.push({
-        badge: '新 刊',
-        title: `頒布物 #${items.length + 1}`,
-        price: '¥ 500',
-        desc: '説明テキストを入力してください',
-        imageSrc: null
-      });
-      renderFormItems();
-      generateOshinagaki();
-    }
-
-    function removeItem(idx) {
-      items.splice(idx, 1);
-      renderFormItems();
-      generateOshinagaki();
-    }
-
-    function updateItem(idx, key, value) {
-      items[idx][key] = value;
-      generateOshinagaki();
-    }
-
-    function handleSingleImageUpload(idx, input) {
-      const file = input.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        items[idx].imageSrc = e.target.result;
-        generateOshinagaki();
-      };
-      reader.readAsDataURL(file);
-    }
-
-    // 複数画像の一括アップロード
-    function handleBatchImageUpload(files) {
-      if (!files || files.length === 0) return;
-      
-      const fileArray = Array.from(files);
-      let loadedCount = 0;
-
-      fileArray.forEach((file, index) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (index < items.length) {
-            items[index].imageSrc = e.target.result;
-          } else {
-            // 既存枠を超える場合は自動追加
-            items.push({
-              badge: '新 刊',
-              title: `新刊アイテム ${index + 1}`,
-              price: '¥ 500',
-              desc: 'スペック等の説明',
-              imageSrc: e.target.result
-            });
-          }
-          loadedCount++;
-          if (loadedCount === fileArray.length) {
-            renderFormItems();
-            generateOshinagaki();
-          }
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-
-    // 背景描画（パターン・アップロード画像・単色）
-    function applyBackground() {
-      const bgType = document.getElementById('bgTypeSelect').value;
-
-      if (bgType === 'color') {
-        const color = document.getElementById('bgColorPicker').value;
-        canvas.setBackgroundImage(null);
-        canvas.setBackgroundColor(color, canvas.renderAll.bind(canvas));
-        return;
-      }
-
-      if (bgType === 'custom' && customBgImageObj) {
-        canvas.setBackgroundImage(customBgImageObj, canvas.renderAll.bind(canvas), {
-          scaleX: CANVAS_WIDTH / customBgImageObj.width,
-          scaleY: CANVAS_HEIGHT / customBgImageObj.height
-        });
-        return;
-      }
-
-      if (bgType === 'pattern') {
-        const patternStyle = document.getElementById('patternStyleSelect').value;
-        const colorHex = selectedPresetColor.hex;
-
-        const patternCanvas = document.createElement('canvas');
-        const pctx = patternCanvas.getContext('2d');
-        const size = 120;
-        patternCanvas.width = size;
-        patternCanvas.height = size;
-
-        pctx.fillStyle = '#ffffff';
-        pctx.fillRect(0, 0, size, size);
-
-        pctx.fillStyle = colorHex;
-        pctx.strokeStyle = colorHex;
-
-        if (patternStyle === 'dots') {
-          // 可愛いドットパターン (水玉)
-          pctx.beginPath();
-          pctx.arc(size / 4, size / 4, 18, 0, Math.PI * 2);
-          pctx.arc(size * 3 / 4, size * 3 / 4, 18, 0, Math.PI * 2);
-          pctx.fill();
-        } else if (patternStyle === 'stripes') {
-          // 太めのストライプ (縦縞)
-          pctx.fillRect(0, 0, size / 2, size);
-        } else if (patternStyle === 'diagonal') {
-          // 太めの斜めストライプ
-          pctx.lineWidth = 35;
-          pctx.beginPath();
-          pctx.moveTo(-size / 2, size);
-          pctx.lineTo(size, -size / 2);
-          pctx.stroke();
-
-          pctx.beginPath();
-          pctx.moveTo(0, size * 1.5);
-          pctx.lineTo(size * 1.5, 0);
-          pctx.stroke();
-        } else if (patternStyle === 'border') {
-          // 太めのボーダー (横縞)
-          pctx.fillRect(0, 0, size, size / 2);
-        } else if (patternStyle === 'tartan') {
-          // タータンチェック
-          pctx.globalAlpha = 0.5;
-          pctx.fillRect(0, 0, size / 2, size);
-          pctx.fillRect(0, 0, size, size / 2);
-          pctx.globalAlpha = 1.0;
-        }
-
-        const pattern = new fabric.Pattern({
-          source: patternCanvas,
-          repeat: 'repeat'
-        });
-
-        canvas.setBackgroundImage(null);
-        canvas.setBackgroundColor(pattern, canvas.renderAll.bind(canvas));
-      }
-    }
-
-    // ★ おしながき全体自動レイアウト処理 ★
-    function generateOshinagaki() {
-      canvas.clear();
-      applyBackground();
-
-      const eventDate = document.getElementById('eventDate').value;
-      const eventName = document.getElementById('eventName').value;
-      const circleName = document.getElementById('circleName').value;
-      const spaceNo = document.getElementById('spaceNo').value;
-
-      const isLandscape = currentOrientation === 'LANDSCAPE';
-
-      // 1. ヘッダー描画
-      const headerHeight = isLandscape ? 360 : 420;
-      const headerBg = new fabric.Rect({
-        left: 0, top: 0, width: CANVAS_WIDTH, height: headerHeight, fill: '#0f172a'
-      });
-      canvas.add(headerBg);
-
-      const headerAccent = new fabric.Rect({
-        left: 0, top: headerHeight - 12, width: CANVAS_WIDTH, height: 12, fill: selectedPresetColor.main
-      });
-      canvas.add(headerAccent);
-
-      // イベント名・日時
-      const eventText = new fabric.Text(`${eventDate}  |  ${eventName}`, {
-        left: 80, top: isLandscape ? 55 : 60, fontSize: isLandscape ? 48 : 46, fontFamily: 'Noto Sans JP', fill: '#cbd5e1'
-      });
-      canvas.add(eventText);
-
-      // サークル名
-      const circleText = new fabric.Text(circleName, {
-        left: 80, top: isLandscape ? 130 : 135, fontSize: isLandscape ? 120 : 110, fontWeight: 'bold', fontFamily: 'Noto Sans JP', fill: '#ffffff'
-      });
-      canvas.add(circleText);
-
-      // スペース番号バッジ
-      if (spaceNo) {
-        const badgeLeft = isLandscape ? CANVAS_WIDTH - 850 : 80;
-        const badgeTop = isLandscape ? 120 : 270;
-        const spaceBadge = new fabric.Textbox(` ${spaceNo} `, {
-          left: badgeLeft, top: badgeTop, fontSize: isLandscape ? 85 : 75, fontWeight: 'bold', fontFamily: 'M PLUS Rounded 1c',
-          fill: '#ffffff', backgroundColor: selectedPresetColor.main, padding: 20, rx: 15, ry: 15
-        });
-        canvas.add(spaceBadge);
-      }
-
-      // 2. 頒布物グリッド段組計算
-      const count = items.length;
-      let cols = 2;
-
-      if (isLandscape) {
-        if (count === 1) cols = 1;
-        else if (count > 4) cols = 3;
-      } else {
-        // 縦向きレイアウト
-        if (count <= 3) cols = 1;
-        else cols = 2;
-      }
-
-      const rows = Math.ceil(count / cols);
-      const startY = headerHeight + 50;
-      const marginX = 70;
-      const marginY = 40;
-
-      const cardWidth = (CANVAS_WIDTH - (marginX * 2) - (40 * (cols - 1))) / cols;
-      const cardHeight = (CANVAS_HEIGHT - startY - marginY - (40 * (rows - 1))) / rows;
-
-      // 頒布物カードループ
-      items.forEach((item, index) => {
-        const r = Math.floor(index / cols);
-        const c = index % cols;
-
-        const posX = marginX + c * (cardWidth + 40);
-        const posY = startY + r * (cardHeight + 40);
-
-        // カード背景
-        const cardBg = new fabric.Rect({
-          left: posX, top: posY, width: cardWidth, height: cardHeight,
-          fill: '#ffffff', stroke: '#cbd5e1', strokeWidth: 4, rx: 24, ry: 24
-        });
-        canvas.add(cardBg);
-
-        const innerPadding = 25;
-        const isSingleColPortrait = (!isLandscape && cols === 1);
-        const imgContainerWidth = isSingleColPortrait ? cardWidth * 0.38 : cardWidth * 0.42;
-        const imgContainerHeight = cardHeight - (innerPadding * 2);
-
-        // 画像表示枠
-        const imgBox = new fabric.Rect({
-          left: posX + innerPadding, top: posY + innerPadding,
-          width: imgContainerWidth, height: imgContainerHeight,
-          fill: '#f1f5f9', rx: 12, ry: 12
-        });
-        canvas.add(imgBox);
-
-        // 画像挿入
-        if (item.imageSrc) {
-          fabric.Image.fromURL(item.imageSrc, (img) => {
-            const scaleX = imgContainerWidth / img.width;
-            const scaleY = imgContainerHeight / img.height;
-            const scale = Math.min(scaleX, scaleY);
-
-            img.set({
-              left: posX + innerPadding + (imgContainerWidth - img.width * scale) / 2,
-              top: posY + innerPadding + (imgContainerHeight - img.height * scale) / 2,
-              scaleX: scale, scaleY: scale
-            });
-            canvas.add(img);
-            canvas.renderAll();
-          });
-        } else {
-          const noImgText = new fabric.Text('NO IMAGE', {
-            left: posX + innerPadding + (imgContainerWidth / 2) - 80,
-            top: posY + innerPadding + (imgContainerHeight / 2) - 15,
-            fontSize: 32, fontFamily: 'Noto Sans JP', fill: '#94a3b8'
-          });
-          canvas.add(noImgText);
-        }
-
-        // テキスト情報エリア（右側）
-        const textX = posX + innerPadding + imgContainerWidth + 25;
-        let currentY = posY + innerPadding + 10;
-
-        // バッジ
-        if (item.badge) {
-          const badge = new fabric.Textbox(` ${item.badge} `, {
-            left: textX, top: currentY, fontSize: isSingleColPortrait ? 48 : 40, fontWeight: 'bold', fontFamily: 'M PLUS Rounded 1c',
-            fill: '#ffffff', backgroundColor: selectedPresetColor.main, padding: 10
-          });
-          canvas.add(badge);
-          currentY += isSingleColPortrait ? 85 : 75;
-        }
-
-        // タイトル
-        const titleFontSize = isSingleColPortrait ? 64 : 54;
-        const title = new fabric.Textbox(item.title, {
-          left: textX, top: currentY, fontSize: titleFontSize, fontWeight: 'bold', fontFamily: 'Noto Sans JP',
-          fill: '#0f172a', width: cardWidth - imgContainerWidth - (innerPadding * 2) - 35
-        });
-        canvas.add(title);
-        currentY += title.height + 15;
-
-        // 価格
-        const priceFontSize = isSingleColPortrait ? 80 : 68;
-        const price = new fabric.Text(item.price, {
-          left: textX, top: currentY, fontSize: priceFontSize, fontWeight: 'bold', fontFamily: 'M PLUS Rounded 1c', fill: selectedPresetColor.main
-        });
-        canvas.add(price);
-        currentY += isSingleColPortrait ? 95 : 85;
-
-        // 説明文
-        if (item.desc) {
-          const descFontSize = isSingleColPortrait ? 42 : 36;
-          const desc = new fabric.Textbox(item.desc.replace(/\n/g, '\n'), {
-            left: textX, top: currentY, fontSize: descFontSize, fontFamily: 'Noto Sans JP', fill: '#475569',
-            width: cardWidth - imgContainerWidth - (innerPadding * 2) - 35
-          });
-          canvas.add(desc);
-        }
-      });
-
-      canvas.renderAll();
-    }
-
-    // 画面レスポンシブフィット調整
+    // ★ 画面表示のレスポンシブフィット調整 ★
     function setupResponsiveScaler() {
       const workspace = document.getElementById('workspace');
       const canvasContainer = document.getElementById('canvasContainer');
@@ -704,72 +584,48 @@
     }
 
     function setupEventListeners() {
-      // リアルタイム反映（入力・打鍵中に即時更新）
-      const realtimeInputs = ['eventDate', 'eventName', 'circleName', 'spaceNo'];
-      realtimeInputs.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.addEventListener('input', generateOshinagaki);
+      document.getElementById('orientationSelect').addEventListener('change', updateDimensions);
+
+      // キーボードショートカット（Deleteキーで削除）
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Delete' || e.key === 'Backspace') {
+          const activeTag = document.activeElement.tagName.toLowerCase();
+          if (activeTag !== 'input' && activeTag !== 'textarea') {
+            const activeObjects = canvas.getActiveObjects();
+            if (activeObjects.length > 0) {
+              activeObjects.forEach(obj => canvas.remove(obj));
+              canvas.discardActiveObject();
+              canvas.renderAll();
+            }
+          }
         }
       });
 
-      document.getElementById('orientationSelect').addEventListener('change', updateCanvasDimensions);
-      document.getElementById('paperSizeSelect').addEventListener('change', updateCanvasDimensions);
-
-      document.getElementById('bgTypeSelect').addEventListener('change', (e) => {
-        const val = e.target.value;
-        document.getElementById('patternControls').classList.toggle('hidden', val !== 'pattern');
-        document.getElementById('customBgControls').classList.toggle('hidden', val !== 'custom');
-        document.getElementById('singleColorControls').classList.toggle('hidden', val !== 'color');
-        generateOshinagaki();
-      });
-
-      document.getElementById('patternStyleSelect').addEventListener('change', generateOshinagaki);
-      document.getElementById('bgColorPicker').addEventListener('input', generateOshinagaki);
-
-      // 背景画像のアップロード
-      document.getElementById('customBgInput').addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = (evt) => {
-          fabric.Image.fromURL(evt.target.result, (img) => {
-            customBgImageObj = img;
-            generateOshinagaki();
-          });
-        };
-        reader.readAsDataURL(file);
-      });
-
-      // 一括画像アップロード
-      document.getElementById('batchImageInput').addEventListener('change', (e) => {
-        handleBatchImageUpload(e.target.files);
-      });
-
-      document.getElementById('addItemBtn').addEventListener('click', addItem);
-
-      // PNG出力
+      // PNG出力 (A3 200dpi 原寸出力)
       document.getElementById('exportPng').addEventListener('click', () => {
+        canvas.discardActiveObject();
+        canvas.renderAll();
         const dataURL = canvas.toDataURL({ format: 'png', multiplier: 1.0 });
         const link = document.createElement('a');
-        link.download = `oshinagaki_${currentPaperSize}_${currentOrientation}_${Date.now()}.png`;
+        link.download = `oshinagaki_A3_${Date.now()}.png`;
         link.href = dataURL;
         link.click();
       });
 
-      // PDF出力
+      // PDF出力 (A3原寸 200dpi PDF出力)
       document.getElementById('exportPdf').addEventListener('click', () => {
+        canvas.discardActiveObject();
+        canvas.renderAll();
         const dataURL = canvas.toDataURL({ format: 'png', multiplier: 1.0 });
         const { jsPDF } = window.jspdf;
         const isLandscape = currentOrientation === 'LANDSCAPE';
-        const pdf = new jsPDF(isLandscape ? 'landscape' : 'portrait', 'mm', currentPaperSize.toLowerCase());
         
+        const pdf = new jsPDF(isLandscape ? 'landscape' : 'portrait', 'mm', 'a3');
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
 
         pdf.addImage(dataURL, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`oshinagaki_${currentPaperSize}_${currentOrientation}_${Date.now()}.pdf`);
+        pdf.save(`oshinagaki_A3_${Date.now()}.pdf`);
       });
     }
   </script>
