@@ -12,7 +12,11 @@
 
   <style>
     * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
 
     body {
       display: flex;
@@ -37,7 +41,13 @@
       background: #1e293b;
     }
 
-    .brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+    }
+
     .brand-icon {
       display: grid;
       width: 34px;
@@ -46,10 +56,16 @@
       place-items: center;
       border-radius: 9px;
       background: linear-gradient(120deg, #f43f5e, #9333ea);
-      color: white;
+      color: #fff;
       font-size: 19px;
     }
-    .brand h1 { margin: 0; font-size: 14px; line-height: 1.3; }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
     .brand p {
       overflow: hidden;
       margin: 2px 0 0;
@@ -59,7 +75,12 @@
       white-space: nowrap;
     }
 
-    .top-actions { display: flex; flex: 0 0 auto; gap: 6px; }
+    .top-actions {
+      display: flex;
+      flex: 0 0 auto;
+      gap: 6px;
+    }
+
     .button {
       display: inline-flex;
       align-items: center;
@@ -72,11 +93,17 @@
       font-size: 11px;
       font-weight: 700;
     }
+
     .button-print { background: #475569; }
     .button-png { background: #059669; }
     .button-pdf { background: #e11d48; }
 
-    #mainLayout { display: flex; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+    #mainLayout {
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
 
     #settingsPanel {
       display: flex;
@@ -109,7 +136,12 @@
       font-size: 9px;
     }
 
-    #settingsContent { flex: 1 1 auto; overflow: auto; padding: 14px; }
+    #settingsContent {
+      flex: 1 1 auto;
+      overflow: auto;
+      padding: 14px;
+    }
+
     .section {
       margin-bottom: 12px;
       border: 1px solid #334155;
@@ -117,8 +149,20 @@
       padding: 12px;
       background: rgba(15, 23, 42, .65);
     }
-    .section h2 { margin: 0 0 10px; color: #fb7185; font-size: 12px; }
-    .field { display: block; margin-bottom: 9px; color: #94a3b8; font-size: 10px; }
+
+    .section h2 {
+      margin: 0 0 10px;
+      color: #fb7185;
+      font-size: 12px;
+    }
+
+    .field {
+      display: block;
+      margin-bottom: 9px;
+      color: #94a3b8;
+      font-size: 10px;
+    }
+
     .field:last-child { margin-bottom: 0; }
 
     .control {
@@ -132,6 +176,7 @@
       color: #e2e8f0;
       font-size: 11px;
     }
+
     .control:disabled { opacity: .5; }
 
     .color-control {
@@ -144,8 +189,19 @@
       background: #1e293b;
     }
 
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .palette { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .palette {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 5px;
+      margin-top: 5px;
+    }
+
     .palette button {
       display: flex;
       align-items: center;
@@ -158,8 +214,16 @@
       color: #cbd5e1;
       font-size: 9px;
     }
+
     .palette button.selected { outline: 2px solid #f43f5e; }
-    .swatch { width: 12px; height: 12px; flex: 0 0 auto; border-radius: 50%; }
+
+    .swatch {
+      width: 13px;
+      height: 13px;
+      flex: 0 0 auto;
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 50%;
+    }
 
     .check-row {
       display: flex;
@@ -169,6 +233,7 @@
       color: #94a3b8;
       font-size: 10px;
     }
+
     .check-row input[type="checkbox"] { accent-color: #f43f5e; }
 
     .upload-box {
@@ -181,8 +246,20 @@
       text-align: center;
       cursor: pointer;
     }
-    .upload-box span { display: block; margin-top: 4px; font-size: 11px; font-weight: 700; }
-    .upload-box small { display: block; margin-top: 3px; color: #94a3b8; font-size: 9px; }
+
+    .upload-box span {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .upload-box small {
+      display: block;
+      margin-top: 3px;
+      color: #94a3b8;
+      font-size: 9px;
+    }
 
     .item-card {
       margin-bottom: 10px;
@@ -191,6 +268,7 @@
       padding: 10px;
       background: #0f172a;
     }
+
     .item-card-head {
       display: flex;
       align-items: center;
@@ -200,6 +278,7 @@
       font-size: 10px;
       font-weight: 700;
     }
+
     .item-card-head button {
       border: 0;
       border-radius: 5px;
@@ -208,8 +287,15 @@
       color: #e2e8f0;
       font-size: 10px;
     }
+
     .item-card-head button:disabled { opacity: .4; }
-    .delete-item { margin-left: 4px; background: transparent !important; color: #fb7185 !important; }
+
+    .delete-item {
+      margin-left: 4px;
+      background: transparent !important;
+      color: #fb7185 !important;
+    }
+
     .add-item {
       width: 100%;
       border: 1px solid #475569;
@@ -238,7 +324,7 @@
       flex: none;
       overflow: hidden;
       border: 1px solid #475569;
-      background: white;
+      background: #fff;
       box-shadow: 0 15px 40px rgba(0, 0, 0, .45);
       line-height: 0;
     }
@@ -250,17 +336,18 @@
       transform-origin: top left;
     }
 
-    #oshinagakiCanvas { display: block; }
+    #previewCanvas { display: block; }
 
     .guide {
       position: absolute;
       z-index: 3;
       pointer-events: none;
-      border: 1px dashed rgba(15, 23, 42, .8);
+      border: 1px dashed rgba(15, 23, 42, .85);
     }
 
-    #trimGuide { outline: 1px solid rgba(255,255,255,.75); }
+    #trimGuide { outline: 1px solid rgba(255,255,255,.8); }
     #safeGuide { border-color: rgba(225, 29, 72, .95); }
+
     .hidden { display: none !important; }
 
     #zoomInfo {
@@ -311,14 +398,17 @@
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
       }
+
       #settingsPanel {
         width: 100%;
         max-height: none;
         overflow: visible;
         border-right: 0;
       }
+
       #settingsContent { overflow: visible; }
       #workspace { width: 100%; height: 75vh; min-height: 480px; }
+
       #previewToolbar {
         top: auto;
         right: 10px;
@@ -394,10 +484,10 @@
             </select>
           </label>
           <div class="field">
-            CMYK向け推奨配色
+            CUDO推奨配色セットの色
             <div id="presetColorPalette" class="palette"></div>
             <small style="display:block;margin-top:5px;color:#64748b">
-              色はCMYK配色の画面表示用近似です。印刷結果は印刷条件により変わります。
+              色名ラベルも併用しています。画面と印刷の色は表示環境・印刷条件により異なります。
             </small>
           </div>
           <div id="patternControls">
@@ -418,7 +508,7 @@
           </div>
           <div id="singleColorControls" class="hidden">
             <label class="field">背景色
-              <input id="bgColorPicker" type="color" value="#fff1f1" class="color-control">
+              <input id="bgColorPicker" type="color" value="#ffffcc" class="color-control">
             </label>
           </div>
         </section>
@@ -476,13 +566,13 @@
               <input id="spaceInfoFontSize" type="number" min="8" max="300" value="90" class="control">
             </label>
             <label class="field">スペース文字色
-              <input id="spaceInfoTextColor" type="color" value="#ffffff" class="color-control">
+              <input id="spaceInfoTextColor" type="color" value="#111111" class="color-control">
             </label>
           </div>
           <label class="check-row">
             スペース番号の背景色
             <input id="spaceInfoBgEnabled" type="checkbox" checked>
-            <input id="spaceInfoBgColor" type="color" value="#c41230" class="color-control">
+            <input id="spaceInfoBgColor" type="color" value="#FF4B00" class="color-control">
           </label>
         </section>
 
@@ -522,7 +612,7 @@
 
       <div id="canvasContainer">
         <div id="canvasStage">
-          <canvas id="oshinagakiCanvas"></canvas>
+          <canvas id="previewCanvas"></canvas>
           <div id="trimGuide" class="guide hidden"></div>
           <div id="safeGuide" class="guide hidden"></div>
         </div>
@@ -531,27 +621,42 @@
   </div>
 
   <script>
+    /*
+      CUDO推奨配色セットのアクセントカラーとベースカラーを使用。
+      HEXは画面表示用のRGB値。印刷色を厳密に一致させるものではありません。
+    */
     const PALETTES = [
-      { name:"赤", hex:"#ed1c24", background:"#fff1f1", header:"#b5121b", accent:"#ed1c24", space:"#c41230", cmyk:"0,100,100,0" },
-      { name:"桃", hex:"#e84a8a", background:"#fff0f5", header:"#8f1648", accent:"#d81b60", space:"#ad1457", cmyk:"0,75,25,0" },
-      { name:"橙", hex:"#f7941d", background:"#fff5e8", header:"#a84300", accent:"#e87500", space:"#b84d00", cmyk:"0,50,100,0" },
-      { name:"緑", hex:"#39b54a", background:"#eef8ef", header:"#155c25", accent:"#278c39", space:"#1d6b30", cmyk:"70,0,100,0" },
-      { name:"青", hex:"#0072bc", background:"#edf5fb", header:"#0b3d70", accent:"#0068a8", space:"#075a96", cmyk:"100,60,0,0" },
-      { name:"紫", hex:"#92278f", background:"#f7eff7", header:"#4e1452", accent:"#84217e", space:"#70206c", cmyk:"50,100,0,0" },
-      { name:"灰", hex:"#666666", background:"#f1f1f1", header:"#333333", accent:"#595959", space:"#4a4a4a", cmyk:"0,0,0,60" }
+      { name:"赤",       hex:"#FF4B00", background:"#FFFFFF", header:"#333333", accent:"#FF4B00", space:"#FF4B00" },
+      { name:"オレンジ", hex:"#FFA500", background:"#FFFFCC", header:"#333333", accent:"#FFA500", space:"#FFA500" },
+      { name:"黄",       hex:"#FFF100", background:"#FFFFCC", header:"#333333", accent:"#FFF100", space:"#FFF100" },
+      { name:"緑",       hex:"#00AF55", background:"#CCFFCC", header:"#333333", accent:"#00AF55", space:"#00AF55" },
+      { name:"青",       hex:"#005AFF", background:"#CCEEFF", header:"#333333", accent:"#005AFF", space:"#005AFF" },
+      { name:"紫",       hex:"#AA00FF", background:"#F3E5F5", header:"#333333", accent:"#AA00FF", space:"#AA00FF" },
+      { name:"ピンク",   hex:"#F20070", background:"#FFC0CB", header:"#333333", accent:"#F20070", space:"#F20070" },
+      { name:"茶色",     hex:"#995A00", background:"#F5DEB3", header:"#333333", accent:"#995A00", space:"#995A00" },
+      { name:"空色",     hex:"#00DCFF", background:"#CCEEFF", header:"#333333", accent:"#00DCFF", space:"#00DCFF" }
     ];
 
     const CATEGORY_STYLES = {
-      "新刊": { background:"#c62828", text:"#ffffff" },
-      "既刊": { background:"#1565c0", text:"#ffffff" },
-      "無料配布": { background:"#2e7d32", text:"#ffffff" },
-      "Web展示": { background:"#00695c", text:"#ffffff" }
+      "新刊":     { background:"#FF4B00", text:"#111111" },
+      "既刊":     { background:"#005AFF", text:"#ffffff" },
+      "無料配布": { background:"#00AF55", text:"#111111" },
+      "Web展示":  { background:"#00DCFF", text:"#111111" }
     };
 
     const PRINT_SPECS = {
-      A2: { widthMm:426, heightMm:600, widthPx:3354, heightPx:4724, trimWidthMm:420, trimHeightMm:594 },
-      A3: { widthMm:303, heightMm:426, widthPx:2386, heightPx:3354, trimWidthMm:297, trimHeightMm:420 },
-      A4: { widthMm:216, heightMm:303, widthPx:2976, heightPx:4175, trimWidthMm:210, trimHeightMm:297 }
+      A2: {
+        widthMm:426, heightMm:600, widthPx:3354, heightPx:4724,
+        trimWidthMm:420, trimHeightMm:594
+      },
+      A3: {
+        widthMm:303, heightMm:426, widthPx:2386, heightPx:3354,
+        trimWidthMm:297, trimHeightMm:420
+      },
+      A4: {
+        widthMm:216, heightMm:303, widthPx:2976, heightPx:4175,
+        trimWidthMm:210, trimHeightMm:297
+      }
     };
 
     const SOCIAL_PRESETS = {
@@ -562,10 +667,26 @@
     };
 
     const SOCIAL_LAYOUTS = {
-      WEB_PORTRAIT: { header:250, marginX:28, marginY:22, gapX:16, gapY:16, padding:12, eventFont:18, circleFont:32, spaceFont:16, cardScale:.55, categoryBand:46, ageBand:28 },
-      WEB_LANDSCAPE: { header:160, marginX:28, marginY:18, gapX:16, gapY:16, padding:11, eventFont:14, circleFont:24, spaceFont:13, cardScale:.48, categoryBand:38, ageBand:24 },
-      PICSQUARE: { header:143, marginX:16, marginY:16, gapX:12, gapY:12, padding:8, eventFont:10, circleFont:18, spaceFont:10, cardScale:.35, categoryBand:34, ageBand:21 },
-      PICREA: { header:270, marginX:24, marginY:22, gapX:16, gapY:16, padding:12, eventFont:15, circleFont:28, spaceFont:15, cardScale:.50, categoryBand:44, ageBand:28 }
+      WEB_PORTRAIT: {
+        header:250, marginX:28, marginY:22, gapX:16, gapY:16,
+        padding:12, eventFont:18, circleFont:32, spaceFont:16,
+        cardScale:.55, categoryBand:46, ageBand:28
+      },
+      WEB_LANDSCAPE: {
+        header:160, marginX:28, marginY:18, gapX:16, gapY:16,
+        padding:11, eventFont:14, circleFont:24, spaceFont:13,
+        cardScale:.48, categoryBand:38, ageBand:24
+      },
+      PICSQUARE: {
+        header:143, marginX:16, marginY:16, gapX:12, gapY:12,
+        padding:8, eventFont:10, circleFont:18, spaceFont:10,
+        cardScale:.35, categoryBand:34, ageBand:21
+      },
+      PICREA: {
+        header:270, marginX:24, marginY:22, gapX:16, gapY:16,
+        padding:12, eventFont:15, circleFont:28, spaceFont:15,
+        cardScale:.50, categoryBand:44, ageBand:28
+      }
     };
 
     const BLEED_MM = 3;
@@ -575,41 +696,68 @@
     let orientation = "LANDSCAPE";
     let outputWidth = PRINT_SPECS.A3.widthPx;
     let outputHeight = PRINT_SPECS.A3.heightPx;
-    let trimWidth = 0;
-    let trimHeight = 0;
+    let trimWidth = outputWidth;
+    let trimHeight = outputHeight;
     let bleedLeft = 0;
     let bleedTop = 0;
     let safeX = 0;
     let safeY = 0;
-    let canvas;
     let customBackground = null;
     let previewMode = "fit";
     let renderToken = 0;
-    let imagePromises = [];
 
-    let items = [
+    const canvas = document.getElementById("previewCanvas");
+    const context = canvas.getContext("2d", { alpha:false });
+
+    const items = [
       {
-        category:"新刊", ageRating:"全年齢",
-        title:"新刊サンプルタイトル", price:"¥ 1,000",
+        category:"新刊",
+        ageRating:"全年齢",
+        title:"新刊サンプルタイトル",
+        price:"¥ 1,000",
         desc:"文庫サイズ / 120P / 全年齢\n特製ノベルティステッカー付き",
-        descriptionFontSize:38, image:null, imageWidth:0, imageHeight:0, noImage:false
+        descriptionFontSize:38,
+        image:null,
+        imageWidth:0,
+        imageHeight:0,
+        noImage:false
       },
       {
-        category:"既刊", ageRating:"全年齢",
-        title:"既刊イラスト集", price:"¥ 500",
+        category:"既刊",
+        ageRating:"全年齢",
+        title:"既刊イラスト集",
+        price:"¥ 500",
         desc:"B5 / 24P / フルカラー\n過去イラストまとめ冊子",
-        descriptionFontSize:36, image:null, imageWidth:0, imageHeight:0, noImage:false
+        descriptionFontSize:36,
+        image:null,
+        imageWidth:0,
+        imageHeight:0,
+        noImage:false
       }
     ];
 
     document.addEventListener("DOMContentLoaded", init);
 
     function init() {
-      canvas = document.getElementById("oshinagakiCanvas");
       buildPalette();
       renderItems();
       bindEvents();
       updateLayout();
+    }
+
+    function getReadableTextColor(hex) {
+      const value = hex.replace("#", "");
+      const r = parseInt(value.slice(0, 2), 16);
+      const g = parseInt(value.slice(2, 4), 16);
+      const b = parseInt(value.slice(4, 6), 16);
+
+      const linear = (channel) => {
+        const c = channel / 255;
+        return c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4;
+      };
+
+      const luminance = .2126 * linear(r) + .7152 * linear(g) + .0722 * linear(b);
+      return luminance > .179 ? "#111111" : "#ffffff";
     }
 
     function buildPalette() {
@@ -619,8 +767,10 @@
       PALETTES.forEach((preset, index) => {
         const button = document.createElement("button");
         button.type = "button";
-        button.title = `CMYK ${preset.cmyk}`;
-        button.innerHTML = `<span class="swatch" style="background:${preset.hex}"></span>${preset.name}`;
+        button.title = `${preset.name}（CUDO推奨配色セット）`;
+        button.innerHTML =
+          `<span class="swatch" style="background:${preset.hex}"></span><span>${preset.name}</span>`;
+
         if (index === 0) button.classList.add("selected");
 
         button.addEventListener("click", () => {
@@ -632,13 +782,16 @@
           document.getElementById("patternControls").classList.add("hidden");
           document.getElementById("customBgControls").classList.add("hidden");
           document.getElementById("singleColorControls").classList.remove("hidden");
+
           document.getElementById("bgColorPicker").value = preset.background;
           document.getElementById("headerBgColor").value = preset.header;
           document.getElementById("headerAccentColor").value = preset.accent;
           document.getElementById("eventInfoTextColor").value = "#ffffff";
           document.getElementById("circleInfoTextColor").value = "#ffffff";
-          document.getElementById("spaceInfoTextColor").value = "#ffffff";
           document.getElementById("spaceInfoBgColor").value = preset.space;
+          document.getElementById("spaceInfoTextColor").value =
+            getReadableTextColor(preset.space);
+
           renderCanvas();
         });
 
@@ -646,60 +799,90 @@
       });
     }
 
+    function applyHeaderFontDefaults(social) {
+      let sizes;
+
+      if (social) {
+        sizes = {
+          event:social.eventFont,
+          circle:social.circleFont,
+          space:social.spaceFont
+        };
+      } else {
+        const scale = Math.max(
+          .9,
+          Math.min(1.25, Math.sqrt((trimWidth * trimHeight) / (3307 * 2339)))
+        );
+        sizes = {
+          event:Math.round(60 * scale),
+          circle:Math.round(150 * scale),
+          space:Math.round(90 * scale)
+        };
+      }
+
+      document.getElementById("eventInfoFontSize").value = sizes.event;
+      document.getElementById("circleInfoFontSize").value = sizes.circle;
+      document.getElementById("spaceInfoFontSize").value = sizes.space;
+    }
+
     function updateLayout() {
       paper = document.getElementById("paperSizeSelect").value;
       const orientationSelect = document.getElementById("orientationSelect");
-      const social = SOCIAL_PRESETS[paper];
+      const socialPreset = SOCIAL_PRESETS[paper];
 
-      if (social) {
-        orientation = social.orientation;
+      bleedLeft = 0;
+      bleedTop = 0;
+      safeX = 0;
+      safeY = 0;
+
+      if (socialPreset) {
+        orientation = socialPreset.orientation;
         orientationSelect.value = orientation;
         orientationSelect.disabled = true;
-        outputWidth = social.width;
-        outputHeight = social.height;
-        trimWidth = outputWidth;
-        trimHeight = outputHeight;
-        bleedLeft = bleedTop = safeX = safeY = 0;
+
+        outputWidth = trimWidth = socialPreset.width;
+        outputHeight = trimHeight = socialPreset.height;
       } else {
         orientationSelect.disabled = false;
         orientation = orientationSelect.value;
 
         const spec = PRINT_SPECS[paper];
         const landscape = orientation === "LANDSCAPE";
+
         outputWidth = landscape ? spec.heightPx : spec.widthPx;
         outputHeight = landscape ? spec.widthPx : spec.heightPx;
 
-        const outWmm = landscape ? spec.heightMm : spec.widthMm;
-        const outHmm = landscape ? spec.widthMm : spec.heightMm;
-        const trimWmm = landscape ? spec.trimHeightMm : spec.trimWidthMm;
-        const trimHmm = landscape ? spec.trimWidthMm : spec.trimHeightMm;
+        const outputWidthMm = landscape ? spec.heightMm : spec.widthMm;
+        const outputHeightMm = landscape ? spec.widthMm : spec.heightMm;
+        const trimWidthMm = landscape ? spec.trimHeightMm : spec.trimWidthMm;
+        const trimHeightMm = landscape ? spec.trimWidthMm : spec.trimHeightMm;
 
-        trimWidth = Math.round(trimWmm * outputWidth / outWmm);
-        trimHeight = Math.round(trimHmm * outputHeight / outHmm);
+        trimWidth = Math.round(trimWidthMm * outputWidth / outputWidthMm);
+        trimHeight = Math.round(trimHeightMm * outputHeight / outputHeightMm);
         bleedLeft = Math.floor((outputWidth - trimWidth) / 2);
         bleedTop = Math.floor((outputHeight - trimHeight) / 2);
-        safeX = Math.ceil(BLEED_MM * trimWidth / trimWmm);
-        safeY = Math.ceil(BLEED_MM * trimHeight / trimHmm);
+        safeX = Math.ceil(BLEED_MM * trimWidth / trimWidthMm);
+        safeY = Math.ceil(BLEED_MM * trimHeight / trimHeightMm);
       }
 
       canvas.width = outputWidth;
       canvas.height = outputHeight;
 
-      document.getElementById("canvasStage").style.width = `${outputWidth}px`;
-      document.getElementById("canvasStage").style.height = `${outputHeight}px`;
+      const stage = document.getElementById("canvasStage");
+      stage.style.width = `${outputWidth}px`;
+      stage.style.height = `${outputHeight}px`;
 
-      const socialInfo = SOCIAL_LAYOUTS[paper];
-      applyHeaderDefaults(socialInfo);
+      applyHeaderFontDefaults(SOCIAL_LAYOUTS[paper]);
       updateGuides();
 
-      const label = social
-        ? `${social.label} (${outputWidth} × ${outputHeight}px)`
+      const label = socialPreset
+        ? `${socialPreset.label} (${outputWidth} × ${outputHeight}px)`
         : `${paper}${orientation === "LANDSCAPE" ? "横" : "縦"} 塗り足し込み ${outputWidth} × ${outputHeight}px`;
 
       document.getElementById("paperSpecLabel").textContent = label;
       document.getElementById("dimensionDisplay").textContent = label;
-      document.getElementById("layoutHelp").textContent = social
-        ? "SNS向けサイズ。印刷用の塗り足しガイドはありません。"
+      document.getElementById("layoutHelp").textContent = socialPreset
+        ? "SNS向けサイズ。印刷用の塗り足し・安全ガイドはありません。"
         : "プレビュー全体が塗り足し込み。白線＝仕上がり範囲、赤点線＝安全マージンです。";
 
       previewMode = "fit";
@@ -707,37 +890,15 @@
       renderCanvas();
     }
 
-    function applyHeaderDefaults(social) {
-      let size;
-
-      if (social) {
-        size = {
-          event: social.eventFont,
-          circle: social.circleFont,
-          space: social.spaceFont
-        };
-      } else {
-        const scale = Math.max(.9, Math.min(1.25, Math.sqrt((trimWidth * trimHeight) / (3307 * 2339))));
-        size = {
-          event: Math.round(60 * scale),
-          circle: Math.round(150 * scale),
-          space: Math.round(90 * scale)
-        };
-      }
-
-      document.getElementById("eventInfoFontSize").value = size.event;
-      document.getElementById("circleInfoFontSize").value = size.circle;
-      document.getElementById("spaceInfoFontSize").value = size.space;
-    }
-
     function updateGuides() {
       const trimGuide = document.getElementById("trimGuide");
       const safeGuide = document.getElementById("safeGuide");
-      const print = Boolean(PRINT_SPECS[paper]);
+      const isPrint = Boolean(PRINT_SPECS[paper]);
 
-      trimGuide.classList.toggle("hidden", !print);
-      safeGuide.classList.toggle("hidden", !print);
-      if (!print) return;
+      trimGuide.classList.toggle("hidden", !isPrint);
+      safeGuide.classList.toggle("hidden", !isPrint);
+
+      if (!isPrint) return;
 
       trimGuide.style.left = `${bleedLeft}px`;
       trimGuide.style.top = `${bleedTop}px`;
@@ -752,7 +913,11 @@
 
     function escapeHTML(value) {
       return String(value ?? "").replace(/[&<>"']/g, (char) => ({
-        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;"
       })[char]);
     }
 
@@ -772,11 +937,12 @@
               ${items.length > 1 ? `<button type="button" class="delete-item" data-remove="${index}">削除</button>` : ""}
             </div>
           </div>
+
           <div class="two-col">
             <label class="field">カテゴリ
               <select class="control" data-index="${index}" data-key="category">
-                ${["新刊", "既刊", "無料配布", "Web展示"].map((v) =>
-                  `<option value="${v}" ${item.category === v ? "selected" : ""}>${v}</option>`
+                ${["新刊","既刊","無料配布","Web展示"].map((value) =>
+                  `<option value="${value}" ${item.category === value ? "selected" : ""}>${value}</option>`
                 ).join("")}
               </select>
             </label>
@@ -787,26 +953,36 @@
               </select>
             </label>
           </div>
+
           <label class="field">タイトル
-            <input class="control" type="text" data-index="${index}" data-key="title" value="${escapeHTML(item.title)}">
+            <input class="control" type="text" data-index="${index}" data-key="title"
+              value="${escapeHTML(item.title)}">
           </label>
+
           <label class="field">値段（無料配布・Web展示は空欄）
             <input class="control" type="text" data-index="${index}" data-key="price"
-              value="${escapeHTML(item.price || "")}" ${["無料配布","Web展示"].includes(item.category) ? "disabled" : ""}>
+              value="${escapeHTML(item.price || "")}"
+              ${["無料配布","Web展示"].includes(item.category) ? "disabled" : ""}>
           </label>
+
           <label class="field">説明
             <textarea class="control" data-index="${index}" data-key="desc" rows="3">${escapeHTML(item.desc)}</textarea>
           </label>
+
           <label class="field">説明文フォントサイズ
             <input class="control" type="number" min="8" max="100" step="1"
-              data-index="${index}" data-key="descriptionFontSize" value="${item.descriptionFontSize || 38}">
+              data-index="${index}" data-key="descriptionFontSize"
+              value="${Number(item.descriptionFontSize) || 38}">
           </label>
+
           <label class="check-row" style="justify-content:flex-start">
             <input type="checkbox" data-noimage="${index}" ${item.noImage ? "checked" : ""}>
             画像なし（テキスト欄を広く表示）
           </label>
+
           <label class="field">個別画像
-            <input class="control" type="file" accept="image/*" data-image="${index}" ${item.noImage ? "disabled" : ""}>
+            <input class="control" type="file" accept="image/*" data-image="${index}"
+              ${item.noImage ? "disabled" : ""}>
           </label>
         `;
         root.appendChild(card);
@@ -819,18 +995,18 @@
           if (!items[index]) return;
 
           if (key === "descriptionFontSize") {
-            const n = Number.parseInt(input.value, 10);
-            items[index][key] = Number.isFinite(n) ? Math.min(100, Math.max(8, n)) : 38;
+            const size = Number.parseInt(input.value, 10);
+            items[index][key] = Number.isFinite(size) ? Math.min(100, Math.max(8, size)) : 38;
           } else {
             items[index][key] = input.value;
           }
 
           if (key === "category") {
             const price = root.querySelector(`[data-index="${index}"][data-key="price"]`);
-            const free = ["無料配布", "Web展示"].includes(input.value);
+            const noPrice = ["無料配布","Web展示"].includes(input.value);
             if (price) {
-              price.disabled = free;
-              if (free) {
+              price.disabled = noPrice;
+              if (noPrice) {
                 price.value = "";
                 items[index].price = "";
               }
@@ -838,20 +1014,25 @@
           }
           renderCanvas();
         };
+
         input.addEventListener("input", update);
         input.addEventListener("change", update);
       });
 
       root.querySelectorAll("[data-image]").forEach((input) => {
-        input.addEventListener("change", () => loadItemImage(Number(input.dataset.image), input.files?.[0]));
+        input.addEventListener("change", () => {
+          loadItemImage(Number(input.dataset.image), input.files?.[0]);
+        });
       });
 
       root.querySelectorAll("[data-noimage]").forEach((input) => {
         input.addEventListener("change", () => {
           const index = Number(input.dataset.noimage);
           if (!items[index]) return;
+
           items[index].noImage = input.checked;
           const fileInput = root.querySelector(`[data-image="${index}"]`);
+
           if (fileInput) {
             fileInput.disabled = input.checked;
             if (input.checked) fileInput.value = "";
@@ -882,16 +1063,16 @@
 
     function addItem() {
       items.push({
-        category: "新刊",
-        ageRating: "全年齢",
-        title: `頒布物 #${items.length + 1}`,
-        price: "¥ 500",
-        desc: "",
-        descriptionFontSize: 38,
-        image: null,
-        imageWidth: 0,
-        imageHeight: 0,
-        noImage: false
+        category:"新刊",
+        ageRating:"全年齢",
+        title:`頒布物 #${items.length + 1}`,
+        price:"¥ 500",
+        desc:"",
+        descriptionFontSize:38,
+        image:null,
+        imageWidth:0,
+        imageHeight:0,
+        noImage:false
       });
       renderItems();
       renderCanvas();
@@ -910,26 +1091,29 @@
       if (!file || !file.type.startsWith("image/")) {
         throw new Error("画像ファイルを選択してください。");
       }
+
       const src = await new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result);
         reader.onerror = () => reject(new Error(`画像を読み込めませんでした: ${file.name}`));
         reader.readAsDataURL(file);
       });
+
       const image = await loadImage(src);
-      return { src, image, width: image.naturalWidth, height: image.naturalHeight };
+      return { src, image, width:image.naturalWidth, height:image.naturalHeight };
     }
 
     async function loadItemImage(index, file) {
       if (!file || !items[index]) return;
+
       try {
         const loaded = await readImageFile(file);
         Object.assign(items[index], {
-          image: loaded.image,
-          imageSrc: loaded.src,
-          imageWidth: loaded.width,
-          imageHeight: loaded.height,
-          noImage: false
+          image:loaded.image,
+          imageSrc:loaded.src,
+          imageWidth:loaded.width,
+          imageHeight:loaded.height,
+          noImage:false
         });
         renderItems();
         renderCanvas();
@@ -944,28 +1128,31 @@
 
       try {
         const loaded = await Promise.all(selected.map(readImageFile));
+
         loaded.forEach((entry, index) => {
-          const fields = {
-            image: entry.image,
-            imageSrc: entry.src,
-            imageWidth: entry.width,
-            imageHeight: entry.height,
-            noImage: false
+          const imageData = {
+            image:entry.image,
+            imageSrc:entry.src,
+            imageWidth:entry.width,
+            imageHeight:entry.height,
+            noImage:false
           };
+
           if (index < items.length) {
-            Object.assign(items[index], fields);
+            Object.assign(items[index], imageData);
           } else {
             items.push({
-              category: "新刊",
-              ageRating: "全年齢",
-              title: `新刊アイテム ${index + 1}`,
-              price: "¥ 500",
-              desc: "",
-              descriptionFontSize: 38,
-              ...fields
+              category:"新刊",
+              ageRating:"全年齢",
+              title:`新刊アイテム ${index + 1}`,
+              price:"¥ 500",
+              desc:"",
+              descriptionFontSize:38,
+              ...imageData
             });
           }
         });
+
         renderItems();
         renderCanvas();
       } catch (error) {
@@ -977,8 +1164,9 @@
       const tile = document.createElement("canvas");
       tile.width = tile.height = 240;
       const ctx = tile.getContext("2d");
-      ctx.fillStyle = "#fff8fb";
-      ctx.fillRect(0, 0, 240, 240);
+
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, tile.width, tile.height);
 
       if (style === "dots") {
         ctx.fillStyle = color;
@@ -994,7 +1182,9 @@
         ctx.translate(120, 120);
         ctx.rotate(Math.PI / 4);
         ctx.fillStyle = color;
-        for (let x = -360; x <= 360; x += 110) ctx.fillRect(x, -360, 36, 720);
+        for (let x = -360; x <= 360; x += 110) {
+          ctx.fillRect(x, -360, 36, 720);
+        }
         ctx.restore();
       } else if (style === "border") {
         ctx.fillStyle = color;
@@ -1004,13 +1194,8 @@
         ctx.fillRect(0, 0, 120, 120);
         ctx.fillRect(120, 120, 120, 120);
       }
-      return tile;
-    }
 
-    function getBackgroundImage() {
-      const type = document.getElementById("bgTypeSelect").value;
-      if (type === "custom") return customBackground;
-      return null;
+      return tile;
     }
 
     function drawBackground(ctx) {
@@ -1023,13 +1208,13 @@
       }
 
       if (type === "custom" && customBackground) {
-        // 背景画像は塗り足し込みキャンバス全体を覆う。
+        // 背景画像は塗り足し込みの全体に適用する。
         ctx.drawImage(customBackground, 0, 0, outputWidth, outputHeight);
         return;
       }
 
       if (type === "pattern") {
-        ctx.fillStyle = "#fff8fb";
+        ctx.fillStyle = "#FFFFFF";
         ctx.fillRect(0, 0, outputWidth, outputHeight);
         const pattern = ctx.createPattern(
           makePattern(
@@ -1045,46 +1230,30 @@
         return;
       }
 
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(0, 0, outputWidth, outputHeight);
     }
 
-    function colorValue(id, fallback) {
-      return document.getElementById(id)?.value || fallback;
-    }
-
     function getHeaderStyle(prefix, defaultSize, defaultColor) {
-      const size = Number.parseInt(document.getElementById(`${prefix}FontSize`).value, 10);
-      const hasBg = document.getElementById(`${prefix}BgEnabled`).checked;
-      return {
-        size: Number.isFinite(size) ? size : defaultSize,
-        color: colorValue(`${prefix}TextColor`, defaultColor),
-        bg: hasBg ? colorValue(`${prefix}BgColor`, "") : ""
-      };
-    }
+      const rawSize = Number.parseInt(
+        document.getElementById(`${prefix}FontSize`).value,
+        10
+      );
+      const hasBackground =
+        document.getElementById(`${prefix}BgEnabled`).checked;
 
-    function roundRect(ctx, x, y, w, h, radius, fill, stroke, lineWidth = 1) {
-      const r = Math.min(radius, w / 2, h / 2);
-      ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.arcTo(x + w, y, x + w, y + h, r);
-      ctx.arcTo(x + w, y + h, x, y + h, r);
-      ctx.arcTo(x, y + h, x, y, r);
-      ctx.arcTo(x, y, x + w, y, r);
-      ctx.closePath();
-      if (fill) {
-        ctx.fillStyle = fill;
-        ctx.fill();
-      }
-      if (stroke) {
-        ctx.lineWidth = lineWidth;
-        ctx.strokeStyle = stroke;
-        ctx.stroke();
-      }
+      return {
+        size:Number.isFinite(rawSize) ? rawSize : defaultSize,
+        color:document.getElementById(`${prefix}TextColor`).value || defaultColor,
+        background:hasBackground
+          ? document.getElementById(`${prefix}BgColor`).value
+          : ""
+      };
     }
 
     function wrapLines(ctx, text, maxWidth) {
       const lines = [];
+
       String(text || "").split("\n").forEach((paragraph) => {
         let line = "";
         for (const char of Array.from(paragraph)) {
@@ -1098,69 +1267,407 @@
         }
         lines.push(line);
       });
+
       return lines.length ? lines : [""];
     }
 
     function fitText(ctx, text, box, options = {}) {
       const family = options.family || '"Noto Sans JP", sans-serif';
-      const weight = options.weight || "normal";
-      const maxFont = Math.max(1, options.maxFont || 24);
-      const minFont = Math.max(1, options.minFont || 1);
-      const lineHeightRatio = options.lineHeight || 1.15;
+      const weight = options.weight || "400";
+      const maxFont = Math.max(1, Number(options.maxFont) || 20);
+      const minFont = Math.max(1, Number(options.minFont) || 1);
+      const lineHeightRatio = options.lineHeight || 1.12;
+      const availableWidth = Math.max(1, box.width);
+      const availableHeight = Math.max(1, box.height);
+
       let chosen = minFont;
       let lines = [];
 
-      for (let fontSize = maxFont; fontSize >= minFont; fontSize -= Math.max(.5, maxFont / 80)) {
-        ctx.font = `${weight} ${fontSize}px ${family}`;
-        const testLines = wrapLines(ctx, text, Math.max(1, box.width));
-        const lineHeight = fontSize * lineHeightRatio;
-
-        if (testLines.length * lineHeight <= box.height) {
-          chosen = fontSize;
-          lines = testLines;
+      for (let size = maxFont; size >= minFont; size -= Math.max(.5, maxFont / 100)) {
+        ctx.font = `${weight} ${size}px ${family}`;
+        const candidateLines = wrapLines(ctx, text, availableWidth);
+        if (candidateLines.length * size * lineHeightRatio <= availableHeight) {
+          chosen = size;
+          lines = candidateLines;
           break;
         }
       }
 
       if (!lines.length) {
         ctx.font = `${weight} ${minFont}px ${family}`;
-        lines = wrapLines(ctx, text, Math.max(1, box.width));
-        const maxLines = Math.max(1, Math.floor(box.height / (minFont * lineHeightRatio)));
+        lines = wrapLines(ctx, text, availableWidth);
+        const maxLines = Math.max(1, Math.floor(availableHeight / (minFont * lineHeightRatio)));
+
         if (lines.length > maxLines) {
           lines = lines.slice(0, maxLines);
-          const last = Array.from(lines[maxLines - 1] || "");
-          while (last.length && ctx.measureText(`${last.join("")}…`).width > box.width) last.pop();
-          lines[maxLines - 1] = `${last.join("")}…`;
+          const lastLine = Array.from(lines[maxLines - 1] || "");
+          while (lastLine.length && ctx.measureText(`${lastLine.join("")}…`).width > availableWidth) {
+            lastLine.pop();
+          }
+          lines[maxLines - 1] = `${lastLine.join("")}…`;
         }
       }
 
       const lineHeight = chosen * lineHeightRatio;
-      const totalHeight = lines.length * lineHeight;
-      let y = box.y + Math.max(0, (box.height - totalHeight) / 2);
+      const textHeight = lines.length * lineHeight;
+      let y = box.y + Math.max(0, (availableHeight - textHeight) / 2);
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(box.x, box.y, availableWidth, availableHeight);
+      ctx.clip();
 
       if (options.background) {
         ctx.fillStyle = options.background;
-        ctx.fillRect(box.x, box.y, box.width, box.height);
+        ctx.fillRect(box.x, box.y, availableWidth, availableHeight);
       }
 
       ctx.font = `${weight} ${chosen}px ${family}`;
-      ctx.fillStyle = options.color || "#111827";
+      ctx.fillStyle = options.color || "#111111";
       ctx.textBaseline = "top";
       ctx.textAlign = options.align || "left";
 
       const x = options.align === "center"
-        ? box.x + box.width / 2
+        ? box.x + availableWidth / 2
         : options.align === "right"
-          ? box.x + box.width
+          ? box.x + availableWidth
           : box.x;
 
-      lines.forEach((line) => {
-        ctx.fillText(line, x, y, box.width);
+      for (const line of lines) {
+        ctx.fillText(line, x, y, availableWidth);
         y += lineHeight;
+      }
+
+      ctx.restore();
+      return chosen;
+    }
+
+    function drawHeader(ctx, social, headerHeight, landscape, eventStyle, circleStyle, spaceStyle) {
+      const margin = social ? social.marginX : safeX + 8;
+      const width = Math.max(1, trimWidth - margin * 2);
+
+      if (social) {
+        const isPicsquare = paper === "PICSQUARE";
+        const top = isPicsquare ? 5 : Math.max(6, headerHeight * .04);
+        const usable = Math.max(1, headerHeight - top * 2);
+        const gap = isPicsquare ? 2 : Math.max(3, usable * .025);
+        const eventHeight = isPicsquare ? 29 : usable * .25;
+        const circleHeight = isPicsquare ? 44 : usable * .34;
+        const spaceHeight = Math.max(1, usable - eventHeight - circleHeight - gap * 2);
+
+        let y = top;
+
+        fitText(
+          ctx,
+          `${document.getElementById("eventDate").value} | ${document.getElementById("eventName").value}`,
+          { x:bleedLeft + margin, y:bleedTop + y, width, height:eventHeight },
+          {
+            maxFont:eventStyle.size, minFont:7, color:eventStyle.color,
+            background:eventStyle.background
+          }
+        );
+
+        y += eventHeight + gap;
+        fitText(
+          ctx,
+          document.getElementById("circleName").value,
+          { x:bleedLeft + margin, y:bleedTop + y, width, height:circleHeight },
+          {
+            maxFont:circleStyle.size, minFont:8, weight:"700",
+            color:circleStyle.color, background:circleStyle.background
+          }
+        );
+
+        y += circleHeight + gap;
+        const space = document.getElementById("spaceNo").value;
+        if (space) {
+          fitText(
+            ctx,
+            ` ${space} `,
+            { x:bleedLeft + margin, y:bleedTop + y, width, height:spaceHeight },
+            {
+              maxFont:spaceStyle.size, minFont:7, weight:"700",
+              family:'"M PLUS Rounded 1c", sans-serif',
+              color:spaceStyle.color, background:spaceStyle.background,
+              align:"center"
+            }
+          );
+        }
+        return;
+      }
+
+      const scale = Math.min(trimWidth / 3307, trimHeight / 2339);
+      const top = Math.max(safeY, headerHeight * .055);
+      const bottom = Math.max(safeY, 10 * scale);
+      const available = Math.max(1, headerHeight - top - bottom);
+      const gap = Math.max(5 * scale, available * .055);
+      const rowHeight = Math.max(1, available - gap * 2);
+      const eventHeight = rowHeight * .24;
+      const circleHeight = rowHeight * .43;
+      const spaceHeight = rowHeight - eventHeight - circleHeight;
+      let y = top;
+
+      fitText(
+        ctx,
+        `${document.getElementById("eventDate").value} | ${document.getElementById("eventName").value}`,
+        { x:bleedLeft + margin, y:bleedTop + y, width, height:eventHeight },
+        {
+          maxFont:eventStyle.size, minFont:10 * scale,
+          color:eventStyle.color, background:eventStyle.background
+        }
+      );
+
+      y += eventHeight + gap;
+      fitText(
+        ctx,
+        document.getElementById("circleName").value,
+        { x:bleedLeft + margin, y:bleedTop + y, width, height:circleHeight },
+        {
+          maxFont:circleStyle.size, minFont:12 * scale,
+          weight:"700", color:circleStyle.color,
+          background:circleStyle.background
+        }
+      );
+
+      y += circleHeight + gap;
+      const space = document.getElementById("spaceNo").value;
+      if (space) {
+        fitText(
+          ctx,
+          ` ${space} `,
+          { x:bleedLeft + margin, y:bleedTop + y, width, height:spaceHeight },
+          {
+            maxFont:spaceStyle.size, minFont:10 * scale, weight:"700",
+            family:'"M PLUS Rounded 1c", sans-serif',
+            color:spaceStyle.color, background:spaceStyle.background,
+            align:"center"
+          }
+        );
+      }
+    }
+
+    function roundedRect(ctx, x, y, width, height, radius, fill, stroke, lineWidth = 1) {
+      const r = Math.max(0, Math.min(radius, width / 2, height / 2));
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + width, y, x + width, y + height, r);
+      ctx.arcTo(x + width, y + height, x, y + height, r);
+      ctx.arcTo(x, y + height, x, y, r);
+      ctx.arcTo(x, y, x + width, y, r);
+      ctx.closePath();
+
+      if (fill) {
+        ctx.fillStyle = fill;
+        ctx.fill();
+      }
+      if (stroke) {
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = lineWidth;
+        ctx.stroke();
+      }
+    }
+
+    function drawBandLabel(ctx, text, box, maximumFont, color) {
+      fitText(ctx, text, box, {
+        maxFont:maximumFont,
+        minFont:1,
+        weight:"700",
+        family:'"M PLUS Rounded 1c", sans-serif',
+        color,
+        align:"center",
+        lineHeight:1
       });
     }
 
-    function drawHeader(ctx, social, headerHeight) {
+    function drawCard(ctx, item, x, y, width, height, config, landscape) {
+      const pad = config.padding;
+      const radius = config.radius;
+
+      roundedRect(ctx, x, y, width, height, radius, "#ffffff", "#cbd5e1", config.borderWidth);
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(x, y, width, height, radius);
+      ctx.clip();
+
+      const categoryStyle = CATEGORY_STYLES[item.category] || CATEGORY_STYLES["新刊"];
+      const categoryHeight = Math.min(
+        config.categoryBand,
+        height * .16,
+        Math.max(18, width * .09)
+      );
+      const ageHeight = Math.min(
+        config.ageBand,
+        height * .11,
+        Math.max(15, width * .055)
+      );
+
+      ctx.fillStyle = categoryStyle.background;
+      ctx.fillRect(x, y, width, categoryHeight);
+
+      drawBandLabel(
+        ctx,
+        item.category || "新刊",
+        { x:x + pad, y:y + 1, width:Math.max(1, width - pad * 2), height:Math.max(1, categoryHeight - 2) },
+        Math.min(categoryHeight * .78, width * .2),
+        categoryStyle.text
+      );
+
+      const ageY = y + categoryHeight;
+      const ageFill = item.ageRating === "R18" ? "#991b1b" : "#e5f2e5";
+      const ageText = item.ageRating === "R18" ? "#ffffff" : "#174b26";
+
+      ctx.fillStyle = ageFill;
+      ctx.fillRect(x, ageY, width, ageHeight);
+
+      drawBandLabel(
+        ctx,
+        item.ageRating === "R18" ? "R18" : "全年齢",
+        { x:x + pad, y:ageY + 1, width:Math.max(1, width - pad * 2), height:Math.max(1, ageHeight - 2) },
+        Math.min(ageHeight * .75, width * .16),
+        ageText
+      );
+
+      const bodyY = ageY + ageHeight + pad;
+      const bodyHeight = Math.max(1, height - categoryHeight - ageHeight - pad * 2);
+
+      let textX = x + pad;
+      let textWidth = Math.max(1, width - pad * 2);
+      let imageBox = null;
+
+      if (item.image && !item.noImage) {
+        const maxImageWidth = width * (landscape ? .38 : .36);
+        const imageScale = Math.min(
+          maxImageWidth / Math.max(1, item.imageWidth),
+          bodyHeight / Math.max(1, item.imageHeight)
+        );
+        const imageWidth = item.imageWidth * imageScale;
+        const imageHeight = item.imageHeight * imageScale;
+
+        imageBox = {
+          x:x + pad,
+          y:bodyY + (bodyHeight - imageHeight) / 2,
+          width:imageWidth,
+          height:imageHeight
+        };
+
+        textX = imageBox.x + imageWidth + (config.social ? 10 : config.padding);
+        textWidth = Math.max(1, x + width - pad - textX);
+      }
+
+      const parts = [];
+
+      if (item.title) {
+        parts.push({
+          text:item.title,
+          ratio:.42,
+          max:78 * config.textScale,
+          min:Math.max(5, 8 * config.textScale),
+          family:'"Noto Sans JP", sans-serif',
+          weight:"700",
+          color:"#0f172a"
+        });
+      }
+
+      if (!["無料配布", "Web展示"].includes(item.category) && item.price) {
+        parts.push({
+          text:item.price,
+          ratio:.28,
+          max:100 * config.textScale,
+          min:Math.max(5, 8 * config.textScale),
+          family:'"M PLUS Rounded 1c", sans-serif',
+          weight:"700",
+          color:categoryStyle.background
+        });
+      }
+
+      if (item.desc) {
+        parts.push({
+          text:item.desc,
+          ratio:.30,
+          max:Math.max(8, Math.min(100, Number(item.descriptionFontSize) || 38)) * config.textScale,
+          min:Math.max(4, 7 * config.textScale),
+          family:'"Noto Sans JP", sans-serif',
+          weight:"400",
+          color:"#475569"
+        });
+      }
+
+      const ratioSum = parts.reduce((sum, part) => sum + part.ratio, 0);
+      let textY = bodyY;
+
+      for (const part of parts) {
+        const partHeight = Math.max(1, bodyHeight * part.ratio / Math.max(.01, ratioSum));
+        fitText(ctx, part.text, {
+          x:textX, y:textY, width:textWidth, height:partHeight
+        }, {
+          maxFont:part.max,
+          minFont:part.min,
+          family:part.family,
+          weight:part.weight,
+          color:part.color
+        });
+        textY += partHeight;
+      }
+
+      if (imageBox && item.image) {
+        try {
+          ctx.save();
+          ctx.shadowColor = "rgba(15,23,42,.22)";
+          ctx.shadowBlur = config.social ? 4 : 12;
+          ctx.shadowOffsetY = config.social ? 2 : 5;
+          ctx.drawImage(item.image, imageBox.x, imageBox.y, imageBox.width, imageBox.height);
+          ctx.restore();
+        } catch (error) {
+          console.error("頒布物画像を描画できませんでした。", error);
+        }
+      }
+
+      ctx.restore();
+      roundedRect(ctx, x, y, width, height, radius, null, "#cbd5e1", config.borderWidth);
+    }
+
+    function renderCanvas() {
+      if (!context || !canvas.width || !canvas.height) return;
+
+      const token = ++renderToken;
+      context.setTransform(1, 0, 0, 1, 0, 0);
+      context.clearRect(0, 0, outputWidth, outputHeight);
+
+      // 背景は仕上がり範囲と塗り足し範囲の両方に描く。
+      drawBackground(context);
+
+      const social = SOCIAL_LAYOUTS[paper] || null;
+      const isSocial = Boolean(social);
+      const landscape = orientation === "LANDSCAPE";
+      const headerHeight = social
+        ? social.header
+        : Math.round(trimHeight * (landscape ? .17 : .15));
+
+      const headerColor = document.getElementById("headerBgColor").value || "#333333";
+      const accentColor = document.getElementById("headerAccentColor").value || selectedPalette.accent;
+
+      // ヘッダー背景を上・左右の塗り足しまで延長する。
+      context.fillStyle = headerColor;
+      context.fillRect(
+        0,
+        0,
+        outputWidth,
+        Math.min(outputHeight, bleedTop + headerHeight)
+      );
+
+      const accentHeight = social
+        ? Math.max(3, Math.round(headerHeight * .025))
+        : Math.max(8, Math.round(12 * trimWidth / 3307));
+
+      context.fillStyle = accentColor;
+      context.fillRect(
+        bleedLeft,
+        bleedTop + headerHeight - accentHeight,
+        trimWidth,
+        accentHeight
+      );
+
       const eventStyle = getHeaderStyle(
         "eventInfo",
         social ? social.eventFont : 60,
@@ -1177,268 +1684,64 @@
         "#ffffff"
       );
 
-      const startX = social ? social.marginX : safeX + 8;
-      const width = Math.max(1, trimWidth - startX * 2);
-
-      if (social) {
-        const top = currentPaperSize === "PICSQUARE" ? 5 : Math.max(6, headerHeight * .04);
-        const gap = currentPaperSize === "PICSQUARE" ? 2 : Math.max(3, headerHeight * .018);
-        const usable = headerHeight - top * 2;
-        const eventH = currentPaperSize === "PICSQUARE" ? 29 : usable * .25;
-        const circleH = currentPaperSize === "PICSQUARE" ? 44 : usable * .34;
-        const spaceH = Math.max(1, usable - eventH - circleH - gap * 2);
-        let y = top;
-
-        fitText(ctx,
-          `${document.getElementById("eventDate").value} | ${document.getElementById("eventName").value}`,
-          { x: startX, y, width, height: eventH },
-          { maxFont: eventStyle.size, minFont: 7, color: eventStyle.color, background: eventStyle.bg }
-        );
-
-        y += eventH + gap;
-        fitText(ctx, document.getElementById("circleName").value,
-          { x: startX, y, width, height: circleH },
-          { maxFont: circleStyle.size, minFont: 8, weight: "700", color: circleStyle.color, background: circleStyle.bg }
-        );
-
-        y += circleH + gap;
-        const space = document.getElementById("spaceNo").value;
-        if (space) {
-          fitText(ctx, ` ${space} `,
-            { x: startX, y, width, height: spaceH },
-            { maxFont: spaceStyle.size, minFont: 7, weight: "700", family: '"M PLUS Rounded 1c", sans-serif', color: spaceStyle.color, background: spaceStyle.bg, align: "center" }
-          );
-        }
-        return;
-      }
-
-      const scale = Math.min(trimWidth / 3307, trimHeight / 2339);
-      const top = Math.max(safeY, headerHeight * .055);
-      const bottom = Math.max(safeY, 10 * scale);
-      const available = Math.max(1, headerHeight - top - bottom);
-      const gap = Math.max(5 * scale, available * .055);
-      const rowHeight = Math.max(1, available - gap * 2);
-      const eventH = rowHeight * .24;
-      const circleH = rowHeight * .43;
-      const spaceH = rowHeight - eventH - circleH;
-      let y = top;
-
-      fitText(ctx,
-        `${document.getElementById("eventDate").value} | ${document.getElementById("eventName").value}`,
-        { x: startX, y, width, height: eventH },
-        { maxFont: eventStyle.size, minFont: 10 * scale, color: eventStyle.color, background: eventStyle.bg }
-      );
-
-      y += eventH + gap;
-      fitText(ctx, document.getElementById("circleName").value,
-        { x: startX, y, width, height: circleH },
-        { maxFont: circleStyle.size, minFont: 12 * scale, weight: "700", color: circleStyle.color, background: circleStyle.bg }
-      );
-
-      y += circleH + gap;
-      const space = document.getElementById("spaceNo").value;
-      if (space) {
-        fitText(ctx, ` ${space} `,
-          { x: startX, y, width, height: spaceH },
-          { maxFont: spaceStyle.size, minFont: 10 * scale, weight: "700", family: '"M PLUS Rounded 1c", sans-serif', color: spaceStyle.color, background: spaceStyle.bg, align: "center" }
-        );
-      }
-    }
-
-    function drawBandLabel(ctx, text, box, maxFont, color, weight = "700") {
-      fitText(ctx, text, box, {
-        maxFont,
-        minFont: 1,
-        weight,
-        family: '"M PLUS Rounded 1c", sans-serif',
-        color,
-        align: "center",
-        lineHeight: 1
-      });
-    }
-
-    function drawCard(ctx, item, x, y, width, height, config, landscape) {
-      const pad = config.padding;
-      const radius = config.radius;
-      roundRect(ctx, x, y, width, height, radius, "#ffffff", "#cbd5e1", Math.max(1, config.scale * 3));
-
-      const style = CATEGORY_STYLES[item.category] || CATEGORY_STYLES["新刊"];
-      const categoryH = Math.min(config.categoryBand, height * .16, Math.max(18, width * .09));
-      const ageH = Math.min(config.ageBand, height * .11, Math.max(15, width * .055));
-
-      ctx.save();
-      ctx.beginPath();
-      ctx.roundRect(x, y, width, height, radius);
-      ctx.clip();
-
-      ctx.fillStyle = style.background;
-      ctx.fillRect(x, y, width, categoryH);
-      drawBandLabel(ctx, item.category, {
-        x: x + pad, y: y + 1, width: width - pad * 2, height: categoryH - 2
-      }, Math.min(categoryH * .78, width * .2), style.text);
-
-      const ageY = y + categoryH;
-      ctx.fillStyle = item.ageRating === "R18" ? "#991b1b" : "#dcfce7";
-      ctx.fillRect(x, ageY, width, ageH);
-      drawBandLabel(ctx, item.ageRating === "R18" ? "R18" : "全年齢", {
-        x: x + pad, y: ageY + 1, width: width - pad * 2, height: ageH - 2
-      }, Math.min(ageH * .75, width * .16), item.ageRating === "R18" ? "#ffffff" : "#166534");
-
-      const bodyY = ageY + ageH + pad;
-      const bodyH = Math.max(1, height - categoryH - ageH - pad * 2);
-      let textX = x + pad;
-      let textW = width - pad * 2;
-      let imageBox = null;
-
-      if (item.image && !item.noImage) {
-        const maxImageW = width * (landscape ? .38 : .36);
-        const scale = Math.min(maxImageW / item.image.width, bodyH / item.image.height);
-        const drawW = item.image.width * scale;
-        const drawH = item.image.height * scale;
-        imageBox = {
-          x: x + pad,
-          y: bodyY + (bodyH - drawH) / 2,
-          width: drawW,
-          height: drawH
-        };
-        textX = imageBox.x + drawW + (config.social ? 10 : 24);
-        textW = Math.max(1, x + width - pad - textX);
-      }
-
-      const content = [];
-      if (item.title) {
-        content.push({
-          text: item.title,
-          ratio: .42,
-          max: 78 * config.textScale,
-          min: Math.max(5, 8 * config.textScale),
-          family: '"Noto Sans JP", sans-serif',
-          weight: "700",
-          color: "#0f172a"
-        });
-      }
-
-      if (!["無料配布", "Web展示"].includes(item.category) && item.price) {
-        content.push({
-          text: item.price,
-          ratio: .28,
-          max: 100 * config.textScale,
-          min: Math.max(5, 8 * config.textScale),
-          family: '"M PLUS Rounded 1c", sans-serif',
-          weight: "700",
-          color: style.background
-        });
-      }
-
-      if (item.desc) {
-        content.push({
-          text: item.desc,
-          ratio: .30,
-          max: Math.max(8, Math.min(100, Number(item.descriptionFontSize) || 38)) * config.textScale,
-          min: Math.max(4, 7 * config.textScale),
-          family: '"Noto Sans JP", sans-serif',
-          weight: "400",
-          color: "#475569"
-        });
-      }
-
-      const ratios = content.reduce((sum, part) => sum + part.ratio, 0);
-      let cursorY = bodyY;
-
-      content.forEach((part) => {
-        const partH = Math.max(1, bodyH * part.ratio / Math.max(.01, ratios));
-        fitText(ctx, part.text, { x: textX, y: cursorY, width: textW, height: partH }, {
-          maxFont: part.max,
-          minFont: part.min,
-          family: part.family,
-          weight: part.weight,
-          color: part.color
-        });
-        cursorY += partH;
-      });
-
-      if (imageBox && item.image) {
-        try {
-          ctx.drawImage(item.image, imageBox.x, imageBox.y, imageBox.width, imageBox.height);
-        } catch (error) {
-          console.warn("頒布物画像の描画に失敗しました", error);
-        }
-      }
-
-      ctx.restore();
-      roundRect(ctx, x, y, width, height, radius, null, "#cbd5e1", Math.max(1, config.scale * 3));
-    }
-
-    function renderCanvas() {
-      if (!canvas) return;
-
-      const token = ++renderToken;
-      const ctx = canvas.getContext("2d", { alpha: false });
-      if (!ctx) return;
-
-      ctx.clearRect(0, 0, outputWidth, outputHeight);
-      drawBackground(ctx);
-
-      const social = SOCIAL_LAYOUTS[paper] || null;
-      const landscape = orientation === "LANDSCAPE";
-      const headerH = social
-        ? social.header
-        : Math.round(trimHeight * (landscape ? .17 : .15));
-
-      const headerColor = document.getElementById("headerBgColor").value || "#3b0a1e";
-      const accentColor = document.getElementById("headerAccentColor").value || selectedPalette.accent;
-
-      // ヘッダー背景色は上端の塗り足しにも続ける。
-      ctx.fillStyle = headerColor;
-      ctx.fillRect(0, 0, outputWidth, Math.min(outputHeight, bleedTop + headerH));
-
-      const accentH = social ? Math.max(3, headerH * .025) : 12 * (trimWidth / 3307);
-      ctx.fillStyle = accentColor;
-      ctx.fillRect(bleedLeft, bleedTop + headerH - accentH, trimWidth, accentH);
-
+      // 引数順を固定して、情報欄の描画エラーでカード描画が止まらないようにする。
       drawHeader(
-        ctx,
+        context,
         social,
-        headerH,
-        document.getElementById("eventInfoFontSize").value,
-        document.getElementById("circleInfoFontSize").value,
-        document.getElementById("spaceInfoFontSize").value
+        headerHeight,
+        landscape,
+        eventStyle,
+        circleStyle,
+        spaceStyle
       );
 
       let columns = 2;
-      if (paper === "WEB_LANDSCAPE") columns = items.length <= 1 ? 1 : 2;
-      else if (social) columns = items.length <= 3 ? 1 : 2;
-      else if (landscape) columns = items.length <= 1 ? 1 : (items.length > 4 ? 3 : 2);
-      else if (items.length <= 3) columns = 1;
+      if (paper === "WEB_LANDSCAPE") {
+        columns = items.length <= 1 ? 1 : 2;
+      } else if (isSocial) {
+        columns = items.length <= 3 ? 1 : 2;
+      } else if (landscape) {
+        columns = items.length <= 1 ? 1 : (items.length > 4 ? 3 : 2);
+      } else if (items.length <= 3) {
+        columns = 1;
+      }
 
       const marginX = social ? social.marginX : safeX;
       const marginY = social ? social.marginY : safeY;
-      const gapX = social ? social.gapX : 40 * (trimWidth / 3307);
-      const gapY = social ? social.gapY : 40 * (trimWidth / 3307);
-      const padding = social ? social.padding : 25 * (trimWidth / 3307);
-      const startY = headerH + (social ? 10 : Math.max(24 * (trimWidth / 3307), safeY));
+      const gapX = social ? social.gapX : Math.round(40 * trimWidth / 3307);
+      const gapY = social ? social.gapY : Math.round(40 * trimWidth / 3307);
+      const padding = social ? social.padding : Math.round(25 * trimWidth / 3307);
+      const startY = headerHeight + (social ? 10 : Math.max(24, safeY));
       const rows = Math.max(1, Math.ceil(items.length / columns));
-      const cardW = Math.max(1, (trimWidth - marginX * 2 - gapX * (columns - 1)) / columns);
-      const cardH = Math.max(1, (trimHeight - startY - marginY - gapY * (rows - 1)) / rows);
-      const textScale = social ? social.cardScale : trimWidth / 3307;
+
+      const cardWidth = Math.max(
+        1,
+        (trimWidth - marginX * 2 - gapX * (columns - 1)) / columns
+      );
+      const cardHeight = Math.max(
+        1,
+        (trimHeight - startY - marginY - gapY * (rows - 1)) / rows
+      );
 
       const config = {
-        social: Boolean(social),
+        social:isSocial,
         padding,
-        radius: social ? 12 : 24 * (trimWidth / 3307),
-        categoryBand: social ? social.categoryBand : cardH * .14,
-        ageBand: social ? social.ageBand : cardH * .09,
-        scale: trimWidth / 3307,
-        textScale
+        radius:social ? 12 : Math.max(12, 24 * trimWidth / 3307),
+        categoryBand:social ? social.categoryBand : cardHeight * .14,
+        ageBand:social ? social.ageBand : cardHeight * .09,
+        borderWidth:social ? 2 : Math.max(2, 4 * trimWidth / 3307),
+        textScale:social ? social.cardScale : trimWidth / 3307
       };
 
       items.forEach((item, index) => {
         if (token !== renderToken) return;
+
         const row = Math.floor(index / columns);
         const column = index % columns;
-        const x = bleedLeft + marginX + column * (cardW + gapX);
-        const y = bleedTop + startY + row * (cardH + gapY);
-        drawCard(ctx, item, x, y, cardW, cardH, config, landscape);
+        const x = bleedLeft + marginX + column * (cardWidth + gapX);
+        const y = bleedTop + startY + row * (cardHeight + gapY);
+
+        drawCard(context, item, x, y, cardWidth, cardHeight, config, landscape);
       });
     }
 
@@ -1453,7 +1756,8 @@
       container.style.width = `${outputWidth * safeScale}px`;
       container.style.height = `${outputHeight * safeScale}px`;
 
-      document.getElementById("zoomDisplay").textContent = `表示 ${Math.round(safeScale * 100)}%`;
+      document.getElementById("zoomDisplay").textContent =
+        `表示 ${Math.round(safeScale * 100)}%`;
       document.getElementById("zoomSlider").value =
         String(Math.max(1, Math.min(200, Math.round(safeScale * 100))));
     }
@@ -1462,29 +1766,33 @@
       const workspace = document.getElementById("workspace");
       const availableWidth = Math.max(1, workspace.clientWidth - 50);
       const availableHeight = Math.max(1, workspace.clientHeight - 75);
-      applyPreviewScale(Math.min(availableWidth / outputWidth, availableHeight / outputHeight));
+      applyPreviewScale(Math.min(
+        availableWidth / outputWidth,
+        availableHeight / outputHeight
+      ));
     }
 
     function setupScaler() {
       const workspace = document.getElementById("workspace");
+
       if ("ResizeObserver" in window) {
         new ResizeObserver(() => {
           if (previewMode === "fit") fitPreview();
         }).observe(workspace);
       }
+
       window.addEventListener("resize", () => {
         if (previewMode === "fit") fitPreview();
       });
     }
 
-    function waitForFonts() {
-      if (document.fonts && document.fonts.ready) {
-        return document.fonts.ready.catch(() => {});
+    async function waitForFonts() {
+      if (document.fonts?.ready) {
+        try { await document.fonts.ready; } catch {}
       }
-      return Promise.resolve();
     }
 
-    async function exportData() {
+    async function getExportData() {
       await waitForFonts();
       renderCanvas();
       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
@@ -1492,24 +1800,25 @@
       const social = SOCIAL_PRESETS[paper];
       if (social) {
         return {
-          dataUrl: canvas.toDataURL("image/png"),
-          widthPx: outputWidth,
-          heightPx: outputHeight,
-          widthMm: outputWidth * 25.4 / 200,
-          heightMm: outputHeight * 25.4 / 200,
-          hasBleed: false
+          dataUrl:canvas.toDataURL("image/png"),
+          widthPx:outputWidth,
+          heightPx:outputHeight,
+          widthMm:outputWidth * 25.4 / 200,
+          heightMm:outputHeight * 25.4 / 200,
+          hasBleed:false
         };
       }
 
       const spec = PRINT_SPECS[paper];
       const landscape = orientation === "LANDSCAPE";
+
       return {
-        dataUrl: canvas.toDataURL("image/png"),
-        widthPx: outputWidth,
-        heightPx: outputHeight,
-        widthMm: landscape ? spec.heightMm : spec.widthMm,
-        heightMm: landscape ? spec.widthMm : spec.heightMm,
-        hasBleed: true
+        dataUrl:canvas.toDataURL("image/png"),
+        widthPx:outputWidth,
+        heightPx:outputHeight,
+        widthMm:landscape ? spec.heightMm : spec.widthMm,
+        heightMm:landscape ? spec.widthMm : spec.heightMm,
+        hasBleed:true
       };
     }
 
@@ -1521,36 +1830,46 @@
 
       handle.addEventListener("pointerdown", (event) => {
         event.preventDefault();
-        const t = toolbar.getBoundingClientRect();
-        const w = workspace.getBoundingClientRect();
 
-        toolbar.style.left = `${t.left - w.left}px`;
-        toolbar.style.top = `${t.top - w.top}px`;
+        const toolbarRect = toolbar.getBoundingClientRect();
+        const workspaceRect = workspace.getBoundingClientRect();
+
+        toolbar.style.left = `${toolbarRect.left - workspaceRect.left}px`;
+        toolbar.style.top = `${toolbarRect.top - workspaceRect.top}px`;
         toolbar.style.right = "auto";
         toolbar.style.bottom = "auto";
 
         drag = {
-          id: event.pointerId,
-          x: event.clientX,
-          y: event.clientY,
-          left: t.left - w.left,
-          top: t.top - w.top
+          pointerId:event.pointerId,
+          startX:event.clientX,
+          startY:event.clientY,
+          left:toolbarRect.left - workspaceRect.left,
+          top:toolbarRect.top - workspaceRect.top
         };
+
         handle.setPointerCapture(event.pointerId);
       });
 
       handle.addEventListener("pointermove", (event) => {
-        if (!drag || drag.id !== event.pointerId) return;
+        if (!drag || drag.pointerId !== event.pointerId) return;
+
         const rect = workspace.getBoundingClientRect();
-        toolbar.style.left = `${Math.max(0, Math.min(rect.width - toolbar.offsetWidth, drag.left + event.clientX - drag.x))}px`;
-        toolbar.style.top = `${Math.max(0, Math.min(rect.height - toolbar.offsetHeight, drag.top + event.clientY - drag.y))}px`;
+        toolbar.style.left = `${Math.max(0, Math.min(
+          rect.width - toolbar.offsetWidth,
+          drag.left + event.clientX - drag.startX
+        ))}px`;
+        toolbar.style.top = `${Math.max(0, Math.min(
+          rect.height - toolbar.offsetHeight,
+          drag.top + event.clientY - drag.startY
+        ))}px`;
       });
 
-      const end = (event) => {
-        if (drag && drag.id === event.pointerId) drag = null;
+      const finish = (event) => {
+        if (drag && drag.pointerId === event.pointerId) drag = null;
       };
-      handle.addEventListener("pointerup", end);
-      handle.addEventListener("pointercancel", end);
+
+      handle.addEventListener("pointerup", finish);
+      handle.addEventListener("pointercancel", finish);
     }
 
     async function openPreview() {
@@ -1561,7 +1880,7 @@
       }
 
       try {
-        const data = await exportData();
+        const output = await getExportData();
         popup.document.open();
         popup.document.write(`<!doctype html>
 <html lang="ja">
@@ -1577,29 +1896,29 @@ body{background:#1e293b;color:#f8fafc}
 .toolbar button{border:0;border-radius:6px;padding:8px 12px;color:#fff;background:#334155;cursor:pointer}
 .toolbar .print{background:#e11d48}
 .preview{height:calc(100vh - 60px);overflow:auto;padding:24px}
-.sheet{width:${data.widthPx}px;height:${data.heightPx}px;margin:0 auto;background:#fff;box-shadow:0 8px 30px #0006}
+.sheet{width:${output.widthPx}px;height:${output.heightPx}px;margin:0 auto;background:#fff;box-shadow:0 8px 30px #0006}
 .sheet img{display:block;width:100%;height:100%}
 body.fit .sheet{width:auto;height:auto;max-width:100%}
 body.fit .sheet img{width:auto;height:auto;max-width:100%;max-height:calc(100vh - 120px);object-fit:contain}
-@page{size:${data.widthMm}mm ${data.heightMm}mm;margin:0}
+@page{size:${output.widthMm}mm ${output.heightMm}mm;margin:0}
 @media print{
-html,body{width:${data.widthMm}mm;height:${data.heightMm}mm;margin:0;padding:0;overflow:hidden;background:#fff}
+html,body{width:${output.widthMm}mm;height:${output.heightMm}mm;margin:0;padding:0;overflow:hidden;background:#fff}
 .toolbar{display:none!important}
-.preview{width:${data.widthMm}mm;height:${data.heightMm}mm;overflow:hidden;padding:0}
-.sheet{width:${data.widthMm}mm!important;height:${data.heightMm}mm!important;margin:0!important;box-shadow:none}
-.sheet img{width:${data.widthMm}mm!important;height:${data.heightMm}mm!important}
+.preview{width:${output.widthMm}mm;height:${output.heightMm}mm;overflow:hidden;padding:0}
+.sheet{width:${output.widthMm}mm!important;height:${output.heightMm}mm!important;margin:0!important;box-shadow:none}
+.sheet img{width:${output.widthMm}mm!important;height:${output.heightMm}mm!important}
 }
 </style>
 </head>
 <body>
 <div class="toolbar">
-<strong>${data.hasBleed ? "塗り足し込み" : "Webサイズ"} プレビュー</strong>
+<strong>${output.hasBleed ? "塗り足し込み" : "Webサイズ"} プレビュー</strong>
 <button id="actual">100%表示</button>
 <button id="fit">画面に合わせる</button>
 <button id="print" class="print">印刷</button>
-<span>${data.widthPx} × ${data.heightPx}px</span>
+<span>${output.widthPx} × ${output.heightPx}px</span>
 </div>
-<main class="preview"><div class="sheet"><img src="${data.dataUrl}" alt="出力プレビュー"></div></main>
+<main class="preview"><div class="sheet"><img src="${output.dataUrl}" alt="出力プレビュー"></div></main>
 <script>
 document.getElementById("actual").onclick=()=>document.body.classList.remove("fit");
 document.getElementById("fit").onclick=()=>document.body.classList.add("fit");
@@ -1647,6 +1966,7 @@ document.getElementById("print").onclick=()=>window.print();
       document.getElementById("customBgInput").addEventListener("change", async (event) => {
         const file = event.target.files?.[0];
         if (!file) return;
+
         try {
           const loaded = await readImageFile(file);
           customBackground = loaded.image;
@@ -1675,10 +1995,11 @@ document.getElementById("print").onclick=()=>window.print();
       });
 
       document.getElementById("toggleGrid").addEventListener("change", (event) => {
-        document.getElementById("canvasStage").style.backgroundImage = event.target.checked
-          ? "linear-gradient(to right,rgba(15,23,42,.16) 1px,transparent 1px),linear-gradient(to bottom,rgba(15,23,42,.16) 1px,transparent 1px)"
+        const stage = document.getElementById("canvasStage");
+        stage.style.backgroundImage = event.target.checked
+          ? "linear-gradient(to right,rgba(15,23,42,.18) 1px,transparent 1px),linear-gradient(to bottom,rgba(15,23,42,.18) 1px,transparent 1px)"
           : "none";
-        document.getElementById("canvasStage").style.backgroundSize = "20px 20px";
+        stage.style.backgroundSize = "20px 20px";
       });
 
       setupToolbarDrag();
@@ -1686,10 +2007,10 @@ document.getElementById("print").onclick=()=>window.print();
 
       document.getElementById("exportPng").addEventListener("click", async () => {
         try {
-          const data = await exportData();
+          const output = await getExportData();
           const link = document.createElement("a");
-          link.download = `oshinagaki_${paper}_${orientation}_${data.widthPx}x${data.heightPx}.png`;
-          link.href = data.dataUrl;
+          link.download = `oshinagaki_${paper}_${orientation}_${output.widthPx}x${output.heightPx}.png`;
+          link.href = output.dataUrl;
           link.click();
         } catch (error) {
           alert(`PNGを書き出せませんでした: ${error.message}`);
@@ -1698,14 +2019,14 @@ document.getElementById("print").onclick=()=>window.print();
 
       document.getElementById("exportPdf").addEventListener("click", async () => {
         try {
-          const data = await exportData();
+          const output = await getExportData();
           const { jsPDF } = window.jspdf;
           const pdf = new jsPDF({
-            orientation: data.widthMm >= data.heightMm ? "landscape" : "portrait",
-            unit: "mm",
-            format: [data.widthMm, data.heightMm]
+            orientation:output.widthMm >= output.heightMm ? "landscape" : "portrait",
+            unit:"mm",
+            format:[output.widthMm, output.heightMm]
           });
-          pdf.addImage(data.dataUrl, "PNG", 0, 0, data.widthMm, data.heightMm);
+          pdf.addImage(output.dataUrl, "PNG", 0, 0, output.widthMm, output.heightMm);
           pdf.save(`oshinagaki_${paper}_${orientation}.pdf`);
         } catch (error) {
           alert(`PDFを書き出せませんでした: ${error.message}`);
