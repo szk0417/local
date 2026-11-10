@@ -46,13 +46,15 @@
     #canvasContainer {
       flex: none;
       line-height: 0;
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
     }
 
     #oshinagakiCanvas {
       display: block;
     }
 
-    /* 編集プレビュー専用の方眼。PNG/PDFには含まれません。 */
     .grid-overlay {
       position: absolute;
       inset: 0;
@@ -103,7 +105,7 @@
 
   <div class="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
 
-    <!-- 左：デザイン・情報入力 -->
+    <!-- 左：設定フォーム -->
     <aside class="w-full md:w-[400px] lg:w-[440px] bg-slate-800 border-r border-slate-700 flex flex-col shrink-0 overflow-hidden max-h-[48vh] md:max-h-none">
       <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/80 shrink-0">
         <h2 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -188,39 +190,6 @@
               背景色
               <input id="bgColorPicker" type="color" value="#f8fafc"
                 class="w-12 h-8 bg-slate-800 border border-slate-700 rounded cursor-pointer p-0.5">
-            </label>
-          </div>
-        </section>
-
-        <!-- イベント・サークル情報 -->
-        <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
-          <h3 class="text-xs font-bold text-rose-400 flex items-center gap-1">
-            <i data-lucide="info" class="w-3.5 h-3.5"></i>
-            イベント・サークル情報
-          </h3>
-
-          <label class="block text-[11px] text-slate-400">
-            イベント日時
-            <input id="eventDate" type="text" value="2026年12月30日(水)"
-              class="mt-1 w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200">
-          </label>
-
-          <label class="block text-[11px] text-slate-400">
-            イベント名
-            <input id="eventName" type="text" value="コミックマーケット109"
-              class="mt-1 w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200">
-          </label>
-
-          <div class="grid grid-cols-2 gap-2">
-            <label class="block text-[11px] text-slate-400">
-              サークル名
-              <input id="circleName" type="text" value="暁の稜線"
-                class="mt-1 w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200">
-            </label>
-            <label class="block text-[11px] text-slate-400">
-              スペース番号
-              <input id="spaceNo" type="text" value="東7ホール あ-01a"
-                class="mt-1 w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200">
             </label>
           </div>
         </section>
@@ -355,6 +324,7 @@
               頒布物を追加
             </button>
           </div>
+
           <div id="itemsContainer" class="space-y-3"></div>
         </section>
       </div>
@@ -362,16 +332,38 @@
 
     <!-- 右：プレビュー -->
     <main id="workspace" class="flex-1 min-w-0 bg-slate-950 flex items-center justify-center p-3 sm:p-5 overflow-hidden relative">
-      <div class="absolute top-3 left-3 z-20 bg-slate-800/80 backdrop-blur border border-slate-700 rounded-full px-3 py-1 text-[11px] text-slate-300 flex items-center gap-2 shadow">
+      <div class="absolute top-3 left-3 z-20 rounded-lg border border-slate-700 bg-slate-800/90 px-3 py-2 text-[11px] text-slate-300 shadow">
         <span id="zoomDisplay">表示: --%</span>
-        <span class="text-slate-600">|</span>
+        <span class="mx-1 text-slate-600">|</span>
         <span id="dimensionDisplay" class="text-slate-400">A3横</span>
       </div>
 
-      <label class="absolute top-3 right-3 z-20 flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/90 px-3 py-2 text-xs text-slate-200 shadow">
-        <input id="toggleGrid" type="checkbox" class="accent-rose-500">
-        方眼ガイド
-      </label>
+      <div class="absolute top-3 right-3 z-20 flex flex-wrap items-center justify-end gap-2 rounded-lg border border-slate-700 bg-slate-800/90 px-3 py-2 shadow">
+        <button
+          id="fitCanvasBtn"
+          type="button"
+          class="rounded bg-slate-700 px-2 py-1 text-xs text-slate-200 hover:bg-slate-600"
+        >
+          全体表示
+        </button>
+
+        <label class="flex items-center gap-1.5 text-xs text-slate-200">
+          倍率
+          <input
+            id="zoomSlider"
+            type="range"
+            min="1"
+            max="200"
+            value="100"
+            class="w-24 accent-rose-500"
+          >
+        </label>
+
+        <label class="flex items-center gap-1.5 text-xs text-slate-200">
+          <input id="toggleGrid" type="checkbox" class="accent-rose-500">
+          方眼
+        </label>
+      </div>
 
       <div id="canvasContainer" class="relative shadow-2xl border border-slate-700/50 bg-white overflow-hidden">
         <canvas id="oshinagakiCanvas"></canvas>
@@ -411,10 +403,6 @@
       }
     };
 
-    /*
-      大・中・小はプレビューカードの面積と、
-      カテゴリ・タイトル・価格の文字サイズに反映します。
-    */
     const SIZE_PRESETS = {
       large: {
         label: "大",
@@ -426,7 +414,7 @@
         description: 42
       },
       medium: {
-        label: "中",
+        label: "大",
         scale: 0.9,
         title: 68,
         price: 90,
@@ -459,6 +447,7 @@
     let customBgImageObj = null;
     let generationId = 0;
     let resizeCanvasToFit = null;
+    let previewZoomMode = "fit";
 
     let items = [
       {
@@ -498,6 +487,12 @@
         selection: false,
         enableRetinaScaling: true
       });
+
+      // 初期状態では canvas のラッパー要素が canvas そのものなので、
+      // ここで transform 可能にしてプレビュー用の拡大率を制御する。
+      if (canvas.wrapperEl) {
+        canvas.wrapperEl.style.transformOrigin = "top left";
+      }
     }
 
     function escapeHtml(value) {
@@ -512,7 +507,7 @@
 
     function setupColorPalette() {
       const container = document.getElementById("presetColorPalette");
-      container.innerHTML = "";
+      const buttons = [];
 
       PRESET_COLORS.forEach((color, index) => {
         const button = document.createElement("button");
@@ -577,12 +572,14 @@
       });
 
       const orientationLabel = currentOrientation === "LANDSCAPE" ? "横" : "縦";
-      const paperLabel =
+      const label =
         `${currentPaperSize}${orientationLabel} (${CANVAS_WIDTH} × ${CANVAS_HEIGHT}px / 200dpi)`;
 
-      document.getElementById("paperSpecLabel").textContent = paperLabel;
+      document.getElementById("paperSpecLabel").textContent = label;
       document.getElementById("dimensionDisplay").textContent =
         `${currentPaperSize}${orientationLabel} (${CANVAS_WIDTH}×${CANVAS_HEIGHT}px)`;
+
+      previewZoomMode = "fit";
 
       if (resizeCanvasToFit) {
         resizeCanvasToFit();
@@ -798,10 +795,6 @@
       });
     }
 
-    /*
-      複数画像を選択順に頒布物へ割り当てます。
-      頒布物数を超えた画像がある場合は、フォームを自動追加します。
-    */
     async function handleBatchImageUpload(fileList) {
       const files = Array.from(fileList || []);
       if (files.length === 0) return;
@@ -852,11 +845,6 @@
       } else if (patternStyle === "stripes") {
         context.fillRect(0, 0, size / 2, size);
       } else if (patternStyle === "diagonal") {
-        /*
-          斜線のタイルをシームレスにするため、
-          240pxのタイルに対して回転後の周期を240/√2に設定します。
-          横・縦方向にタイルが繰り返されても斜線の位置がつながります。
-        */
         const period = size / Math.sqrt(2);
         const stripeWidth = period / 3;
 
@@ -866,12 +854,7 @@
         context.fillStyle = colorHex;
 
         for (let x = -size * 2; x <= size * 2; x += period) {
-          context.fillRect(
-            x,
-            -size * 2,
-            stripeWidth,
-            size * 4
-          );
+          context.fillRect(x, -size * 2, stripeWidth, size * 4);
         }
 
         context.restore();
@@ -882,7 +865,7 @@
         context.fillRect(36, 0, 48, size);
         context.fillRect(156, 0, 20, size);
         context.fillRect(0, 36, size, 48);
-        context.fillRect(0, 156, size, 20);
+        context.fillRect(0, 76, size, 20);
 
         context.globalAlpha = 0.42;
         context.fillRect(0, 108, size, 12);
@@ -996,7 +979,6 @@
 
       const patternFill = applyBackground();
 
-      /* パターンを最背面のオブジェクトとして描画 */
       if (patternFill) {
         canvas.add(new fabric.Rect({
           left: 0,
@@ -1041,7 +1023,6 @@
         200
       );
 
-      // ヘッダー
       const headerHeight = isLandscape ? 360 : 420;
 
       canvas.add(new fabric.Rect({
@@ -1064,7 +1045,6 @@
         evented: false
       }));
 
-      // 日時・イベント名
       canvas.add(new fabric.Textbox(`${eventDate}  |  ${eventName}`, {
         left: 80,
         top: isLandscape ? 55 : 60,
@@ -1077,7 +1057,6 @@
         evented: false
       }));
 
-      // サークル名
       canvas.add(new fabric.Textbox(circleName, {
         left: 80,
         top: isLandscape ? 130 : 135,
@@ -1091,7 +1070,6 @@
         evented: false
       }));
 
-      // スペース番号
       if (spaceNo) {
         canvas.add(new fabric.Textbox(` ${spaceNo} `, {
           left: isLandscape ? CANVAS_WIDTH - 850 : 80,
@@ -1108,7 +1086,6 @@
         }));
       }
 
-      // 頒布物カードの段組
       const itemCount = items.length;
       let columns = 2;
 
@@ -1117,6 +1094,8 @@
         else if (itemCount > 4) columns = 3;
       } else if (itemCount <= 3) {
         columns = 1;
+      } else {
+        columns = 2;
       }
 
       const rows = Math.ceil(itemCount / columns);
@@ -1140,7 +1119,6 @@
         const sizePreset =
           SIZE_PRESETS[item.displaySize] || SIZE_PRESETS.medium;
 
-        /* 大・中・小をカードの寸法にも反映 */
         const cardWidth = slotWidth * sizePreset.scale;
         const cardHeight = slotHeight * sizePreset.scale;
         const posX = slotX + (slotWidth - cardWidth) / 2;
@@ -1205,9 +1183,9 @@
           100,
           cardWidth - imageWidth - padding * 2 - 35 * sizePreset.scale
         );
+
         let currentY = posY + padding + 8;
 
-        // カテゴリをカテゴリ別の色で大きく表示
         const categoryStyle = getCategoryStyle(item.category);
         const categoryBadge = new fabric.Textbox(
           ` ${item.category || "新刊"} `,
@@ -1231,7 +1209,6 @@
         canvas.add(categoryBadge);
         currentY += categoryBadge.height + 8;
 
-        // 年齢区分
         const isR18 = item.ageRating === "R18";
         const ageBadge = new fabric.Textbox(
           ` ${isR18 ? "R18" : "全年齢"} `,
@@ -1255,7 +1232,6 @@
         canvas.add(ageBadge);
         currentY += ageBadge.height + 10;
 
-        // タイトルを大きく表示
         const title = new fabric.Textbox(item.title || "", {
           left: textX,
           top: currentY,
@@ -1271,7 +1247,6 @@
         canvas.add(title);
         currentY += title.height + 12;
 
-        // 無料配布以外は価格を大きく表示
         if (item.category !== "無料配布" && item.price) {
           const price = new fabric.Textbox(item.price, {
             left: textX,
@@ -1306,45 +1281,76 @@
       canvas.renderAll();
     }
 
+    function applyPreviewScale(scale) {
+      const canvasContainer = document.getElementById("canvasContainer");
+      const fabricWrapper = canvas.wrapperEl;
+
+      if (!fabricWrapper) return;
+
+      fabricWrapper.style.transformOrigin = "top left";
+      fabricWrapper.style.transform = `scale(${scale})`;
+
+      canvasContainer.style.width = `${CANVAS_WIDTH * scale}px`;
+      canvasContainer.style.height = `${CANVAS_HEIGHT * scale}px`;
+
+      canvas.requestRenderAll();
+
+      document.getElementById("zoomDisplay").textContent =
+        `表示: ${Math.round(scale * 100)}%`;
+
+      const slider = document.getElementById("zoomSlider");
+      if (slider) {
+        slider.value = String(
+          Math.max(1, Math.min(200, Math.round(scale * 100)))
+        );
+      }
+    }
+
+    function fitCanvasToWorkspace() {
+      const workspace = document.getElementById("workspace");
+      const padding = 40;
+
+      const availableWidth = Math.max(workspace.clientWidth - padding, 1);
+      const availableHeight = Math.max(workspace.clientHeight - padding, 1);
+
+      const scale = Math.min(
+        availableWidth / CANVAS_WIDTH,
+        availableHeight / CANVAS_HEIGHT
+      );
+
+      applyPreviewScale(scale);
+    }
+
     function setupResponsiveScaler() {
       const workspace = document.getElementById("workspace");
-      const canvasContainer = document.getElementById("canvasContainer");
 
       resizeCanvasToFit = () => {
-        const padding = 40;
-        const availableWidth = Math.max(workspace.clientWidth - padding, 100);
-        const availableHeight = Math.max(workspace.clientHeight - padding, 100);
-        const scale = Math.min(
-          availableWidth / CANVAS_WIDTH,
-          availableHeight / CANVAS_HEIGHT
-        );
-
-        canvasContainer.style.width = `${CANVAS_WIDTH * scale}px`;
-        canvasContainer.style.height = `${CANVAS_HEIGHT * scale}px`;
-
-        canvas.setDimensions(
-          {
-            width: CANVAS_WIDTH * scale,
-            height: CANVAS_HEIGHT * scale
-          },
-          { cssOnly: true }
-        );
-
-        canvas.setViewportTransform([scale, 0, 0, scale, 0, 0]);
-        canvas.calcOffset();
-        canvas.requestRenderAll();
-
-        document.getElementById("zoomDisplay").textContent =
-          `表示: ${Math.round(scale * 100)}%`;
+        if (previewZoomMode === "fit") {
+          fitCanvasToWorkspace();
+        } else {
+          const sliderValue = Number(
+            document.getElementById("zoomSlider").value
+          );
+          applyPreviewScale(sliderValue / 100);
+        }
       };
 
       if ("ResizeObserver" in window) {
-        const observer = new ResizeObserver(resizeCanvasToFit);
+        const observer = new ResizeObserver(() => {
+          if (previewZoomMode === "fit") {
+            fitCanvasToWorkspace();
+          }
+        });
         observer.observe(workspace);
       }
 
-      window.addEventListener("resize", resizeCanvasToFit);
-      setTimeout(resizeCanvasToFit, 50);
+      window.addEventListener("resize", () => {
+        if (previewZoomMode === "fit") {
+          fitCanvasToWorkspace();
+        }
+      });
+
+      requestAnimationFrame(fitCanvasToWorkspace);
     }
 
     function setupEventListeners() {
@@ -1423,8 +1429,17 @@
         .addEventListener("click", addItem);
 
       document.getElementById("toggleGrid").addEventListener("change", (event) => {
-        document.getElementById("gridOverlay")
-          .classList.toggle("hidden", !event.target.checked);
+        document.getElementById("gridOverlay").classList.toggle("hidden", !event.target.checked);
+      });
+
+      document.getElementById("fitCanvasBtn").addEventListener("click", () => {
+        previewZoomMode = "fit";
+        fitCanvasToWorkspace();
+      });
+
+      document.getElementById("zoomSlider").addEventListener("input", (event) => {
+        previewZoomMode = "manual";
+        applyPreviewScale(Number(event.target.value) / 100);
       });
 
       document.getElementById("exportPng").addEventListener("click", () => {
