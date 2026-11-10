@@ -1,426 +1,1566 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" class="h-full bg-slate-900">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport"
+content="width=device-width,initial-scale=1.0">
 
-<title>おしながきメーカー</title>
+<title>
+高度同人おしながきエディタ
+</title>
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Zen+Maru+Gothic:wght@400;700&family=M+PLUS+Rounded+1c:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/fabric@5.3.0/dist/fabric.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link
+href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+JP:wght@400;700;900&family=Shippori+Mincho:wght@600;800&family=Dela+Gothic+One&family=Kaisei+Decol:wght@700&family=Yuji+Syuku&display=swap"
+rel="stylesheet">
 
 <style>
 
-*{
- box-sizing:border-box;
+::-webkit-scrollbar{
+width:6px;
+height:6px;
+}
+
+::-webkit-scrollbar-track{
+background:#0f172a;
+}
+
+::-webkit-scrollbar-thumb{
+background:#334155;
+}
+
+.font-noto{
+font-family:'Noto Sans JP',sans-serif;
+}
+
+.font-mplus{
+font-family:'M PLUS Rounded 1c',sans-serif;
+}
+
+.font-shippori{
+font-family:'Shippori Mincho',serif;
 }
 
 body{
- margin:0;
- background:#f3f4f6;
- font-family:sans-serif;
-}
-
-.toolbar{
- padding:12px;
- display:flex;
- flex-wrap:wrap;
- gap:8px;
- background:#fff;
- border-bottom:1px solid #ddd;
- position:sticky;
- top:0;
- z-index:100;
-}
-
-button,
-select,
-label{
- padding:8px 12px;
- cursor:pointer;
-}
-
-label{
- border:1px solid #ddd;
- background:#fff;
-}
-
-input[type=file]{
- display:none;
-}
-
-.editor{
- padding:20px;
- display:flex;
- justify-content:center;
-}
-
-.canvas-wrapper{
- width:min(95vw,900px);
- background:white;
- box-shadow:0 0 10px rgba(0,0,0,.1);
-}
-
-canvas{
- width:100% !important;
- height:auto !important;
+overflow:hidden;
 }
 
 </style>
+
 </head>
-<body>
 
-<div class="toolbar">
+<body
+class="
+h-full
+text-slate-100
+flex
+flex-col
+font-sans
+">
 
-<button onclick="addText()">
-テキスト追加
+<header
+class="
+bg-slate-800
+border-b
+border-slate-700
+px-4
+py-2.5
+flex
+items-center
+justify-between
+">
+
+<div class="flex items-center gap-3">
+
+<div
+class="
+bg-gradient-to-r
+from-rose-500
+to-purple-600
+p-2
+rounded-lg
+">
+
+<i
+data-lucide="layout-dashboard"
+class="w-5 h-5">
+</i>
+
+</div>
+
+<div>
+
+<h1
+class="font-bold">
+同人おしながきエディタ
+</h1>
+
+<p
+id="paperSpecLabel"
+class="text-xs text-slate-400">
+
+A3横 200dpi
+
+</p>
+
+</div>
+
+</div>
+
+<div class="flex gap-2">
+
+<button
+id="undoBtn"
+class="bg-slate-700 px-3 py-2 rounded">
+
+Undo
+
 </button>
 
-<label>
-画像追加
+<button
+id="redoBtn"
+class="bg-slate-700 px-3 py-2 rounded">
+
+Redo
+
+</button>
+
+<button
+id="saveBtn"
+class="bg-blue-600 px-3 py-2 rounded">
+
+保存
+
+</button>
+
+<button
+id="loadBtn"
+class="bg-indigo-600 px-3 py-2 rounded">
+
+読込
+
+</button>
+
+<button
+id="exportPng"
+class="bg-emerald-600 px-3 py-2 rounded">
+
+PNG
+
+</button>
+
+<button
+id="exportPdf"
+class="bg-rose-600 px-3 py-2 rounded">
+
+PDF
+
+</button>
+
+</div>
+
+</header>
+
+<div
+class="
+flex-1
+flex
+overflow-hidden
+">
+
+<aside
+class="
+w-[420px]
+bg-slate-800
+overflow-y-auto
+p-4
+space-y-4
+">
+
+<div
+class="
+bg-slate-900
+rounded-xl
+p-3
+space-y-3
+">
+
+<h3
+class="text-rose-400 font-bold">
+
+キャンバス設定
+
+</h3>
+
+<select
+id="orientationSelect"
+class="
+w-full
+bg-slate-800
+p-2
+rounded
+">
+
+<option value="LANDSCAPE">
+
+A3横
+
+</option>
+
+<option value="PORTRAIT">
+
+A3縦
+
+</option>
+
+</select>
+
 <input
- type="file"
- accept="image/*"
- onchange="uploadImage(event)">
+type="color"
+id="canvasBgPicker"
+value="#ffffff"
+class="w-full h-10">
+
+<input
+type="file"
+id="bgImageInput"
+accept="image/*"
+class="w-full text-xs">
+
+<button
+id="clearBgBtn"
+class="
+w-full
+bg-slate-700
+rounded
+py-2
+">
+
+背景クリア
+
+</button>
+
+</div>
+
+<div
+class="
+bg-slate-900
+rounded-xl
+p-3
+space-y-2
+">
+
+<h3
+class="text-rose-400 font-bold">
+
+オブジェクト追加
+
+</h3>
+
+<button
+id="addTextBtn"
+class="
+w-full
+bg-slate-700
+py-2
+rounded
+">
+
+テキスト追加
+
+</button>
+
+<button
+id="addBookCoverBtn"
+class="
+w-full
+bg-slate-700
+py-2
+rounded
+">
+
+表紙テンプレ
+
+</button>
+
+<input
+type="file"
+multiple
+accept="image/*"
+id="imageAddInput"
+class="w-full text-xs">
+
+</div>
+<!-- プロパティパネル -->
+
+<div
+id="propertyPanel"
+class="
+bg-slate-900
+rounded-xl
+p-3
+space-y-3
+opacity-50
+pointer-events-none
+">
+
+<h3
+class="
+text-rose-400
+font-bold
+">
+
+選択オブジェクト
+
+</h3>
+
+<div id="textControls">
+
+<label
+class="block text-xs mb-1">
+フォント
 </label>
 
-<label>
-背景画像
-<input
- type="file"
- accept="image/*"
- onchange="uploadBackground(event)">
-</label>
-
-<select id="fontSelect">
+<select
+id="fontFamilySelect"
+class="
+w-full
+bg-slate-800
+p-2
+rounded
+">
 
 <option value="Noto Sans JP">
 Noto Sans JP
-</option>
-
-<option value="Zen Maru Gothic">
-Zen Maru Gothic
 </option>
 
 <option value="M PLUS Rounded 1c">
 M PLUS Rounded
 </option>
 
+<option value="Shippori Mincho">
+Shippori Mincho
+</option>
+
+<option value="Dela Gothic One">
+Dela Gothic One
+</option>
+
+<option value="Kaisei Decol">
+Kaisei Decol
+</option>
+
+<option value="Yuji Syuku">
+Yuji Syuku
+</option>
+
 </select>
 
-<button onclick="changeFont()">
-フォント変更
+<label
+class="
+block
+text-xs
+mt-3
+mb-1
+">
+
+文字サイズ
+
+</label>
+
+<input
+type="number"
+id="fontSizeInput"
+value="60"
+class="
+w-full
+bg-slate-800
+p-2
+rounded
+">
+
+<label
+class="
+block
+text-xs
+mt-3
+mb-1
+">
+
+文字色
+
+</label>
+
+<input
+type="color"
+id="textColorPicker"
+value="#0f172a"
+class="
+w-full
+h-10
+">
+
+<div class="flex gap-2 mt-3">
+
+<button
+id="toggleBoldBtn"
+class="
+flex-1
+bg-slate-700
+py-2
+rounded
+">
+
+太字
+
 </button>
 
-<button onclick="alignLeft()">
-左揃え
-</button>
+<button
+id="toggleItalicBtn"
+class="
+flex-1
+bg-slate-700
+py-2
+rounded
+">
 
-<button onclick="alignCenter()">
-中央揃え
-</button>
+斜体
 
-<button onclick="exportPNG()">
-PNG
-</button>
-
-<button onclick="exportPDF()">
-PDF
 </button>
 
 </div>
 
-<div class="editor">
+</div>
 
-<div class="canvas-wrapper">
+<div class="grid grid-cols-2 gap-2">
 
-<canvas id="canvas"></canvas>
+<button
+id="bringForwardBtn"
+class="
+bg-slate-700
+py-2
+rounded
+">
+
+前面
+
+</button>
+
+<button
+id="sendBackwardsBtn"
+class="
+bg-slate-700
+py-2
+rounded
+">
+
+背面
+
+</button>
 
 </div>
+
+<button
+id="deleteObjectBtn"
+class="
+w-full
+bg-rose-600
+py-2
+rounded
+">
+
+削除
+
+</button>
+
+</div>
+
+<!-- 整列パネル -->
+
+<div
+class="
+bg-slate-900
+rounded-xl
+p-3
+space-y-3
+">
+
+<h3
+class="
+text-rose-400
+font-bold
+">
+
+整列
+
+</h3>
+
+<div
+class="
+grid
+grid-cols-3
+gap-2
+">
+
+<button
+onclick="alignObjects('left')"
+class="bg-slate-700 py-2 rounded text-xs">
+
+左
+
+</button>
+
+<button
+onclick="alignObjects('center')"
+class="bg-slate-700 py-2 rounded text-xs">
+
+中央
+
+</button>
+
+<button
+onclick="alignObjects('right')"
+class="bg-slate-700 py-2 rounded text-xs">
+
+右
+
+</button>
+
+<button
+onclick="alignObjects('top')"
+class="bg-slate-700 py-2 rounded text-xs">
+
+上
+
+</button>
+
+<button
+onclick="alignObjects('middle')"
+class="bg-slate-700 py-2 rounded text-xs">
+
+中
+
+</button>
+
+<button
+onclick="alignObjects('bottom')"
+class="bg-slate-700 py-2 rounded text-xs">
+
+下
+
+</button>
+
+</div>
+
+</div>
+
+</aside>
+
+<!-- ワークスペース -->
+
+<main
+id="workspace"
+class="
+flex-1
+bg-slate-950
+flex
+items-center
+justify-center
+relative
+overflow-hidden
+">
+
+<div
+class="
+absolute
+top-4
+left-4
+z-10
+bg-slate-800
+px-3
+py-1
+rounded-full
+text-xs
+">
+
+<span id="zoomDisplay">
+
+表示:100%
+
+</span>
+
+<span
+class="mx-2">
+
+|
+
+</span>
+
+<span
+id="dimensionDisplay">
+
+A3横
+
+</span>
+
+</div>
+
+<div
+id="canvasContainer"
+class="
+bg-white
+shadow-2xl
+border
+border-slate-700
+overflow-hidden
+">
+
+<canvas
+id="oshinagakiCanvas">
+</canvas>
+
+</div>
+
+</main>
 
 </div>
 
 <script>
 
-const A3_WIDTH = 3508;
-const A3_HEIGHT = 4961;
+lucide.createIcons();
 
-const canvas = new fabric.Canvas(
- "canvas",
- {
-   preserveObjectStacking:true,
-   selection:true
- }
+const A3_SPECS = {
+
+width:3307,
+height:2339
+
+};
+
+let currentOrientation =
+"LANDSCAPE";
+
+let CANVAS_WIDTH =
+A3_SPECS.width;
+
+let CANVAS_HEIGHT =
+A3_SPECS.height;
+
+let canvas;
+let bgImageObj = null;
+
+const history = [];
+let historyIndex = -1;
+
+window.addEventListener(
+"DOMContentLoaded",
+()=>{
+
+initCanvas();
+
+setupResponsiveScaler();
+
+setupEventListeners();
+
+addDefaultElements();
+
+}
 );
 
-canvas.setWidth(A3_WIDTH);
-canvas.setHeight(A3_HEIGHT);
+function initCanvas(){
 
-function addText(){
-
- const text = new fabric.IText(
-   "新刊タイトル",
-   {
-      left:300,
-      top:300,
-      fontSize:72,
-      fontFamily:"Noto Sans JP",
-      fill:"#000000"
-   }
- );
-
- canvas.add(text);
-
- canvas.setActiveObject(text);
-
- canvas.renderAll();
-
+canvas =
+new fabric.Canvas(
+"oshinagakiCanvas",
+{
+width:CANVAS_WIDTH,
+height:CANVAS_HEIGHT,
+backgroundColor:"#ffffff",
+preserveObjectStacking:true,
+enableRetinaScaling:true,
+selection:true
 }
-
-
-
-function uploadImage(event){
-
- const file = event.target.files[0];
-
- if(!file) return;
-
- const reader = new FileReader();
-
- reader.onload = function(e){
-
-   fabric.Image.fromURL(
-     e.target.result,
-
-     function(img){
-
-       img.set({
-         left:500,
-         top:500
-       });
-
-       img.scaleToWidth(800);
-
-       canvas.add(img);
-
-       canvas.setActiveObject(img);
-
-       canvas.renderAll();
-
-     }
-
-   );
-
- };
-
- reader.readAsDataURL(file);
-
-}
-
-
-
-function uploadBackground(event){
-
- const file = event.target.files[0];
-
- if(!file) return;
-
- const reader = new FileReader();
-
- reader.onload = function(e){
-
-   fabric.Image.fromURL(
-     e.target.result,
-
-     function(img){
-
-       const scaleX =
-          canvas.width / img.width;
-
-       const scaleY =
-          canvas.height / img.height;
-
-       canvas.setBackgroundImage(
-         img,
-         canvas.renderAll.bind(canvas),
-         {
-            scaleX,
-            scaleY
-         }
-       );
-
-     }
-
-   );
-
- };
-
- reader.readAsDataURL(file);
-
-}
-
-
-
-function changeFont(){
-
- const font =
-  document.getElementById(
-   "fontSelect"
-  ).value;
-
- const obj =
-  canvas.getActiveObject();
-
- if(
-   obj &&
-   obj.type === "i-text"
- ){
-
-    obj.set(
-      "fontFamily",
-      font
-    );
-
-    canvas.renderAll();
-
- }
-
-}
-
-
-
-function alignLeft(){
-
- const objs =
-  canvas.getActiveObjects();
-
- if(objs.length===0)
-   return;
-
- const left =
-  Math.min(
-    ...objs.map(
-      o => o.left
-    )
-  );
-
- objs.forEach(obj=>{
-
-   obj.set("left",left);
-
- });
-
- canvas.renderAll();
-
-}
-
-
-
-function alignCenter(){
-
- const objs =
-  canvas.getActiveObjects();
-
- if(objs.length===0)
-   return;
-
- objs.forEach(obj=>{
-
-    obj.set(
-      "left",
-      (canvas.width/2)
-      -
-      obj.getScaledWidth()/2
-    );
-
- });
-
- canvas.renderAll();
-
-}
-
-
-
-document.addEventListener(
- "keydown",
- e=>{
-
-  if(
-    e.key==="Delete" ||
-    e.key==="Backspace"
-  ){
-
-    const active =
-     canvas.getActiveObjects();
-
-    active.forEach(obj=>{
-
-       canvas.remove(obj);
-
-    });
-
-    canvas.discardActiveObject();
-
-    canvas.renderAll();
-  }
-
- }
 );
 
+canvas.on(
+"selection:created",
+updatePropertyPanel
+);
 
+canvas.on(
+"selection:updated",
+updatePropertyPanel
+);
 
-function exportPNG(){
+canvas.on(
+"selection:cleared",
+resetPropertyPanel
+);
 
- const data =
-  canvas.toDataURL({
-      format:"png",
-      multiplier:1
-  });
+canvas.on(
+"object:added",
+saveHistory
+);
 
- const link =
-  document.createElement("a");
+canvas.on(
+"object:modified",
+saveHistory
+);
 
- link.href=data;
+canvas.on(
+"object:removed",
+saveHistory
+);
 
- link.download=
-  "oshinagaki.png";
+}
+function addDefaultElements(){
 
- link.click();
+const headerBox =
+new fabric.Rect({
+left:0,
+top:0,
+width:CANVAS_WIDTH,
+height:380,
+fill:"#0f172a"
+});
+
+const circleText =
+new fabric.Textbox(
+"サークル名",
+{
+left:80,
+top:120,
+fontSize:130,
+fontWeight:"bold",
+fontFamily:"Noto Sans JP",
+fill:"#ffffff",
+width:1800
+}
+);
+
+const spaceBadge =
+new fabric.Textbox(
+"東7 あ-01a",
+{
+left:CANVAS_WIDTH-900,
+top:120,
+fontSize:85,
+fontWeight:"bold",
+fontFamily:"M PLUS Rounded 1c",
+fill:"#ffffff",
+backgroundColor:"#e11d48",
+padding:20
+}
+);
+
+canvas.add(
+headerBox,
+circleText,
+spaceBadge
+);
+
+canvas.renderAll();
 
 }
 
+document
+.getElementById("addTextBtn")
+.addEventListener(
+"click",
+()=>{
 
+const text =
+new fabric.Textbox(
+"新規テキスト",
+{
+left:300,
+top:600,
+width:800,
+fontSize:60,
+fill:"#0f172a",
+fontFamily:"Noto Sans JP"
+}
+);
 
-async function exportPDF(){
+canvas.add(text);
+canvas.setActiveObject(text);
+canvas.renderAll();
 
- const data =
-  canvas.toDataURL({
-     format:"png",
-     multiplier:1
-  });
+}
+);
 
- const pdf =
-   new jspdf.jsPDF(
-      "portrait",
-      "mm",
-      "a3"
-   );
+document
+.getElementById("addBookCoverBtn")
+.addEventListener(
+"click",
+()=>{
 
- pdf.addImage(
-    data,
-    "PNG",
-    0,
-    0,
-    297,
-    420
- );
+const rect =
+new fabric.Rect({
+width:600,
+height:850,
+fill:"#ffffff",
+stroke:"#cbd5e1",
+strokeWidth:3,
+rx:20,
+ry:20
+});
 
- pdf.save(
-   "oshinagaki.pdf"
- );
+const label =
+new fabric.Text(
+"表紙画像",
+{
+fontSize:48,
+fill:"#64748b",
+originX:"center",
+originY:"center"
+}
+);
+
+const group =
+new fabric.Group(
+[rect,label],
+{
+left:200,
+top:500
+}
+);
+
+canvas.add(group);
+
+}
+);
+
+document
+.getElementById("imageAddInput")
+.addEventListener(
+"change",
+(e)=>{
+
+const files=
+Array.from(e.target.files);
+
+files.forEach(
+(file,index)=>{
+
+const reader=
+new FileReader();
+
+reader.onload=
+(evt)=>{
+
+fabric.Image.fromURL(
+evt.target.result,
+
+(img)=>{
+
+const maxWidth=700;
+const maxHeight=900;
+
+const scale=
+Math.min(
+maxWidth/img.width,
+maxHeight/img.height,
+1
+);
+
+img.set({
+left:200+(index*40),
+top:500+(index*40),
+scaleX:scale,
+scaleY:scale,
+cornerSize:20,
+transparentCorners:false
+});
+
+canvas.add(img);
+canvas.setActiveObject(img);
+canvas.renderAll();
+
+}
+);
+
+};
+
+reader.readAsDataURL(file);
+
+}
+);
+
+e.target.value='';
+
+}
+);
+
+document
+.getElementById("bgImageInput")
+.addEventListener(
+"change",
+(e)=>{
+
+const file=e.target.files[0];
+
+if(!file)return;
+
+const reader=
+new FileReader();
+
+reader.onload=
+(evt)=>{
+
+fabric.Image.fromURL(
+evt.target.result,
+
+(img)=>{
+
+bgImageObj=img;
+
+updateBackground();
+
+}
+);
+
+};
+
+reader.readAsDataURL(file);
+
+}
+);
+
+function updateBackground(){
+
+if(bgImageObj){
+
+canvas.setBackgroundImage(
+bgImageObj,
+canvas.renderAll.bind(canvas),
+{
+scaleX:
+CANVAS_WIDTH/bgImageObj.width,
+
+scaleY:
+CANVAS_HEIGHT/bgImageObj.height
+}
+);
+
+}else{
+
+canvas.setBackgroundColor(
+document
+.getElementById(
+"canvasBgPicker"
+)
+.value,
+
+canvas.renderAll.bind(canvas)
+);
+
+}
+
+}
+
+document
+.getElementById("clearBgBtn")
+.addEventListener(
+"click",
+()=>{
+
+bgImageObj=null;
+
+canvas.setBackgroundImage(
+null,
+canvas.renderAll.bind(canvas)
+);
+
+}
+);
+
+document
+.getElementById("canvasBgPicker")
+.addEventListener(
+"input",
+updateBackground
+);
+function updatePropertyPanel(){
+
+const active=
+canvas.getActiveObject();
+
+if(!active){
+
+resetPropertyPanel();
+return;
+
+}
+
+document
+.getElementById(
+"propertyPanel"
+)
+.classList.remove(
+"opacity-50",
+"pointer-events-none"
+);
+
+if(
+active.type==="textbox" ||
+active.type==="text"
+){
+
+document
+.getElementById(
+"fontFamilySelect"
+).value=
+active.fontFamily ||
+"Noto Sans JP";
+
+document
+.getElementById(
+"fontSizeInput"
+).value=
+Math.round(
+active.fontSize||60
+);
+
+document
+.getElementById(
+"textColorPicker"
+).value=
+active.fill||
+"#000000";
+
+}
+
+}
+
+function resetPropertyPanel(){
+
+document
+.getElementById(
+"propertyPanel"
+)
+.classList.add(
+"opacity-50",
+"pointer-events-none"
+);
+
+}
+
+document
+.getElementById(
+"fontFamilySelect"
+)
+.addEventListener(
+"change",
+(e)=>{
+
+const obj=
+canvas.getActiveObject();
+
+if(!obj)return;
+
+obj.set(
+"fontFamily",
+e.target.value
+);
+
+canvas.renderAll();
+
+}
+);
+
+document
+.getElementById(
+"fontSizeInput"
+)
+.addEventListener(
+"input",
+(e)=>{
+
+const obj=
+canvas.getActiveObject();
+
+if(!obj)return;
+
+obj.set(
+"fontSize",
+parseInt(e.target.value)
+);
+
+canvas.renderAll();
+
+}
+);
+
+document
+.getElementById(
+"textColorPicker"
+)
+.addEventListener(
+"input",
+(e)=>{
+
+const obj=
+canvas.getActiveObject();
+
+if(!obj)return;
+
+obj.set(
+"fill",
+e.target.value
+);
+
+canvas.renderAll();
+
+}
+);
+
+document
+.getElementById(
+"toggleBoldBtn"
+)
+.addEventListener(
+"click",
+()=>{
+
+const obj=
+canvas.getActiveObject();
+
+if(!obj)return;
+
+obj.set(
+"fontWeight",
+obj.fontWeight==="bold"
+?"normal"
+:"bold"
+);
+
+canvas.renderAll();
+
+}
+);
+
+document
+.getElementById(
+"toggleItalicBtn"
+)
+.addEventListener(
+"click",
+()=>{
+
+const obj=
+canvas.getActiveObject();
+
+if(!obj)return;
+
+obj.set(
+"fontStyle",
+obj.fontStyle==="italic"
+?"normal"
+:"italic"
+);
+
+canvas.renderAll();
+
+}
+);
+
+function alignObjects(type){
+
+const obj=
+canvas.getActiveObject();
+
+if(!obj)return;
+
+const rect=
+obj.getBoundingRect();
+
+switch(type){
+
+case "left":
+obj.set("left",0);
+break;
+
+case "center":
+obj.set(
+"left",
+(CANVAS_WIDTH-rect.width)/2
+);
+break;
+
+case "right":
+obj.set(
+"left",
+CANVAS_WIDTH-rect.width
+);
+break;
+
+case "top":
+obj.set("top",0);
+break;
+
+case "middle":
+obj.set(
+"top",
+(CANVAS_HEIGHT-rect.height)/2
+);
+break;
+
+case "bottom":
+obj.set(
+"top",
+CANVAS_HEIGHT-rect.height
+);
+break;
+
+}
+
+canvas.renderAll();
+
+}
+function saveHistory(){
+
+const json=
+JSON.stringify(canvas);
+
+if(
+historyIndex>=0 &&
+history[historyIndex]===json
+){
+return;
+}
+
+history.splice(
+historyIndex+1
+);
+
+history.push(json);
+
+historyIndex=
+history.length-1;
+
+}
+
+function undo(){
+
+if(historyIndex<=0)
+return;
+
+historyIndex--;
+
+canvas.loadFromJSON(
+history[historyIndex],
+()=>{
+canvas.renderAll();
+}
+);
+
+}
+
+function redo(){
+
+if(
+historyIndex>=
+history.length-1
+)return;
+
+historyIndex++;
+
+canvas.loadFromJSON(
+history[historyIndex],
+()=>{
+canvas.renderAll();
+}
+);
+
+}
+
+document
+.getElementById("undoBtn")
+.addEventListener(
+"click",
+undo
+);
+
+document
+.getElementById("redoBtn")
+.addEventListener(
+"click",
+redo
+);
+
+document
+.getElementById("saveBtn")
+.addEventListener(
+"click",
+()=>{
+
+localStorage.setItem(
+"oshinagaki-project",
+JSON.stringify(canvas)
+);
+
+alert("保存しました");
+
+}
+);
+
+document
+.getElementById("loadBtn")
+.addEventListener(
+"click",
+()=>{
+
+const json=
+localStorage.getItem(
+"oshinagaki-project"
+);
+
+if(!json)return;
+
+canvas.loadFromJSON(
+json,
+()=>canvas.renderAll()
+);
+
+}
+);
+
+document
+.getElementById(
+"deleteObjectBtn"
+)
+.addEventListener(
+"click",
+()=>{
+
+const objs=
+canvas.getActiveObjects();
+
+objs.forEach(
+o=>canvas.remove(o)
+);
+
+canvas.discardActiveObject();
+
+canvas.renderAll();
+
+}
+);
+
+document
+.getElementById(
+"bringForwardBtn"
+)
+.addEventListener(
+"click",
+()=>{
+
+const obj=
+canvas.getActiveObject();
+
+if(!obj)return;
+
+canvas.bringForward(obj);
+
+canvas.renderAll();
+
+}
+);
+
+document
+.getElementById(
+"sendBackwardsBtn"
+)
+.addEventListener(
+"click",
+()=>{
+
+const obj=
+canvas.getActiveObject();
+
+if(!obj)return;
+
+canvas.sendBackwards(obj);
+
+canvas.renderAll();
+
+}
+);
+function setupResponsiveScaler(){
+
+const workspace=
+document.getElementById(
+"workspace"
+);
+
+const canvasContainer=
+document.getElementById(
+"canvasContainer"
+);
+
+function fitCanvas(){
+
+const availableWidth=
+workspace.clientWidth-40;
+
+const availableHeight=
+workspace.clientHeight-40;
+
+const scale=
+Math.min(
+availableWidth/
+CANVAS_WIDTH,
+
+availableHeight/
+CANVAS_HEIGHT
+);
+
+canvasContainer.style.width=
+`${CANVAS_WIDTH*scale}px`;
+
+canvasContainer.style.height=
+`${CANVAS_HEIGHT*scale}px`;
+
+canvas.setViewportTransform([
+scale,
+0,
+0,
+scale,
+0,
+0
+]);
+
+canvas.requestRenderAll();
+
+document
+.getElementById(
+"zoomDisplay"
+)
+.innerText=
+`表示:${Math.round(scale*100)}%`;
+
+}
+
+window.addEventListener(
+"resize",
+fitCanvas
+);
+
+setTimeout(
+fitCanvas,
+100
+);
+
+}
+
+function setupEventListeners(){
+
+window.addEventListener(
+"keydown",
+(e)=>{
+
+if(
+e.key==="Delete" ||
+e.key==="Backspace"
+){
+
+const objs=
+canvas.getActiveObjects();
+
+objs.forEach(
+o=>canvas.remove(o)
+);
+
+canvas.discardActiveObject();
+canvas.renderAll();
+
+}
+
+}
+);
+
+document
+.getElementById(
+"exportPng"
+)
+.addEventListener(
+"click",
+()=>{
+
+canvas.discardActiveObject();
+canvas.renderAll();
+
+const png=
+canvas.toDataURL({
+format:"png",
+multiplier:2
+});
+
+const a=
+document.createElement("a");
+
+a.href=png;
+
+a.download=
+`oshinagaki_${Date.now()}.png`;
+
+a.click();
+
+}
+);
+
+document
+.getElementById(
+"exportPdf"
+)
+.addEventListener(
+"click",
+()=>{
+
+canvas.discardActiveObject();
+canvas.renderAll();
+
+const image=
+canvas.toDataURL({
+format:"png",
+multiplier:2
+});
+
+const {jsPDF}=
+window.jspdf;
+
+const pdf=
+new jsPDF(
+currentOrientation==="LANDSCAPE"
+?"landscape"
+:"portrait",
+"mm",
+"a3"
+);
+
+pdf.addImage(
+image,
+"PNG",
+0,
+0,
+pdf.internal.pageSize.getWidth(),
+pdf.internal.pageSize.getHeight()
+);
+
+pdf.save(
+`oshinagaki_${Date.now()}.pdf`
+);
+
+}
+);
 
 }
 
