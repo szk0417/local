@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>同人おしながきジェネレーター</title>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,7 +12,11 @@
 
   <style>
     * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
 
     body {
       display: flex;
@@ -36,7 +41,13 @@
       background: #1e293b;
     }
 
-    .brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+    }
+
     .brand-icon {
       display: grid;
       width: 34px;
@@ -45,10 +56,16 @@
       place-items: center;
       border-radius: 9px;
       background: linear-gradient(120deg, #f43f5e, #9333ea);
-      color: white;
+      color: #fff;
       font-size: 19px;
     }
-    .brand h1 { margin: 0; font-size: 14px; line-height: 1.3; }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
     .brand p {
       overflow: hidden;
       margin: 2px 0 0;
@@ -58,7 +75,12 @@
       white-space: nowrap;
     }
 
-    .top-actions { display: flex; flex: 0 0 auto; gap: 6px; }
+    .top-actions {
+      display: flex;
+      flex: 0 0 auto;
+      gap: 6px;
+    }
+
     .button {
       display: inline-flex;
       align-items: center;
@@ -70,11 +92,17 @@
       font-size: 11px;
       font-weight: 700;
     }
+
     .button-print { background: #475569; }
     .button-png { background: #059669; }
     .button-pdf { background: #e11d48; }
 
-    #mainLayout { display: flex; flex: 1 1 auto; min-height: 0; overflow: hidden; }
+    #mainLayout {
+      display: flex;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+    }
 
     #settingsPanel {
       display: flex;
@@ -97,6 +125,7 @@
       font-size: 12px;
       font-weight: 700;
     }
+
     .panel-heading small {
       border: 1px solid #166534;
       border-radius: 999px;
@@ -106,7 +135,12 @@
       font-size: 9px;
     }
 
-    #settingsContent { flex: 1 1 auto; overflow: auto; padding: 14px; }
+    #settingsContent {
+      flex: 1 1 auto;
+      overflow: auto;
+      padding: 14px;
+    }
+
     .section {
       margin-bottom: 12px;
       border: 1px solid #334155;
@@ -114,8 +148,20 @@
       padding: 12px;
       background: rgba(15, 23, 42, .65);
     }
-    .section h2 { margin: 0 0 10px; color: #fb7185; font-size: 12px; }
-    .field { display: block; margin-bottom: 9px; color: #94a3b8; font-size: 10px; }
+
+    .section h2 {
+      margin: 0 0 10px;
+      color: #fb7185;
+      font-size: 12px;
+    }
+
+    .field {
+      display: block;
+      margin-bottom: 9px;
+      color: #94a3b8;
+      font-size: 10px;
+    }
+
     .field:last-child { margin-bottom: 0; }
 
     .control {
@@ -129,6 +175,7 @@
       color: #e2e8f0;
       font-size: 11px;
     }
+
     .control:disabled { opacity: .5; }
 
     .color-control {
@@ -141,7 +188,11 @@
       background: #1e293b;
     }
 
-    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
 
     .palette {
       display: grid;
@@ -149,6 +200,7 @@
       gap: 5px;
       margin-top: 5px;
     }
+
     .palette button {
       display: flex;
       align-items: center;
@@ -161,7 +213,9 @@
       color: #cbd5e1;
       font-size: 9px;
     }
+
     .palette button.selected { outline: 2px solid #f43f5e; }
+
     .swatch {
       width: 13px;
       height: 13px;
@@ -178,6 +232,7 @@
       color: #94a3b8;
       font-size: 10px;
     }
+
     .check-row input[type="checkbox"] { accent-color: #f43f5e; }
 
     .upload-box {
@@ -190,8 +245,20 @@
       text-align: center;
       cursor: pointer;
     }
-    .upload-box span { display: block; margin-top: 4px; font-size: 11px; font-weight: 700; }
-    .upload-box small { display: block; margin-top: 3px; color: #94a3b8; font-size: 9px; }
+
+    .upload-box span {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .upload-box small {
+      display: block;
+      margin-top: 3px;
+      color: #94a3b8;
+      font-size: 9px;
+    }
 
     .item-card {
       margin-bottom: 10px;
@@ -200,6 +267,7 @@
       padding: 10px;
       background: #0f172a;
     }
+
     .item-card-head {
       display: flex;
       align-items: center;
@@ -209,6 +277,7 @@
       font-size: 10px;
       font-weight: 700;
     }
+
     .item-card-head button {
       border: 0;
       border-radius: 5px;
@@ -217,8 +286,10 @@
       color: #e2e8f0;
       font-size: 10px;
     }
+
     .item-card-head button:disabled { opacity: .4; }
     .delete-item { margin-left: 4px; background: transparent !important; color: #fb7185 !important; }
+
     .add-item {
       width: 100%;
       border: 1px solid #475569;
@@ -247,7 +318,7 @@
       flex: none;
       overflow: hidden;
       border: 1px solid #475569;
-      background: white;
+      background: #fff;
       box-shadow: 0 15px 40px rgba(0, 0, 0, .45);
       line-height: 0;
     }
@@ -259,7 +330,22 @@
       transform-origin: top left;
     }
 
-    #previewCanvas { display: block; }
+    #previewCanvas {
+      position: relative;
+      z-index: 1;
+      display: block;
+    }
+
+    #gridOverlay {
+      position: absolute;
+      z-index: 2;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(15,23,42,.16) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15,23,42,.16) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
 
     .guide {
       position: absolute;
@@ -267,7 +353,8 @@
       pointer-events: none;
       border: 1px dashed rgba(15, 23, 42, .85);
     }
-    #trimGuide { outline: 1px solid rgba(255,255,255,.8); }
+
+    #trimGuide { outline: 1px solid rgba(255,255,255,.85); }
     #safeGuide { border-color: rgba(225, 29, 72, .95); }
     .hidden { display: none !important; }
 
@@ -299,6 +386,7 @@
       box-shadow: 0 6px 20px rgba(0, 0, 0, .35);
       font-size: 10px;
     }
+
     #previewToolbar button {
       border: 0;
       border-radius: 5px;
@@ -307,6 +395,7 @@
       color: #e2e8f0;
       font-size: 10px;
     }
+
     #previewToolbarDrag { cursor: grab; touch-action: none; }
 
     @media (max-width: 767px) {
@@ -316,14 +405,17 @@
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
       }
+
       #settingsPanel {
         width: 100%;
         max-height: none;
         overflow: visible;
         border-right: 0;
       }
+
       #settingsContent { overflow: visible; }
       #workspace { width: 100%; height: 75vh; min-height: 480px; }
+
       #previewToolbar {
         top: auto;
         right: 10px;
@@ -398,6 +490,7 @@
               <option value="color">単色カラー</option>
             </select>
           </label>
+
           <div class="field">
             CUDO推奨配色セットの色
             <div id="presetColorPalette" class="palette"></div>
@@ -405,6 +498,7 @@
               選択色は背景・パターン・ヘッダーに適用します。色名ラベルも併用しています。
             </small>
           </div>
+
           <div id="patternControls">
             <label class="field">パターン
               <select id="patternStyleSelect" class="control">
@@ -417,11 +511,13 @@
               </select>
             </label>
           </div>
+
           <div id="customBgControls" class="hidden">
             <label class="field">背景画像を選択
               <input id="customBgInput" type="file" accept="image/*" class="control">
             </label>
           </div>
+
           <div id="singleColorControls" class="hidden">
             <label class="field">背景色
               <input id="bgColorPicker" type="color" value="#ffffcc" class="color-control">
@@ -462,7 +558,9 @@
             <input id="eventInfoBgEnabled" type="checkbox">
             <input id="eventInfoBgColor" type="color" value="#ffffff" class="color-control">
           </label>
+
           <hr style="border-color:#334155;margin:10px 0">
+
           <div class="two-col">
             <label class="field">サークル名サイズ
               <input id="circleInfoFontSize" type="number" min="8" max="400" value="150" class="control">
@@ -476,7 +574,9 @@
             <input id="circleInfoBgEnabled" type="checkbox">
             <input id="circleInfoBgColor" type="color" value="#ffffff" class="color-control">
           </label>
+
           <hr style="border-color:#334155;margin:10px 0">
+
           <div class="two-col">
             <label class="field">スペース番号サイズ
               <input id="spaceInfoFontSize" type="number" min="8" max="300" value="90" class="control">
@@ -488,7 +588,7 @@
           <label class="check-row">
             スペース番号の背景色
             <input id="spaceInfoBgEnabled" type="checkbox" checked>
-            <input id="spaceInfoBgColor" type="color" value="#FF4B00" class="color-control">
+            <input id="spaceInfoBgColor" type="color" value="#00AF55" class="color-control">
           </label>
         </section>
 
@@ -529,6 +629,7 @@
       <div id="canvasContainer">
         <div id="canvasStage">
           <canvas id="previewCanvas"></canvas>
+          <div id="gridOverlay" class="hidden"></div>
           <div id="trimGuide" class="guide hidden"></div>
           <div id="safeGuide" class="guide hidden"></div>
         </div>
@@ -581,7 +682,7 @@
     const BLEED_MM = 3;
     const canvas = document.getElementById("previewCanvas");
 
-    let selectedPalette = PALETTES[3];
+    let selectedPalette = PALETTES.find((palette) => palette.name === "緑");
     let paper = "A3";
     let orientation = "PORTRAIT";
     let outputWidth = 0;
@@ -623,7 +724,7 @@
       }
     ];
 
-    // HTMLの末尾で初期化するため、DOMContentLoaded待ちによる未実行を避ける。
+    // スクリプトがbody末尾にあるので、ここで初期化し初回プレビューを描く。
     initialize();
 
     function initialize() {
@@ -633,7 +734,7 @@
       updateLayout();
 
       if (document.fonts && document.fonts.ready) {
-        document.fonts.ready.then(renderCanvas).catch(() => {});
+        document.fonts.ready.then(() => renderCanvas()).catch(() => {});
       }
     }
 
@@ -670,8 +771,7 @@
           root.querySelectorAll("button").forEach((el) => el.classList.remove("selected"));
           button.classList.add("selected");
 
-          const type = document.getElementById("bgTypeSelect").value;
-          if (type === "color") {
+          if (document.getElementById("bgTypeSelect").value === "color") {
             document.getElementById("bgColorPicker").value = preset.background;
           }
 
@@ -699,7 +799,6 @@
 
     function updateLayout() {
       paper = document.getElementById("paperSizeSelect").value;
-
       const orientationSelect = document.getElementById("orientationSelect");
       const socialPreset = SOCIAL_PRESETS[paper];
 
@@ -712,6 +811,7 @@
         orientation = socialPreset.orientation;
         orientationSelect.value = orientation;
         orientationSelect.disabled = true;
+
         outputWidth = trimWidth = socialPreset.width;
         outputHeight = trimHeight = socialPreset.height;
       } else {
@@ -720,23 +820,23 @@
 
         const spec = PRINT_SPECS[paper];
         const landscape = orientation === "LANDSCAPE";
+
         outputWidth = landscape ? spec.heightPx : spec.widthPx;
         outputHeight = landscape ? spec.widthPx : spec.heightPx;
 
-        const outWmm = landscape ? spec.heightMm : spec.widthMm;
-        const outHmm = landscape ? spec.widthMm : spec.heightMm;
-        const trimWmm = landscape ? spec.trimHeightMm : spec.trimWidthMm;
-        const trimHmm = landscape ? spec.trimWidthMm : spec.trimHeightMm;
+        const outputWidthMm = landscape ? spec.heightMm : spec.widthMm;
+        const outputHeightMm = landscape ? spec.widthMm : spec.heightMm;
+        const trimWidthMm = landscape ? spec.trimHeightMm : spec.trimWidthMm;
+        const trimHeightMm = landscape ? spec.trimWidthMm : spec.trimHeightMm;
 
-        trimWidth = Math.round(trimWmm * outputWidth / outWmm);
-        trimHeight = Math.round(trimHmm * outputHeight / outHmm);
+        trimWidth = Math.round(trimWidthMm * outputWidth / outputWidthMm);
+        trimHeight = Math.round(trimHeightMm * outputHeight / outputHeightMm);
         bleedLeft = Math.floor((outputWidth - trimWidth) / 2);
         bleedTop = Math.floor((outputHeight - trimHeight) / 2);
-        safeX = Math.ceil(BLEED_MM * trimWidth / trimWmm);
-        safeY = Math.ceil(BLEED_MM * trimHeight / trimHmm);
+        safeX = Math.ceil(BLEED_MM * trimWidth / trimWidthMm);
+        safeY = Math.ceil(BLEED_MM * trimHeight / trimHeightMm);
       }
 
-      // Canvasのwidth/height変更後に取得し直すContextを使う。
       canvas.width = outputWidth;
       canvas.height = outputHeight;
 
@@ -805,7 +905,6 @@
               ${items.length > 1 ? `<button type="button" class="delete-item" data-remove="${index}">削除</button>` : ""}
             </div>
           </div>
-
           <div class="two-col">
             <label class="field">カテゴリ
               <select class="control" data-index="${index}" data-key="category">
@@ -821,30 +920,24 @@
               </select>
             </label>
           </div>
-
           <label class="field">タイトル
             <input class="control" type="text" data-index="${index}" data-key="title" value="${escapeHTML(item.title)}">
           </label>
-
           <label class="field">値段（無料配布・Web展示は空欄）
             <input class="control" type="text" data-index="${index}" data-key="price"
               value="${escapeHTML(item.price || "")}" ${["無料配布","Web展示"].includes(item.category) ? "disabled" : ""}>
           </label>
-
           <label class="field">説明
             <textarea class="control" data-index="${index}" data-key="desc" rows="3">${escapeHTML(item.desc)}</textarea>
           </label>
-
           <label class="field">説明文フォントサイズ
             <input class="control" type="number" min="8" max="100" step="1"
               data-index="${index}" data-key="descriptionFontSize" value="${Number(item.descriptionFontSize) || 38}">
           </label>
-
           <label class="check-row" style="justify-content:flex-start">
             <input type="checkbox" data-noimage="${index}" ${item.noImage ? "checked" : ""}>
             画像なし（テキスト欄を広く表示）
           </label>
-
           <label class="field">個別画像
             <input class="control" type="file" accept="image/*" data-image="${index}" ${item.noImage ? "disabled" : ""}>
           </label>
@@ -868,7 +961,6 @@
           if (key === "category") {
             const priceInput = root.querySelector(`[data-index="${index}"][data-key="price"]`);
             const noPrice = ["無料配布","Web展示"].includes(input.value);
-
             if (priceInput) {
               priceInput.disabled = noPrice;
               if (noPrice) {
@@ -965,12 +1057,16 @@
       });
 
       const image = await loadImage(src);
-      return { src, image, width:image.naturalWidth, height:image.naturalHeight };
+      return {
+        src,
+        image,
+        width:image.naturalWidth,
+        height:image.naturalHeight
+      };
     }
 
     async function loadItemImage(index, file) {
       if (!file || !items[index]) return;
-
       try {
         const loaded = await readImageFile(file);
         Object.assign(items[index], {
@@ -995,7 +1091,7 @@
         const loaded = await Promise.all(selected.map(readImageFile));
 
         loaded.forEach((entry, index) => {
-          const data = {
+          const imageData = {
             image:entry.image,
             imageSrc:entry.src,
             imageWidth:entry.width,
@@ -1004,7 +1100,7 @@
           };
 
           if (index < items.length) {
-            Object.assign(items[index], data);
+            Object.assign(items[index], imageData);
           } else {
             items.push({
               category:"新刊",
@@ -1013,7 +1109,7 @@
               price:"¥ 500",
               desc:"",
               descriptionFontSize:38,
-              ...data
+              ...imageData
             });
           }
         });
@@ -1025,44 +1121,44 @@
       }
     }
 
-    function makePattern(style, color, backgroundColor) {
+    function makePattern(style, foreground, background) {
       const tile = document.createElement("canvas");
       tile.width = tile.height = 240;
-      const patternContext = tile.getContext("2d");
+      const pctx = tile.getContext("2d");
 
-      patternContext.fillStyle = backgroundColor;
-      patternContext.fillRect(0, 0, tile.width, tile.height);
+      pctx.fillStyle = background;
+      pctx.fillRect(0, 0, tile.width, tile.height);
 
       if (style === "solid") return tile;
 
       if (style === "dots") {
-        patternContext.fillStyle = color;
-        patternContext.beginPath();
-        patternContext.arc(60, 60, 16, 0, Math.PI * 2);
-        patternContext.arc(180, 180, 16, 0, Math.PI * 2);
-        patternContext.fill();
+        pctx.fillStyle = foreground;
+        pctx.beginPath();
+        pctx.arc(60, 60, 16, 0, Math.PI * 2);
+        pctx.arc(180, 180, 16, 0, Math.PI * 2);
+        pctx.fill();
       } else if (style === "stripes") {
-        patternContext.fillStyle = color;
-        patternContext.fillRect(0, 0, 120, 240);
+        pctx.fillStyle = foreground;
+        pctx.fillRect(0, 0, 120, 240);
       } else if (style === "diagonal") {
-        patternContext.save();
-        patternContext.translate(120, 120);
-        patternContext.rotate(Math.PI / 4);
-        patternContext.fillStyle = color;
+        pctx.save();
+        pctx.translate(120, 120);
+        pctx.rotate(Math.PI / 4);
+        pctx.fillStyle = foreground;
         for (let x = -360; x <= 360; x += 110) {
-          patternContext.fillRect(x, -360, 36, 720);
+          pctx.fillRect(x, -360, 36, 720);
         }
-        patternContext.restore();
+        pctx.restore();
       } else if (style === "border") {
-        patternContext.fillStyle = color;
-        patternContext.fillRect(0, 0, 240, 24);
-        patternContext.fillRect(0, 216, 240, 24);
-        patternContext.fillRect(0, 0, 24, 240);
-        patternContext.fillRect(216, 0, 24, 240);
+        pctx.fillStyle = foreground;
+        pctx.fillRect(0, 0, 240, 24);
+        pctx.fillRect(0, 216, 240, 24);
+        pctx.fillRect(0, 0, 24, 240);
+        pctx.fillRect(216, 0, 24, 240);
       } else if (style === "check") {
-        patternContext.fillStyle = color;
-        patternContext.fillRect(0, 0, 120, 120);
-        patternContext.fillRect(120, 120, 120, 120);
+        pctx.fillStyle = foreground;
+        pctx.fillRect(0, 0, 120, 120);
+        pctx.fillRect(120, 120, 120, 120);
       }
 
       return tile;
@@ -1084,23 +1180,21 @@
 
       if (type === "pattern") {
         const style = document.getElementById("patternStyleSelect").value;
-        const backgroundColor = style === "solid"
-          ? selectedPalette.background
-          : selectedPalette.background;
+        const base = selectedPalette.background;
 
-        context.fillStyle = backgroundColor;
+        context.fillStyle = base;
         context.fillRect(0, 0, outputWidth, outputHeight);
 
-        if (style !== "solid") {
-          const pattern = context.createPattern(
-            makePattern(style, selectedPalette.hex, backgroundColor),
-            "repeat"
-          );
+        if (style === "solid") return;
 
-          if (pattern) {
-            context.fillStyle = pattern;
-            context.fillRect(0, 0, outputWidth, outputHeight);
-          }
+        const pattern = context.createPattern(
+          makePattern(style, selectedPalette.hex, base),
+          "repeat"
+        );
+
+        if (pattern) {
+          context.fillStyle = pattern;
+          context.fillRect(0, 0, outputWidth, outputHeight);
         }
         return;
       }
@@ -1183,8 +1277,8 @@
       }
 
       const lineHeight = fontSize * lineHeightRatio;
-      const blockHeight = lines.length * lineHeight;
-      let y = box.y + Math.max(0, (height - blockHeight) / 2);
+      const totalHeight = lines.length * lineHeight;
+      let y = box.y + Math.max(0, (height - totalHeight) / 2);
 
       context.save();
       context.beginPath();
@@ -1207,43 +1301,43 @@
           ? box.x + width
           : box.x;
 
-      for (const line of lines) {
+      lines.forEach((line) => {
         context.fillText(line, x, y, width);
         y += lineHeight;
-      }
+      });
 
       context.restore();
     }
 
     function drawHeader(context, social, headerHeight, landscape, eventStyle, circleStyle, spaceStyle) {
       const margin = social ? social.marginX : safeX + 8;
-      const width = Math.max(1, trimWidth - margin * 2);
+      const textWidth = Math.max(1, trimWidth - margin * 2);
 
       if (social) {
-        const isPicsquare = paper === "PICSQUARE";
-        const top = isPicsquare ? 5 : Math.max(6, headerHeight * .04);
-        const available = Math.max(1, headerHeight - top * 2);
-        const gap = isPicsquare ? 2 : Math.max(3, available * .025);
-        const eventHeight = isPicsquare ? 29 : available * .25;
-        const circleHeight = isPicsquare ? 44 : available * .34;
-        const spaceHeight = Math.max(1, available - eventHeight - circleHeight - gap * 2);
+        const compact = paper === "PICSQUARE";
+        const top = compact ? 5 : Math.max(6, headerHeight * .04);
+        const usable = Math.max(1, headerHeight - top * 2);
+        const gap = compact ? 2 : Math.max(3, usable * .025);
+        const eventHeight = compact ? 29 : usable * .25;
+        const circleHeight = compact ? 44 : usable * .34;
+        const spaceHeight = Math.max(1, usable - eventHeight - circleHeight - gap * 2);
         let y = top;
 
         fitText(context,
           `${document.getElementById("eventDate").value} | ${document.getElementById("eventName").value}`,
-          { x:bleedLeft + margin, y:bleedTop + y, width, height:eventHeight },
+          { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:eventHeight },
           { maxFont:eventStyle.size, minFont:7, color:eventStyle.color, background:eventStyle.background });
 
         y += eventHeight + gap;
         fitText(context, document.getElementById("circleName").value,
-          { x:bleedLeft + margin, y:bleedTop + y, width, height:circleHeight },
+          { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:circleHeight },
           { maxFont:circleStyle.size, minFont:8, weight:"700", color:circleStyle.color, background:circleStyle.background });
 
         y += circleHeight + gap;
         const space = document.getElementById("spaceNo").value;
         if (space) {
           fitText(context, ` ${space} `,
-            { x:bleedLeft + margin, y:bleedTop + y, width, height:spaceHeight },
+            { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:spaceHeight },
             {
               maxFont:spaceStyle.size,
               minFont:7,
@@ -1270,19 +1364,19 @@
 
       fitText(context,
         `${document.getElementById("eventDate").value} | ${document.getElementById("eventName").value}`,
-        { x:bleedLeft + margin, y:bleedTop + y, width, height:eventHeight },
+        { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:eventHeight },
         { maxFont:eventStyle.size, minFont:10 * scale, color:eventStyle.color, background:eventStyle.background });
 
       y += eventHeight + gap;
       fitText(context, document.getElementById("circleName").value,
-        { x:bleedLeft + margin, y:bleedTop + y, width, height:circleHeight },
+        { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:circleHeight },
         { maxFont:circleStyle.size, minFont:12 * scale, weight:"700", color:circleStyle.color, background:circleStyle.background });
 
       y += circleHeight + gap;
       const space = document.getElementById("spaceNo").value;
       if (space) {
         fitText(context, ` ${space} `,
-          { x:bleedLeft + margin, y:bleedTop + y, width, height:spaceHeight },
+          { x:bleedLeft + margin, y:bleedTop + y, width:textWidth, height:spaceHeight },
           {
             maxFont:spaceStyle.size,
             minFont:10 * scale,
@@ -1392,17 +1486,24 @@
       }
 
       const parts = [];
+
       if (item.title) {
         parts.push({
-          text:item.title, ratio:.42, max:78 * config.textScale,
+          text:item.title,
+          ratio:.42,
+          max:78 * config.textScale,
           min:Math.max(5, 8 * config.textScale),
-          family:'"Noto Sans JP", sans-serif', weight:"700", color:"#0f172a"
+          family:'"Noto Sans JP", sans-serif',
+          weight:"700",
+          color:"#0f172a"
         });
       }
 
       if (!["無料配布","Web展示"].includes(item.category) && item.price) {
         parts.push({
-          text:item.price, ratio:.28, max:100 * config.textScale,
+          text:item.price,
+          ratio:.28,
+          max:100 * config.textScale,
           min:Math.max(5, 8 * config.textScale),
           family:'"M PLUS Rounded 1c", sans-serif',
           weight:"700",
@@ -1462,10 +1563,12 @@
 
         const token = ++renderToken;
         const context = canvas.getContext("2d", { alpha:false });
-        if (!context) throw new Error("2Dプレビュー用Canvasを取得できません。");
+        if (!context) throw new Error("プレビュー用Canvasを取得できません。");
 
         context.setTransform(1, 0, 0, 1, 0, 0);
         context.clearRect(0, 0, outputWidth, outputHeight);
+
+        // 背景を先に塗る。パターン・単色・画像すべて塗り足し込みの全体が対象。
         drawBackground(context);
 
         const social = SOCIAL_LAYOUTS[paper] || null;
@@ -1474,6 +1577,7 @@
           ? social.header
           : Math.round(trimHeight * (landscape ? .17 : .15));
 
+        // ヘッダー背景は上端の塗り足し部分まで続ける。
         context.fillStyle = document.getElementById("headerBgColor").value || "#333333";
         context.fillRect(0, 0, outputWidth, Math.min(outputHeight, bleedTop + headerHeight));
 
@@ -1505,10 +1609,14 @@
         const startY = headerHeight + (social ? 10 : Math.max(24 * scale, safeY));
         const rows = Math.max(1, Math.ceil(items.length / columns));
 
-        const cardWidth = Math.max(1,
-          (trimWidth - marginX * 2 - gapX * (columns - 1)) / columns);
-        const cardHeight = Math.max(1,
-          (trimHeight - startY - marginY - gapY * (rows - 1)) / rows);
+        const cardWidth = Math.max(
+          1,
+          (trimWidth - marginX * 2 - gapX * (columns - 1)) / columns
+        );
+        const cardHeight = Math.max(
+          1,
+          (trimHeight - startY - marginY - gapY * (rows - 1)) / rows
+        );
 
         const config = {
           social:Boolean(social),
@@ -1527,18 +1635,18 @@
           const column = index % columns;
           const x = bleedLeft + marginX + column * (cardWidth + gapX);
           const y = bleedTop + startY + row * (cardHeight + gapY);
-
           drawCard(context, item, x, y, cardWidth, cardHeight, config, landscape);
         });
       } catch (error) {
         console.error("プレビューの描画に失敗しました。", error);
+
         const context = canvas.getContext("2d");
         if (context && canvas.width && canvas.height) {
           context.fillStyle = "#fff1f1";
           context.fillRect(0, 0, canvas.width, canvas.height);
           context.fillStyle = "#991b1b";
           context.font = "20px sans-serif";
-          context.fillText("プレビュー描画エラー。入力内容を確認してください。", 24, 40);
+          context.fillText("プレビュー描画エラー。ブラウザーのコンソールを確認してください。", 24, 40);
         }
       }
     }
@@ -1554,7 +1662,8 @@
       container.style.width = `${outputWidth * safeScale}px`;
       container.style.height = `${outputHeight * safeScale}px`;
 
-      document.getElementById("zoomDisplay").textContent = `表示 ${Math.round(safeScale * 100)}%`;
+      document.getElementById("zoomDisplay").textContent =
+        `表示 ${Math.round(safeScale * 100)}%`;
       document.getElementById("zoomSlider").value =
         String(Math.max(1, Math.min(200, Math.round(safeScale * 100))));
     }
@@ -1589,7 +1698,9 @@
       }
 
       renderCanvas();
-      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+      await new Promise((resolve) => {
+        requestAnimationFrame(() => requestAnimationFrame(resolve));
+      });
 
       const social = SOCIAL_PRESETS[paper];
       if (social) {
@@ -1746,9 +1857,12 @@ document.getElementById("print").onclick=()=>window.print();
 
       document.getElementById("bgTypeSelect").addEventListener("change", (event) => {
         const type = event.target.value;
+
+        // 切替のたびに3種類すべての表示状態を明示的に更新する。
         document.getElementById("patternControls").classList.toggle("hidden", type !== "pattern");
         document.getElementById("customBgControls").classList.toggle("hidden", type !== "custom");
         document.getElementById("singleColorControls").classList.toggle("hidden", type !== "color");
+
         renderCanvas();
       });
 
@@ -1787,15 +1901,12 @@ document.getElementById("print").onclick=()=>window.print();
       });
 
       document.getElementById("toggleGrid").addEventListener("change", (event) => {
-        const stage = document.getElementById("canvasStage");
-        stage.style.backgroundImage = event.target.checked
-          ? "linear-gradient(to right,rgba(15,23,42,.18) 1px,transparent 1px),linear-gradient(to bottom,rgba(15,23,42,.18) 1px,transparent 1px)"
-          : "none";
-        stage.style.backgroundSize = "20px 20px";
+        document.getElementById("gridOverlay").classList.toggle("hidden", !event.target.checked);
       });
 
       setupScaler();
       setupToolbarDrag();
+
       document.getElementById("printPreviewBtn").addEventListener("click", openPreview);
 
       document.getElementById("exportPng").addEventListener("click", async () => {
