@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>同人おしながきジェネレーター</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -12,7 +11,6 @@
   <style>
     * { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; }
-
     body {
       display: flex;
       flex-direction: column;
@@ -21,7 +19,6 @@
       color: #e2e8f0;
       font-family: "Noto Sans JP", sans-serif;
     }
-
     button, input, select, textarea { font: inherit; }
     button { cursor: pointer; }
 
@@ -35,7 +32,6 @@
       border-bottom: 1px solid #334155;
       background: #1e293b;
     }
-
     .brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
     .brand-icon {
       display: grid;
@@ -57,12 +53,8 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-
     .top-actions { display: flex; flex: 0 0 auto; gap: 6px; }
     .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
       border: 0;
       border-radius: 7px;
       padding: 8px 10px;
@@ -75,7 +67,6 @@
     .button-pdf { background: #e11d48; }
 
     #mainLayout { display: flex; flex: 1 1 auto; min-height: 0; overflow: hidden; }
-
     #settingsPanel {
       display: flex;
       flex: 0 0 410px;
@@ -85,7 +76,6 @@
       border-right: 1px solid #334155;
       background: #1e293b;
     }
-
     .panel-heading {
       display: flex;
       flex: 0 0 auto;
@@ -105,7 +95,6 @@
       color: #4ade80;
       font-size: 9px;
     }
-
     #settingsContent { flex: 1 1 auto; overflow: auto; padding: 14px; }
     .section {
       margin-bottom: 12px;
@@ -117,7 +106,6 @@
     .section h2 { margin: 0 0 10px; color: #fb7185; font-size: 12px; }
     .field { display: block; margin-bottom: 9px; color: #94a3b8; font-size: 10px; }
     .field:last-child { margin-bottom: 0; }
-
     .control {
       display: block;
       width: 100%;
@@ -130,7 +118,6 @@
       font-size: 11px;
     }
     .control:disabled { opacity: .5; }
-
     .color-control {
       width: 48px;
       height: 31px;
@@ -140,10 +127,8 @@
       padding: 3px;
       background: #1e293b;
     }
-
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .palette { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin-top: 5px; }
-
     .palette button {
       display: flex;
       align-items: center;
@@ -164,7 +149,6 @@
       border: 1px solid rgba(255,255,255,.25);
       border-radius: 50%;
     }
-
     .check-row {
       display: flex;
       align-items: center;
@@ -174,7 +158,6 @@
       font-size: 10px;
     }
     .check-row input[type="checkbox"] { accent-color: #f43f5e; }
-
     .upload-box {
       display: block;
       border: 2px dashed #9f1239;
@@ -187,7 +170,6 @@
     }
     .upload-box span { display: block; margin-top: 4px; font-size: 11px; font-weight: 700; }
     .upload-box small { display: block; margin-top: 3px; color: #94a3b8; font-size: 9px; }
-
     .item-card {
       margin-bottom: 10px;
       border: 1px solid #334155;
@@ -236,7 +218,6 @@
       padding: 48px 20px 20px;
       background: #020617;
     }
-
     #canvasContainer {
       position: relative;
       flex: none;
@@ -246,17 +227,13 @@
       box-shadow: 0 15px 40px rgba(0, 0, 0, .45);
       line-height: 0;
     }
-
     #canvasStage {
       position: absolute;
       top: 0;
       left: 0;
       transform-origin: top left;
     }
-
     #previewCanvas { display: block; }
-
-    /* 方眼ガイドは削除。印刷用の仕上がり・安全マージンガイドだけ表示する。 */
     .guide {
       position: absolute;
       z-index: 3;
@@ -266,7 +243,6 @@
     #trimGuide { outline: 1px solid rgba(255,255,255,.85); }
     #safeGuide { border-color: rgba(225, 29, 72, .95); }
     .hidden { display: none !important; }
-
     #zoomInfo {
       position: absolute;
       z-index: 12;
@@ -279,7 +255,6 @@
       color: #cbd5e1;
       font-size: 10px;
     }
-
     #previewToolbar {
       position: absolute;
       z-index: 12;
@@ -328,7 +303,6 @@
         justify-content: center;
       }
     }
-
     @media (max-width: 420px) {
       .topbar { padding-right: 6px; padding-left: 6px; }
       .button { padding: 7px 6px; font-size: 10px; }
@@ -347,9 +321,8 @@
       </div>
     </div>
     <div class="top-actions">
-      <button id="printPreviewBtn" class="button button-print" type="button">プレビュー</button>
+      <button id="printPreviewBtn" class="button button-print" type="button">プレビュー・PDF</button>
       <button id="exportPng" class="button button-png" type="button">PNG保存</button>
-      <button id="exportPdf" class="button button-pdf" type="button">PDF保存</button>
     </div>
   </header>
 
@@ -365,13 +338,13 @@
           <h2>レイアウト・用紙設定</h2>
           <div class="two-col">
             <label class="field">用紙向き
-              <select id="orientationSelect" class="control">
+              <select id="orientationSelect" name="orientation" class="control">
                 <option value="PORTRAIT" selected>縦向き</option>
                 <option value="LANDSCAPE">横向き</option>
               </select>
             </label>
             <label class="field">レイアウト
-              <select id="paperSizeSelect" class="control">
+              <select id="paperSizeSelect" name="paperSize" class="control">
                 <option value="A2">A2 (200dpi)</option>
                 <option value="A3" selected>A3 (200dpi)</option>
                 <option value="A4">A4 (350dpi)</option>
@@ -388,7 +361,7 @@
         <section class="section">
           <h2>背景デザイン・推奨配色</h2>
           <label class="field">背景の種類
-            <select id="bgTypeSelect" class="control">
+            <select id="bgTypeSelect" name="backgroundType" class="control">
               <option value="pattern" selected>パターン・無地</option>
               <option value="custom">背景画像</option>
               <option value="color">単色カラー</option>
@@ -398,12 +371,12 @@
             CUDO推奨配色セットの色
             <div id="presetColorPalette" class="palette"></div>
             <small style="display:block;margin-top:5px;color:#64748b">
-              初期配色は赤色ドットです。色名ラベルも併用しています。
+              初期表示は赤色ドットパターンです。色名ラベルも併用しています。
             </small>
           </div>
           <div id="patternControls">
             <label class="field">パターン
-              <select id="patternStyleSelect" class="control">
+              <select id="patternStyleSelect" name="patternStyle" class="control">
                 <option value="dots" selected>ドット</option>
                 <option value="stripes">ストライプ</option>
                 <option value="diagonal">斜めストライプ</option>
@@ -415,12 +388,12 @@
           </div>
           <div id="customBgControls" class="hidden">
             <label class="field">背景画像を選択
-              <input id="customBgInput" type="file" accept="image/*" class="control">
+              <input id="customBgInput" name="customBackground" type="file" accept="image/*" class="control">
             </label>
           </div>
           <div id="singleColorControls" class="hidden">
             <label class="field">背景色
-              <input id="bgColorPicker" type="color" value="#ffffff" class="color-control">
+              <input id="bgColorPicker" name="backgroundColor" type="color" value="#ffffff" class="color-control">
             </label>
           </div>
         </section>
@@ -428,17 +401,17 @@
         <section class="section">
           <h2>イベント・サークル情報</h2>
           <label class="field">イベント日時
-            <input id="eventDate" type="text" value="2026年12月30日(水)" class="control">
+            <input id="eventDate" name="eventDate" type="text" value="2026年12月30日(水)" class="control">
           </label>
           <label class="field">イベント名
-            <input id="eventName" type="text" value="コミックマーケット109" class="control">
+            <input id="eventName" name="eventName" type="text" value="コミックマーケット109" class="control">
           </label>
           <div class="two-col">
             <label class="field">サークル名
-              <input id="circleName" type="text" value="暁の稜線" class="control">
+              <input id="circleName" name="circleName" type="text" value="暁の稜線" class="control">
             </label>
             <label class="field">スペース番号
-              <input id="spaceNo" type="text" value="東7ホール あ-01a" class="control">
+              <input id="spaceNo" name="spaceNo" type="text" value="東7ホール あ-01a" class="control">
             </label>
           </div>
         </section>
@@ -447,10 +420,10 @@
           <h2>ヘッダー配色</h2>
           <div class="two-col">
             <label class="field">背景色
-              <input id="headerBgColor" type="color" value="#333333" class="color-control">
+              <input id="headerBgColor" name="headerBackgroundColor" type="color" value="#333333" class="color-control">
             </label>
             <label class="field">アクセント色
-              <input id="headerAccentColor" type="color" value="#FF4B00" class="color-control">
+              <input id="headerAccentColor" name="headerAccentColor" type="color" value="#FF4B00" class="color-control">
             </label>
           </div>
         </section>
@@ -459,48 +432,48 @@
           <h2>ヘッダー文字設定</h2>
           <div class="two-col">
             <label class="field">イベント情報サイズ
-              <input id="eventInfoFontSize" type="number" min="8" max="300" value="60" class="control">
+              <input id="eventInfoFontSize" name="eventInfoFontSize" type="number" min="8" max="300" value="60" class="control">
             </label>
             <label class="field">イベント文字色
-              <input id="eventInfoTextColor" type="color" value="#ffffff" class="color-control">
+              <input id="eventInfoTextColor" name="eventInfoTextColor" type="color" value="#ffffff" class="color-control">
             </label>
           </div>
           <label class="check-row">
             イベント情報の背景色
-            <input id="eventInfoBgEnabled" type="checkbox">
-            <input id="eventInfoBgColor" type="color" value="#ffffff" class="color-control">
+            <input id="eventInfoBgEnabled" name="eventInfoBgEnabled" type="checkbox">
+            <input id="eventInfoBgColor" name="eventInfoBgColor" type="color" value="#ffffff" class="color-control">
           </label>
 
           <hr style="border-color:#334155;margin:10px 0">
 
           <div class="two-col">
             <label class="field">サークル名サイズ
-              <input id="circleInfoFontSize" type="number" min="8" max="400" value="150" class="control">
+              <input id="circleInfoFontSize" name="circleInfoFontSize" type="number" min="8" max="400" value="150" class="control">
             </label>
             <label class="field">サークル文字色
-              <input id="circleInfoTextColor" type="color" value="#ffffff" class="color-control">
+              <input id="circleInfoTextColor" name="circleInfoTextColor" type="color" value="#ffffff" class="color-control">
             </label>
           </div>
           <label class="check-row">
             サークル名の背景色
-            <input id="circleInfoBgEnabled" type="checkbox">
-            <input id="circleInfoBgColor" type="color" value="#ffffff" class="color-control">
+            <input id="circleInfoBgEnabled" name="circleInfoBgEnabled" type="checkbox">
+            <input id="circleInfoBgColor" name="circleInfoBgColor" type="color" value="#ffffff" class="color-control">
           </label>
 
           <hr style="border-color:#334155;margin:10px 0">
 
           <div class="two-col">
             <label class="field">スペース番号サイズ
-              <input id="spaceInfoFontSize" type="number" min="8" max="300" value="90" class="control">
+              <input id="spaceInfoFontSize" name="spaceInfoFontSize" type="number" min="8" max="300" value="90" class="control">
             </label>
             <label class="field">スペース文字色
-              <input id="spaceInfoTextColor" type="color" value="#111111" class="color-control">
+              <input id="spaceInfoTextColor" name="spaceInfoTextColor" type="color" value="#111111" class="color-control">
             </label>
           </div>
           <label class="check-row">
             スペース番号の背景色
-            <input id="spaceInfoBgEnabled" type="checkbox" checked>
-            <input id="spaceInfoBgColor" type="color" value="#FF4B00" class="color-control">
+            <input id="spaceInfoBgEnabled" name="spaceInfoBgEnabled" type="checkbox" checked>
+            <input id="spaceInfoBgColor" name="spaceInfoBgColor" type="color" value="#FF4B00" class="color-control">
           </label>
         </section>
 
@@ -510,7 +483,7 @@
             ☁
             <span>複数画像を選択</span>
             <small>選択順に頒布物へ割り当て</small>
-            <input id="batchImageInput" type="file" accept="image/*" multiple hidden>
+            <input id="batchImageInput" name="batchImages" type="file" accept="image/*" multiple hidden>
           </label>
         </section>
 
@@ -528,15 +501,13 @@
         <span style="color:#64748b"> | </span>
         <span id="dimensionDisplay"></span>
       </div>
-
       <div id="previewToolbar">
         <button id="previewToolbarDrag" type="button" aria-label="操作バーを移動">↕</button>
         <button id="fitCanvasBtn" type="button">全体表示</button>
         <label>倍率
-          <input id="zoomSlider" type="range" min="1" max="200" value="100" style="width:70px;vertical-align:middle">
+          <input id="zoomSlider" name="previewZoom" type="range" min="1" max="200" value="100" style="width:70px;vertical-align:middle">
         </label>
       </div>
-
       <div id="canvasContainer">
         <div id="canvasStage">
           <canvas id="previewCanvas"></canvas>
@@ -592,7 +563,7 @@
     const BLEED_MM = 3;
     const canvas = document.getElementById("previewCanvas");
 
-    // 初期設定: A3縦、赤色ドットパターン
+    // 初期状態: A3縦 + 赤色ドット
     let selectedPalette = PALETTES[0];
     let paper = "A3";
     let orientation = "PORTRAIT";
@@ -610,28 +581,16 @@
 
     const items = [
       {
-        category:"新刊",
-        ageRating:"全年齢",
-        title:"新刊サンプルタイトル",
-        price:"¥ 1,000",
+        category:"新刊", ageRating:"全年齢",
+        title:"新刊サンプルタイトル", price:"¥ 1,000",
         desc:"文庫サイズ / 120P / 全年齢\n特製ノベルティステッカー付き",
-        descriptionFontSize:38,
-        image:null,
-        imageWidth:0,
-        imageHeight:0,
-        noImage:false
+        descriptionFontSize:38, image:null, imageWidth:0, imageHeight:0, noImage:false
       },
       {
-        category:"既刊",
-        ageRating:"全年齢",
-        title:"既刊イラスト集",
-        price:"¥ 500",
+        category:"既刊", ageRating:"全年齢",
+        title:"既刊イラスト集", price:"¥ 500",
         desc:"B5 / 24P / フルカラー\n過去イラストまとめ冊子",
-        descriptionFontSize:36,
-        image:null,
-        imageWidth:0,
-        imageHeight:0,
-        noImage:false
+        descriptionFontSize:36, image:null, imageWidth:0, imageHeight:0, noImage:false
       }
     ];
 
@@ -663,8 +622,8 @@
         const c = channel / 255;
         return c <= .04045 ? c / 12.92 : ((c + .055) / 1.055) ** 2.4;
       };
-      const luminance = .2126 * linear(r) + .7152 * linear(g) + .0722 * linear(b);
-      return luminance > .179 ? "#111111" : "#ffffff";
+      return .2126 * linear(r) + .7152 * linear(g) + .0722 * linear(b) > .179
+        ? "#111111" : "#ffffff";
     }
 
     function buildPalette() {
@@ -686,12 +645,10 @@
           if (getEl("bgTypeSelect").value === "color") {
             getEl("bgColorPicker").value = preset.background;
           }
-
           getEl("headerBgColor").value = preset.header;
           getEl("headerAccentColor").value = preset.accent;
           getEl("spaceInfoBgColor").value = preset.space;
           getEl("spaceInfoTextColor").value = getReadableTextColor(preset.space);
-
           renderCanvas();
         });
 
@@ -703,7 +660,6 @@
       const sizes = social
         ? { event:social.eventFont, circle:social.circleFont, space:social.spaceFont }
         : { event:60, circle:150, space:90 };
-
       getEl("eventInfoFontSize").value = sizes.event;
       getEl("circleInfoFontSize").value = sizes.circle;
       getEl("spaceInfoFontSize").value = sizes.space;
@@ -731,7 +687,6 @@
 
         const spec = PRINT_SPECS[paper];
         const landscape = orientation === "LANDSCAPE";
-
         outputWidth = landscape ? spec.heightPx : spec.widthPx;
         outputHeight = landscape ? spec.widthPx : spec.heightPx;
 
@@ -815,39 +770,39 @@
           </div>
           <div class="two-col">
             <label class="field">カテゴリ
-              <select class="control" data-index="${index}" data-key="category">
+              <select id="item-${index}-category" name="item-${index}-category" class="control" data-index="${index}" data-key="category">
                 ${["新刊","既刊","無料配布","Web展示"].map((value) =>
                   `<option value="${value}" ${item.category === value ? "selected" : ""}>${value}</option>`
                 ).join("")}
               </select>
             </label>
             <label class="field">年齢区分
-              <select class="control" data-index="${index}" data-key="ageRating">
+              <select id="item-${index}-ageRating" name="item-${index}-ageRating" class="control" data-index="${index}" data-key="ageRating">
                 <option value="全年齢" ${item.ageRating === "全年齢" ? "selected" : ""}>全年齢</option>
                 <option value="R18" ${item.ageRating === "R18" ? "selected" : ""}>R18</option>
               </select>
             </label>
           </div>
           <label class="field">タイトル
-            <input class="control" type="text" data-index="${index}" data-key="title" value="${escapeHTML(item.title)}">
+            <input id="item-${index}-title" name="item-${index}-title" class="control" type="text" data-index="${index}" data-key="title" value="${escapeHTML(item.title)}">
           </label>
           <label class="field">値段（無料配布・Web展示は空欄）
-            <input class="control" type="text" data-index="${index}" data-key="price"
+            <input id="item-${index}-price" name="item-${index}-price" class="control" type="text" data-index="${index}" data-key="price"
               value="${escapeHTML(item.price || "")}" ${["無料配布","Web展示"].includes(item.category) ? "disabled" : ""}>
           </label>
           <label class="field">説明
-            <textarea class="control" data-index="${index}" data-key="desc" rows="3">${escapeHTML(item.desc)}</textarea>
+            <textarea id="item-${index}-desc" name="item-${index}-desc" class="control" data-index="${index}" data-key="desc" rows="3">${escapeHTML(item.desc)}</textarea>
           </label>
           <label class="field">説明文フォントサイズ
-            <input class="control" type="number" min="8" max="100" step="1"
+            <input id="item-${index}-descriptionFontSize" name="item-${index}-descriptionFontSize" class="control" type="number" min="8" max="100" step="1"
               data-index="${index}" data-key="descriptionFontSize" value="${Number(item.descriptionFontSize) || 38}">
           </label>
           <label class="check-row" style="justify-content:flex-start">
-            <input type="checkbox" data-noimage="${index}" ${item.noImage ? "checked" : ""}>
+            <input id="item-${index}-noImage" name="item-${index}-noImage" type="checkbox" data-noimage="${index}" ${item.noImage ? "checked" : ""}>
             画像なし（テキスト欄を広く表示）
           </label>
           <label class="field">個別画像
-            <input class="control" type="file" accept="image/*" data-image="${index}" ${item.noImage ? "disabled" : ""}>
+            <input id="item-${index}-image" name="item-${index}-image" class="control" type="file" accept="image/*" data-image="${index}" ${item.noImage ? "disabled" : ""}>
           </label>
         `;
         root.appendChild(card);
@@ -879,7 +834,6 @@
           }
           renderCanvas();
         };
-
         input.addEventListener("input", update);
         input.addEventListener("change", update);
       });
@@ -894,8 +848,8 @@
         input.addEventListener("change", () => {
           const index = Number(input.dataset.noimage);
           if (!items[index]) return;
-
           items[index].noImage = input.checked;
+
           const fileInput = root.querySelector(`[data-image="${index}"]`);
           if (fileInput) {
             fileInput.disabled = input.checked;
@@ -927,16 +881,10 @@
 
     function addItem() {
       items.push({
-        category:"新刊",
-        ageRating:"全年齢",
-        title:`頒布物 #${items.length + 1}`,
-        price:"¥ 500",
-        desc:"",
-        descriptionFontSize:38,
-        image:null,
-        imageWidth:0,
-        imageHeight:0,
-        noImage:false
+        category:"新刊", ageRating:"全年齢",
+        title:`頒布物 #${items.length + 1}`, price:"¥ 500",
+        desc:"", descriptionFontSize:38,
+        image:null, imageWidth:0, imageHeight:0, noImage:false
       });
       renderItems();
       renderCanvas();
@@ -955,14 +903,12 @@
       if (!file || !file.type || !file.type.startsWith("image/")) {
         throw new Error("画像ファイルを選択してください。");
       }
-
       const src = await new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result);
         reader.onerror = () => reject(new Error(`画像を読み込めませんでした: ${file.name}`));
         reader.readAsDataURL(file);
       });
-
       const image = await loadImage(src);
       return { src, image, width:image.naturalWidth, height:image.naturalHeight };
     }
@@ -992,25 +938,21 @@
       try {
         const loaded = await Promise.all(selected.map(readImageFile));
         loaded.forEach((entry, index) => {
-          const data = {
+          const imageData = {
             image:entry.image,
             imageSrc:entry.src,
             imageWidth:entry.width,
             imageHeight:entry.height,
             noImage:false
           };
-
           if (index < items.length) {
-            Object.assign(items[index], data);
+            Object.assign(items[index], imageData);
           } else {
             items.push({
-              category:"新刊",
-              ageRating:"全年齢",
-              title:`新刊アイテム ${index + 1}`,
-              price:"¥ 500",
-              desc:"",
-              descriptionFontSize:38,
-              ...data
+              category:"新刊", ageRating:"全年齢",
+              title:`新刊アイテム ${index + 1}`, price:"¥ 500",
+              desc:"", descriptionFontSize:38,
+              ...imageData
             });
           }
         });
@@ -1025,9 +967,8 @@
       const tile = document.createElement("canvas");
       tile.width = tile.height = 240;
       const pctx = tile.getContext("2d");
-
       pctx.fillStyle = background;
-      pctx.fillRect(0, 0, tile.width, tile.height);
+      pctx.fillRect(0, 0, 240, 240);
 
       if (style === "solid") return tile;
 
@@ -1058,7 +999,6 @@
         pctx.fillRect(0, 0, 120, 120);
         pctx.fillRect(120, 120, 120, 120);
       }
-
       return tile;
     }
 
@@ -1102,7 +1042,6 @@
     function getHeaderStyle(prefix, defaultSize, defaultColor) {
       const rawSize = Number.parseInt(getEl(`${prefix}FontSize`).value, 10);
       const enabled = getEl(`${prefix}BgEnabled`).checked;
-
       return {
         size:Number.isFinite(rawSize) ? rawSize : defaultSize,
         color:getEl(`${prefix}TextColor`).value || defaultColor,
@@ -1309,12 +1248,9 @@
         { x:x + padding, y:y + 1, width:Math.max(1, width - padding * 2), height:Math.max(1, categoryHeight - 2) },
         {
           maxFont:Math.min(categoryHeight * .78, width * .2),
-          minFont:1,
-          weight:"700",
+          minFont:1, weight:"700",
           family:'"M PLUS Rounded 1c", sans-serif',
-          color:style.text,
-          align:"center",
-          lineHeight:1
+          color:style.text, align:"center", lineHeight:1
         });
 
       const ageY = y + categoryHeight;
@@ -1325,17 +1261,13 @@
         { x:x + padding, y:ageY + 1, width:Math.max(1, width - padding * 2), height:Math.max(1, ageHeight - 2) },
         {
           maxFont:Math.min(ageHeight * .75, width * .16),
-          minFont:1,
-          weight:"700",
+          minFont:1, weight:"700",
           family:'"M PLUS Rounded 1c", sans-serif',
-          color:isR18 ? "#ffffff" : "#174b26",
-          align:"center",
-          lineHeight:1
+          color:isR18 ? "#ffffff" : "#174b26", align:"center", lineHeight:1
         });
 
       const bodyY = ageY + ageHeight + padding;
       const bodyHeight = Math.max(1, height - categoryHeight - ageHeight - padding * 2);
-
       let textX = x + padding;
       let textWidth = Math.max(1, width - padding * 2);
       let imageBox = null;
@@ -1369,14 +1301,12 @@
         parts.push({
           text:item.price, ratio:.28, max:100 * config.textScale,
           min:Math.max(5, 8 * config.textScale),
-          family:'"M PLUS Rounded 1c", sans-serif', weight:"700",
-          color:style.background
+          family:'"M PLUS Rounded 1c", sans-serif', weight:"700", color:style.background
         });
       }
       if (item.desc) {
         parts.push({
-          text:item.desc,
-          ratio:.30,
+          text:item.desc, ratio:.30,
           max:Math.max(8, Math.min(100, Number(item.descriptionFontSize) || 38)) * config.textScale,
           min:Math.max(4, 7 * config.textScale),
           family:'"Noto Sans JP", sans-serif', weight:"400", color:"#475569"
@@ -1441,7 +1371,6 @@
         const eventStyle = getHeaderStyle("eventInfo", social ? social.eventFont : 60, "#ffffff");
         const circleStyle = getHeaderStyle("circleInfo", social ? social.circleFont : 150, "#ffffff");
         const spaceStyle = getHeaderStyle("spaceInfo", social ? social.spaceFont : 90, "#ffffff");
-
         drawHeader(context, social, headerHeight, landscape, eventStyle, circleStyle, spaceStyle);
 
         let columns = 2;
@@ -1525,7 +1454,6 @@
       if (document.fonts && document.fonts.ready) {
         try { await document.fonts.ready; } catch {}
       }
-
       renderCanvas();
       await new Promise((resolve) => {
         requestAnimationFrame(() => requestAnimationFrame(resolve));
@@ -1545,7 +1473,6 @@
 
       const spec = PRINT_SPECS[paper];
       const landscape = orientation === "LANDSCAPE";
-
       return {
         dataUrl:canvas.toDataURL("image/png"),
         widthPx:outputWidth,
@@ -1585,7 +1512,6 @@
       handle.addEventListener("pointermove", (event) => {
         if (!drag || drag.id !== event.pointerId) return;
         const rect = workspace.getBoundingClientRect();
-
         toolbar.style.left = `${Math.max(0, Math.min(
           rect.width - toolbar.offsetWidth,
           drag.left + event.clientX - drag.startX
@@ -1603,65 +1529,63 @@
       handle.addEventListener("pointercancel", finish);
     }
 
-    async function openPreview() {
-      const popup = window.open("", "_blank");
-      if (!popup) {
-        alert("プレビューを開けません。ポップアップを許可してください。");
+    function openPrintDialog() {
+      /*
+        jsPDFなどのeval依存ライブラリを使わず、ブラウザー標準の印刷画面を開く。
+        印刷先で「PDFに保存」を選択できます。
+      */
+      const output = {
+        widthMm:orientation === "LANDSCAPE"
+          ? PRINT_SPECS[paper].heightMm
+          : PRINT_SPECS[paper].widthMm,
+        heightMm:orientation === "LANDSCAPE"
+          ? PRINT_SPECS[paper].widthMm
+          : PRINT_SPECS[paper].heightMm
+      };
+
+      if (SOCIAL_PRESETS[paper]) {
+        output.widthMm = outputWidth * 25.4 / 200;
+        output.heightMm = outputHeight * 25.4 / 200;
+      }
+
+      const imageData = canvas.toDataURL("image/png");
+      const printWindow = window.open("", "_blank");
+
+      if (!printWindow) {
+        alert("印刷プレビューを開けません。ブラウザーのポップアップを許可してください。");
         return;
       }
 
-      try {
-        const output = await getExportData();
-        popup.document.open();
-        popup.document.write(`<!doctype html>
-<html lang="ja">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>出力プレビュー</title>
-<style>
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;font-family:sans-serif}
-body{background:#1e293b;color:#f8fafc}
-.toolbar{position:sticky;top:0;z-index:2;display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 14px;background:#0f172a}
-.toolbar button{border:0;border-radius:6px;padding:8px 12px;color:#fff;background:#334155;cursor:pointer}
-.toolbar .print{background:#e11d48}
-.preview{height:calc(100vh - 60px);overflow:auto;padding:24px}
-.sheet{width:${output.widthPx}px;height:${output.heightPx}px;margin:0 auto;background:#fff;box-shadow:0 8px 30px #0006}
-.sheet img{display:block;width:100%;height:100%}
-body.fit .sheet{width:auto;height:auto;max-width:100%}
-body.fit .sheet img{width:auto;height:auto;max-width:100%;max-height:calc(100vh - 120px);object-fit:contain}
-@page{size:${output.widthMm}mm ${output.heightMm}mm;margin:0}
-@media print{
-html,body{width:${output.widthMm}mm;height:${output.heightMm}mm;margin:0;padding:0;overflow:hidden;background:#fff}
-.toolbar{display:none!important}
-.preview{width:${output.widthMm}mm;height:${output.heightMm}mm;overflow:hidden;padding:0}
-.sheet{width:${output.widthMm}mm!important;height:${output.heightMm}mm!important;margin:0!important;box-shadow:none}
-.sheet img{width:${output.widthMm}mm!important;height:${output.heightMm}mm!important}
-}
-</style>
-</head>
-<body>
-<div class="toolbar">
-<strong>${output.hasBleed ? "塗り足し込み" : "Webサイズ"} プレビュー</strong>
-<button id="actual">100%表示</button>
-<button id="fit">画面に合わせる</button>
-<button id="print" class="print">印刷</button>
-<span>${output.widthPx} × ${output.heightPx}px</span>
-</div>
-<main class="preview"><div class="sheet"><img src="${output.dataUrl}" alt="出力プレビュー"></div></main>
-<script>
-document.getElementById("actual").onclick=()=>document.body.classList.remove("fit");
-document.getElementById("fit").onclick=()=>document.body.classList.add("fit");
-document.getElementById("print").onclick=()=>window.print();
-<\/script>
-</body>
-</html>`);
-        popup.document.close();
-      } catch (error) {
-        popup.close();
-        alert(`プレビューを作成できませんでした: ${error.message}`);
-      }
+      const doc = printWindow.document;
+      doc.title = "印刷プレビュー";
+      doc.documentElement.lang = "ja";
+
+      const meta = doc.createElement("meta");
+      meta.setAttribute("charset", "UTF-8");
+      doc.head.appendChild(meta);
+
+      const style = doc.createElement("style");
+      style.textContent = `
+        @page { size: ${output.widthMm}mm ${output.heightMm}mm; margin: 0; }
+        html, body { margin: 0; padding: 0; }
+        body { background: #fff; }
+        img { display: block; width: ${output.widthMm}mm; height: ${output.heightMm}mm; }
+        @media screen {
+          body { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: #1e293b; }
+          img { width: min(90vw, ${output.widthMm}mm); height: auto; box-shadow: 0 8px 30px #0008; }
+        }
+      `;
+      doc.head.appendChild(style);
+
+      const image = doc.createElement("img");
+      image.alt = "印刷用プレビュー";
+      image.src = imageData;
+      doc.body.appendChild(image);
+
+      image.addEventListener("load", () => {
+        printWindow.focus();
+        printWindow.print();
+      }, { once:true });
     }
 
     function bindEvents() {
@@ -1724,41 +1648,23 @@ document.getElementById("print").onclick=()=>window.print();
         applyPreviewScale(Number(event.target.value) / 100);
       });
 
+      setupScaler();
       setupToolbarDrag();
-      getEl("printPreviewBtn").addEventListener("click", openPreview);
+
+      getEl("printPreviewBtn").addEventListener("click", openPrintDialog);
 
       getEl("exportPng").addEventListener("click", async () => {
         try {
-          const output = await getExportData();
+          const data = await getExportData();
           const link = document.createElement("a");
-          link.download = `oshinagaki_${paper}_${orientation}_${output.widthPx}x${output.heightPx}.png`;
-          link.href = output.dataUrl;
+          link.download = `oshinagaki_${paper}_${orientation}_${data.widthPx}x${data.heightPx}.png`;
+          link.href = data.dataUrl;
           link.click();
         } catch (error) {
           alert(`PNGを書き出せませんでした: ${error.message}`);
-        }
-      });
-
-      getEl("exportPdf").addEventListener("click", async () => {
-        try {
-          const output = await getExportData();
-          if (!window.jspdf || !window.jspdf.jsPDF) {
-            throw new Error("PDFライブラリを読み込めませんでした。");
-          }
-          const { jsPDF } = window.jspdf;
-          const pdf = new jsPDF({
-            orientation:output.widthMm >= output.heightMm ? "landscape" : "portrait",
-            unit:"mm",
-            format:[output.widthMm, output.heightMm]
-          });
-          pdf.addImage(output.dataUrl, "PNG", 0, 0, output.widthMm, output.heightMm);
-          pdf.save(`oshinagaki_${paper}_${orientation}.pdf`);
-        } catch (error) {
-          alert(`PDFを書き出せませんでした: ${error.message}`);
         }
       });
     }
   </script>
 </body>
 </html>
-```
