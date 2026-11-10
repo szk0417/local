@@ -37,7 +37,7 @@
       place-items: center;
       border-radius: 9px;
       background: linear-gradient(120deg, #f43f5e, #9333ea);
-      color: white;
+      color: #fff;
       font-size: 19px;
     }
     .brand h1 { margin: 0; font-size: 14px; line-height: 1.3; }
@@ -49,12 +49,12 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .top-actions { display: flex; flex: 0 0 auto; gap: 6px; }
+    .actions { display: flex; flex: 0 0 auto; gap: 6px; }
     .button {
       border: 0;
       border-radius: 7px;
       padding: 8px 10px;
-      color: white;
+      color: #fff;
       font-size: 11px;
       font-weight: 700;
     }
@@ -64,7 +64,7 @@
     #mainLayout { display: flex; flex: 1 1 auto; min-height: 0; overflow: hidden; }
     #settingsPanel {
       display: flex;
-      flex: 0 0 410px;
+      flex: 0 0 390px;
       flex-direction: column;
       max-height: 100%;
       overflow: hidden;
@@ -112,6 +112,7 @@
       color: #e2e8f0;
       font-size: 11px;
     }
+    .control:disabled { opacity: .5; }
     .color-control {
       width: 48px;
       height: 31px;
@@ -122,7 +123,7 @@
       background: #1e293b;
     }
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .palette { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin-top: 5px; }
+    .palette { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
     .palette button {
       display: flex;
       align-items: center;
@@ -217,8 +218,8 @@
       flex: none;
       overflow: hidden;
       border: 1px solid #475569;
-      background: white;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, .45);
+      background: #fff;
+      box-shadow: 0 15px 40px rgba(0,0,0,.45);
       line-height: 0;
     }
     #canvasStage {
@@ -232,10 +233,10 @@
       position: absolute;
       z-index: 3;
       pointer-events: none;
-      border: 1px dashed rgba(15, 23, 42, .85);
+      border: 1px dashed rgba(15,23,42,.85);
     }
     #trimGuide { outline: 1px solid rgba(255,255,255,.85); }
-    #safeGuide { border-color: rgba(225, 29, 72, .95); }
+    #safeGuide { border-color: rgba(225,29,72,.95); }
     .hidden { display: none !important; }
     #zoomInfo {
       position: absolute;
@@ -245,7 +246,7 @@
       border: 1px solid #334155;
       border-radius: 7px;
       padding: 7px 9px;
-      background: rgba(30, 41, 59, .95);
+      background: rgba(30,41,59,.95);
       color: #cbd5e1;
       font-size: 10px;
     }
@@ -260,8 +261,8 @@
       border: 1px solid #334155;
       border-radius: 8px;
       padding: 7px;
-      background: rgba(30, 41, 59, .96);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, .35);
+      background: rgba(30,41,59,.96);
+      box-shadow: 0 6px 20px rgba(0,0,0,.35);
       font-size: 10px;
     }
     #previewToolbar button {
@@ -314,7 +315,7 @@
         <p id="paperSpecLabel">A3縦・赤色ドット</p>
       </div>
     </div>
-    <div class="top-actions">
+    <div class="actions">
       <button id="printPreviewBtn" class="button button-print" type="button">プレビュー・PDF</button>
       <button id="exportPng" class="button button-png" type="button">PNG保存</button>
     </div>
@@ -352,7 +353,7 @@
         </section>
 
         <section class="section">
-          <h2>背景デザイン・推奨配色</h2>
+          <h2>背景デザイン・規定カラー</h2>
           <label class="field">背景の種類
             <select id="bgTypeSelect" name="backgroundType" class="control">
               <option value="pattern" selected>パターン・無地</option>
@@ -361,10 +362,10 @@
             </select>
           </label>
           <div class="field">
-            CUDO推奨配色セットの色
+            規定カラー
             <div id="presetColorPalette" class="palette"></div>
             <small style="display:block;margin-top:5px;color:#64748b">
-              初期表示は赤色ドットです。色名ラベルも併用しています。
+              選択色のアクセントカラーをヘッダーに適用します。
             </small>
           </div>
           <div id="patternControls">
@@ -380,7 +381,7 @@
             </label>
           </div>
           <div id="customBgControls" class="hidden">
-            <label class="field">背景画像を選択
+            <label class="field">背景画像
               <input id="customBgInput" name="customBackground" type="file" accept="image/*" class="control">
             </label>
           </div>
@@ -523,6 +524,7 @@
       "Web展示":  { background:"#00DCFF", text:"#111111" }
     };
 
+    // A2は対応レイアウトに含めない。
     const PRINT_SPECS = {
       A3: { widthMm:303, heightMm:426, widthPx:2386, heightPx:3354, trimWidthMm:297, trimHeightMm:420 },
       A4: { widthMm:216, heightMm:303, widthPx:2976, heightPx:4175, trimWidthMm:210, trimHeightMm:297 }
@@ -535,26 +537,32 @@
       PICREA: { width:800, height:1600, orientation:"PORTRAIT", label:"ピクリエ用" }
     };
 
+    // 指定どおりのヘッダーフォントサイズ（px）。
+    const HEADER_FONT_SIZES = {
+      A3: { event:60, space:120, circle:120 },
+      A4: { event:60, space:120, circle:120 },
+      WEB_PORTRAIT: { event:30, space:50, circle:50 },
+      WEB_LANDSCAPE: { event:30, space:50, circle:50 },
+      PICSQUARE: { event:20, space:30, circle:30 },
+      PICREA: { event:30, space:50, circle:50 }
+    };
+
     const SOCIAL_LAYOUTS = {
       WEB_PORTRAIT: {
         header:250, marginX:28, marginY:22, gapX:16, gapY:16, padding:12,
-        eventFont:30, spaceFont:50, circleFont:50, cardScale:.55,
-        categoryBand:46, ageBand:28
+        cardScale:.55, categoryBand:46, ageBand:28
       },
       WEB_LANDSCAPE: {
         header:160, marginX:28, marginY:18, gapX:16, gapY:16, padding:11,
-        eventFont:30, spaceFont:50, circleFont:50, cardScale:.48,
-        categoryBand:38, ageBand:24
+        cardScale:.48, categoryBand:38, ageBand:24
       },
       PICSQUARE: {
         header:143, marginX:16, marginY:16, gapX:12, gapY:12, padding:8,
-        eventFont:20, spaceFont:30, circleFont:30, cardScale:.35,
-        categoryBand:34, ageBand:21
+        cardScale:.35, categoryBand:34, ageBand:21
       },
       PICREA: {
         header:270, marginX:24, marginY:22, gapX:16, gapY:16, padding:12,
-        eventFont:30, spaceFont:50, circleFont:50, cardScale:.50,
-        categoryBand:44, ageBand:28
+        cardScale:.50, categoryBand:44, ageBand:28
       }
     };
 
@@ -599,10 +607,6 @@
         renderItems();
         bindEvents();
         updateLayout();
-
-        if (document.fonts && document.fonts.ready) {
-          document.fonts.ready.then(renderCanvas).catch(() => {});
-        }
       } catch (error) {
         console.error("初期化エラー:", error);
         const label = document.getElementById("paperSpecLabel");
@@ -638,40 +642,26 @@
         button.type = "button";
         button.title = `${preset.name}（CUDO推奨配色セット）`;
         button.innerHTML = `<span class="swatch" style="background:${preset.hex}"></span><span>${preset.name}</span>`;
-        if (preset.name === selectedPalette.name) button.classList.add("selected");
+        button.classList.toggle("selected", preset.name === selectedPalette.name);
 
         button.addEventListener("click", () => {
           selectedPalette = preset;
           root.querySelectorAll("button").forEach((el) => el.classList.remove("selected"));
-
-          const selectedButton = root.querySelector(
-            `button[title="${preset.name}（CUDO推奨配色セット）"]`
-          );
-          if (selectedButton) selectedButton.classList.add("selected");
+          button.classList.add("selected");
 
           if (getEl("bgTypeSelect").value === "color") {
             getEl("bgColorPicker").value = preset.background;
           }
 
+          // 各規定カラー固有のアクセント色をヘッダーに反映。
           getEl("headerBgColor").value = preset.header;
           getEl("headerAccentColor").value = preset.accent;
           getEl("spaceInfoBgColor").value = preset.space;
-          getEl("spaceInfoTextColor").value = "#ffffff";
           renderCanvas();
         });
 
         root.appendChild(button);
       });
-    }
-
-    function applyHeaderDefaults(social) {
-      const sizes = social
-        ? { event:social.eventFont, space:social.spaceFont, circle:social.circleFont }
-        : { event:60, space:120, circle:120 };
-
-      getEl("eventInfoFontSize").value = sizes.event;
-      getEl("spaceInfoFontSize").value = sizes.space;
-      getEl("circleInfoFontSize").value = sizes.circle;
     }
 
     function updateLayout() {
@@ -717,7 +707,11 @@
       getEl("canvasStage").style.width = `${outputWidth}px`;
       getEl("canvasStage").style.height = `${outputHeight}px`;
 
-      applyHeaderDefaults(SOCIAL_LAYOUTS[paper]);
+      const defaults = HEADER_FONT_SIZES[paper];
+      getEl("eventInfoFontSize").value = defaults.event;
+      getEl("spaceInfoFontSize").value = defaults.space;
+      getEl("circleInfoFontSize").value = defaults.circle;
+
       updateGuides();
 
       const label = socialPreset
@@ -830,12 +824,12 @@
           }
 
           if (key === "category") {
-            const priceInput = root.querySelector(`[data-index="${index}"][data-key="price"]`);
+            const price = root.querySelector(`[data-index="${index}"][data-key="price"]`);
             const noPrice = ["無料配布","Web展示"].includes(input.value);
-            if (priceInput) {
-              priceInput.disabled = noPrice;
+            if (price) {
+              price.disabled = noPrice;
               if (noPrice) {
-                priceInput.value = "";
+                price.value = "";
                 items[index].price = "";
               }
             }
@@ -1047,19 +1041,15 @@
       context.fillRect(0, 0, outputWidth, outputHeight);
     }
 
-    /*
-      背景色欄の有無にかかわらず安全に取得する。
-      スペース背景はチェックOFFなら常に透明。
-    */
     function getHeaderStyle(prefix, defaultSize, defaultColor) {
       const sizeElement = document.getElementById(`${prefix}FontSize`);
       const colorElement = document.getElementById(`${prefix}TextColor`);
       const enabledElement = document.getElementById(`${prefix}BgEnabled`);
       const backgroundElement = document.getElementById(`${prefix}BgColor`);
+      const value = Number.parseInt(sizeElement ? sizeElement.value : "", 10);
 
-      const parsedSize = Number.parseInt(sizeElement ? sizeElement.value : "", 10);
       return {
-        size:Number.isFinite(parsedSize) ? parsedSize : defaultSize,
+        size:Number.isFinite(value) ? value : defaultSize,
         color:(colorElement && colorElement.value) || defaultColor,
         background:enabledElement && enabledElement.checked && backgroundElement
           ? backgroundElement.value
@@ -1085,6 +1075,7 @@
       return lines.length ? lines : [""];
     }
 
+    // 指定最大サイズから、テキスト枠内に収まる最大フォントサイズを探す。
     function fitText(context, text, box, options = {}) {
       const family = options.family || '"Noto Sans JP", sans-serif';
       const weight = options.weight || "400";
@@ -1103,9 +1094,9 @@
         const size = (low + high) / 2;
         context.font = `${weight} ${size}px ${family}`;
         const lines = wrapLines(context, text, width);
-        const fitsHeight = lines.length * size * lineHeightRatio <= height;
+        const fits = lines.length * size * lineHeightRatio <= height;
 
-        if (fitsHeight) {
+        if (fits) {
           chosen = size;
           chosenLines = lines;
           low = size;
@@ -1115,18 +1106,15 @@
       }
 
       if (!chosenLines) {
-        chosen = minFont;
-        context.font = `${weight} ${chosen}px ${family}`;
+        context.font = `${weight} ${minFont}px ${family}`;
         chosenLines = wrapLines(context, text, width);
+        const maxLines = Math.max(1, Math.floor(height / (minFont * lineHeightRatio)));
 
-        const maxLines = Math.max(1, Math.floor(height / (chosen * lineHeightRatio)));
         if (chosenLines.length > maxLines) {
           chosenLines = chosenLines.slice(0, maxLines);
-          const chars = Array.from(chosenLines[maxLines - 1] || "");
-          while (chars.length && context.measureText(`${chars.join("")}…`).width > width) {
-            chars.pop();
-          }
-          chosenLines[maxLines - 1] = `${chars.join("")}…`;
+          const last = Array.from(chosenLines[maxLines - 1] || "");
+          while (last.length && context.measureText(`${last.join("")}…`).width > width) last.pop();
+          chosenLines[maxLines - 1] = `${last.join("")}…`;
         }
       }
 
@@ -1159,10 +1147,7 @@
       context.restore();
     }
 
-    /*
-      配置順: イベント名・日時 → スペース番号 → サークル名。
-      左揃え。入力欄のサイズは各レイアウトの最大フォントサイズとして使用。
-    */
+    // 順番と揃え方: イベント名・日時 → スペース番号 → サークル名。全て左揃え。
     function drawHeader(context, social, headerHeight, landscape, eventStyle, spaceStyle, circleStyle) {
       const margin = social ? social.marginX : safeX + 8;
       const width = Math.max(1, trimWidth - margin * 2);
@@ -1171,9 +1156,10 @@
       const eventText = [eventName, eventDate].filter(Boolean).join("\n");
 
       if (social) {
-        const top = paper === "PICSQUARE" ? 4 : Math.max(6, headerHeight * .035);
+        const compact = paper === "PICSQUARE";
+        const top = compact ? 4 : Math.max(6, headerHeight * .035);
         const available = Math.max(1, headerHeight - top * 2);
-        const gap = paper === "PICSQUARE" ? 1 : Math.max(2, available * .018);
+        const gap = compact ? 1 : Math.max(2, available * .018);
         const eventHeight = available * .34;
         const spaceHeight = available * .31;
         const circleHeight = Math.max(1, available - eventHeight - spaceHeight - gap * 2);
@@ -1181,7 +1167,10 @@
 
         fitText(context, eventText,
           { x:bleedLeft + margin, y:bleedTop + y, width, height:eventHeight },
-          { maxFont:eventStyle.size, minFont:6, color:eventStyle.color, background:eventStyle.background });
+          {
+            maxFont:eventStyle.size, minFont:6,
+            color:eventStyle.color, background:eventStyle.background
+          });
 
         y += eventHeight + gap;
         fitText(context, getEl("spaceNo").value,
@@ -1189,7 +1178,8 @@
           {
             maxFont:spaceStyle.size, minFont:6, weight:"700",
             family:'"M PLUS Rounded 1c", sans-serif',
-            color:spaceStyle.color, background:spaceStyle.background, align:"left", lineHeight:1
+            color:spaceStyle.color, background:spaceStyle.background,
+            align:"left", lineHeight:1
           });
 
         y += spaceHeight + gap;
@@ -1197,7 +1187,7 @@
           { x:bleedLeft + margin, y:bleedTop + y, width, height:circleHeight },
           {
             maxFont:circleStyle.size, minFont:6, weight:"700",
-            color:circleStyle.color, background:circleStyle.background, align:"left", lineHeight:1
+            color:circleStyle.color, align:"left", lineHeight:1
           });
         return;
       }
@@ -1212,7 +1202,10 @@
 
       fitText(context, eventText,
         { x:bleedLeft + margin, y:bleedTop + y, width, height:rowHeight },
-        { maxFont:eventStyle.size, minFont:8 * scale, color:eventStyle.color, background:eventStyle.background });
+        {
+          maxFont:eventStyle.size, minFont:8 * scale,
+          color:eventStyle.color, background:eventStyle.background
+        });
 
       y += rowHeight + gap;
       fitText(context, getEl("spaceNo").value,
@@ -1220,15 +1213,16 @@
         {
           maxFont:spaceStyle.size, minFont:8 * scale, weight:"700",
           family:'"M PLUS Rounded 1c", sans-serif',
-          color:spaceStyle.color, background:spaceStyle.background, align:"left", lineHeight:1
+          color:spaceStyle.color, background:spaceStyle.background,
+          align:"left", lineHeight:1
         });
 
       y += rowHeight + gap;
       fitText(context, getEl("circleName").value,
         { x:bleedLeft + margin, y:bleedTop + y, width, height:rowHeight },
         {
-          maxFont:circleStyle.size, minFont:8 * scale, weight:"700",
-          color:circleStyle.color, align:"left", lineHeight:1
+          maxFont:circleStyle.size, minFont:8 * scale,
+          weight:"700", color:circleStyle.color, align:"left", lineHeight:1
         });
     }
 
@@ -1309,7 +1303,6 @@
         );
         const imageWidth = item.imageWidth * imageScale;
         const imageHeight = item.imageHeight * imageScale;
-
         imageBox = {
           x:x + padding,
           y:bodyY + (bodyHeight - imageHeight) / 2,
@@ -1351,7 +1344,10 @@
         const partHeight = Math.max(1, bodyHeight * part.ratio / Math.max(.01, ratioSum));
         fitText(context, part.text,
           { x:textX, y:cursorY, width:textWidth, height:partHeight },
-          { maxFont:part.max, minFont:part.min, family:part.family, weight:part.weight, color:part.color });
+          {
+            maxFont:part.max, minFont:part.min,
+            family:part.family, weight:part.weight, color:part.color
+          });
         cursorY += partHeight;
       }
 
@@ -1392,14 +1388,13 @@
         const accentHeight = social
           ? Math.max(3, Math.round(headerHeight * .025))
           : Math.max(8, Math.round(12 * trimWidth / 3307));
-
         context.fillStyle = getEl("headerAccentColor").value || selectedPalette.accent;
         context.fillRect(bleedLeft, bleedTop + headerHeight - accentHeight, trimWidth, accentHeight);
 
-        const eventStyle = getHeaderStyle("eventInfo", social ? social.eventFont : 60, "#ffffff");
-        const spaceStyle = getHeaderStyle("spaceInfo", social ? social.spaceFont : 120, "#ffffff");
-        const circleStyle = getHeaderStyle("circleInfo", social ? social.circleFont : 120, "#ffffff");
-
+        const sizes = HEADER_FONT_SIZES[paper];
+        const eventStyle = getHeaderStyle("eventInfo", sizes.event, "#ffffff");
+        const spaceStyle = getHeaderStyle("spaceInfo", sizes.space, "#ffffff");
+        const circleStyle = getHeaderStyle("circleInfo", sizes.circle, "#ffffff");
         drawHeader(context, social, headerHeight, landscape, eventStyle, spaceStyle, circleStyle);
 
         let columns = 2;
@@ -1416,7 +1411,6 @@
         const padding = social ? social.padding : Math.round(25 * scale);
         const startY = headerHeight + (social ? 10 : Math.max(24 * scale, safeY));
         const rows = Math.max(1, Math.ceil(items.length / columns));
-
         const cardWidth = Math.max(1,
           (trimWidth - marginX * 2 - gapX * (columns - 1)) / columns);
         const cardHeight = Math.max(1,
@@ -1486,19 +1480,15 @@
         try { await document.fonts.ready; } catch {}
       }
       renderCanvas();
-      await new Promise((resolve) => {
-        requestAnimationFrame(() => requestAnimationFrame(resolve));
-      });
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
-      const social = SOCIAL_PRESETS[paper];
-      if (social) {
+      if (SOCIAL_PRESETS[paper]) {
         return {
           dataUrl:canvas.toDataURL("image/png"),
           widthPx:outputWidth,
           heightPx:outputHeight,
           widthMm:outputWidth * 25.4 / 200,
-          heightMm:outputHeight * 25.4 / 200,
-          hasBleed:false
+          heightMm:outputHeight * 25.4 / 200
         };
       }
 
@@ -1509,8 +1499,7 @@
         widthPx:outputWidth,
         heightPx:outputHeight,
         widthMm:landscape ? spec.heightMm : spec.widthMm,
-        heightMm:landscape ? spec.widthMm : spec.heightMm,
-        hasBleed:true
+        heightMm:landscape ? spec.widthMm : spec.heightMm
       };
     }
 
@@ -1522,20 +1511,20 @@
 
       handle.addEventListener("pointerdown", (event) => {
         event.preventDefault();
-        const toolbarRect = toolbar.getBoundingClientRect();
-        const workspaceRect = workspace.getBoundingClientRect();
+        const t = toolbar.getBoundingClientRect();
+        const w = workspace.getBoundingClientRect();
 
-        toolbar.style.left = `${toolbarRect.left - workspaceRect.left}px`;
-        toolbar.style.top = `${toolbarRect.top - workspaceRect.top}px`;
+        toolbar.style.left = `${t.left - w.left}px`;
+        toolbar.style.top = `${t.top - w.top}px`;
         toolbar.style.right = "auto";
         toolbar.style.bottom = "auto";
 
         drag = {
           id:event.pointerId,
-          startX:event.clientX,
-          startY:event.clientY,
-          left:toolbarRect.left - workspaceRect.left,
-          top:toolbarRect.top - workspaceRect.top
+          x:event.clientX,
+          y:event.clientY,
+          left:t.left - w.left,
+          top:t.top - w.top
         };
         handle.setPointerCapture(event.pointerId);
       });
@@ -1545,11 +1534,11 @@
         const rect = workspace.getBoundingClientRect();
         toolbar.style.left = `${Math.max(0, Math.min(
           rect.width - toolbar.offsetWidth,
-          drag.left + event.clientX - drag.startX
+          drag.left + event.clientX - drag.x
         ))}px`;
         toolbar.style.top = `${Math.max(0, Math.min(
           rect.height - toolbar.offsetHeight,
-          drag.top + event.clientY - drag.startY
+          drag.top + event.clientY - drag.y
         ))}px`;
       });
 
@@ -1561,13 +1550,12 @@
     }
 
     function openPrintDialog() {
-      const isSocial = Boolean(SOCIAL_PRESETS[paper]);
+      const social = Boolean(SOCIAL_PRESETS[paper]);
       const spec = PRINT_SPECS[paper];
-
-      const widthMm = isSocial
+      const widthMm = social
         ? outputWidth * 25.4 / 200
         : (orientation === "LANDSCAPE" ? spec.heightMm : spec.widthMm);
-      const heightMm = isSocial
+      const heightMm = social
         ? outputHeight * 25.4 / 200
         : (orientation === "LANDSCAPE" ? spec.widthMm : spec.heightMm);
 
@@ -1587,13 +1575,12 @@
 
       const style = doc.createElement("style");
       style.textContent = `
-        @page { size: ${widthMm}mm ${heightMm}mm; margin: 0; }
-        html, body { margin: 0; padding: 0; }
-        body { background: #fff; }
-        img { display: block; width: ${widthMm}mm; height: ${heightMm}mm; }
+        @page { size:${widthMm}mm ${heightMm}mm; margin:0; }
+        html,body { margin:0; padding:0; }
+        img { display:block; width:${widthMm}mm; height:${heightMm}mm; }
         @media screen {
-          body { min-height: 100vh; display: grid; place-items: center; padding: 24px; background: #1e293b; }
-          img { width: min(90vw, ${widthMm}mm); height: auto; box-shadow: 0 8px 30px #0008; }
+          body { min-height:100vh; display:grid; place-items:center; padding:24px; background:#1e293b; }
+          img { width:min(90vw, ${widthMm}mm); height:auto; box-shadow:0 8px 30px #0008; }
         }
       `;
       doc.head.appendChild(style);
@@ -1602,7 +1589,6 @@
       image.alt = "印刷用プレビュー";
       image.src = canvas.toDataURL("image/png");
       doc.body.appendChild(image);
-
       image.addEventListener("load", () => {
         popup.focus();
         popup.print();
@@ -1625,9 +1611,9 @@
         "spaceInfoBgEnabled", "spaceInfoBgColor",
         "circleInfoFontSize", "circleInfoTextColor"
       ].forEach((id) => {
-        const element = getEl(id);
-        element.addEventListener("input", renderCanvas);
-        element.addEventListener("change", renderCanvas);
+        const input = getEl(id);
+        input.addEventListener("input", renderCanvas);
+        input.addEventListener("change", renderCanvas);
       });
 
       getEl("bgTypeSelect").addEventListener("change", (event) => {
@@ -1660,12 +1646,10 @@
       });
 
       getEl("addItemBtn").addEventListener("click", addItem);
-
       getEl("fitCanvasBtn").addEventListener("click", () => {
         previewMode = "fit";
         fitPreview();
       });
-
       getEl("zoomSlider").addEventListener("input", (event) => {
         previewMode = "manual";
         applyPreviewScale(Number(event.target.value) / 100);
@@ -1673,7 +1657,6 @@
 
       setupScaler();
       setupToolbarDrag();
-
       getEl("printPreviewBtn").addEventListener("click", openPrintDialog);
 
       getEl("exportPng").addEventListener("click", async () => {
