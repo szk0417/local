@@ -43,19 +43,40 @@
       background: #475569;
     }
 
+    .form-control {
+      width: 100%;
+      margin-top: .25rem;
+      border: 1px solid #334155;
+      border-radius: .5rem;
+      background: #1e293b;
+      padding: .4rem .55rem;
+      color: #e2e8f0;
+      font-size: .75rem;
+    }
+
     #canvasContainer {
-      flex: none;
       position: relative;
-      display: inline-block;
+      flex: none;
       overflow: hidden;
       line-height: 0;
+    }
+
+    /*
+      Canvasは原寸のまま保持します。
+      このステージだけをCSS transformで拡大縮小し、
+      containerは表示倍率に合わせた大きさにします。
+    */
+    #canvasStage {
+      position: absolute;
+      left: 0;
+      top: 0;
+      transform-origin: top left;
     }
 
     #oshinagakiCanvas {
       display: block;
     }
 
-    /* 編集プレビュー専用の方眼。PNG/PDFには含まれません。 */
     .grid-overlay {
       position: absolute;
       inset: 0;
@@ -67,21 +88,10 @@
         linear-gradient(to right, rgba(15, 23, 42, .12) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(15, 23, 42, .12) 1px, transparent 1px);
       background-size:
-        calc(100px * var(--preview-scale, 1)) calc(100px * var(--preview-scale, 1)),
-        calc(100px * var(--preview-scale, 1)) calc(100px * var(--preview-scale, 1)),
-        calc(20px * var(--preview-scale, 1)) calc(20px * var(--preview-scale, 1)),
-        calc(20px * var(--preview-scale, 1)) calc(20px * var(--preview-scale, 1));
-    }
-
-    .form-control {
-      width: 100%;
-      margin-top: .25rem;
-      border: 1px solid #334155;
-      border-radius: .5rem;
-      background: #1e293b;
-      padding: .4rem .55rem;
-      color: #e2e8f0;
-      font-size: .75rem;
+        100px 100px,
+        100px 100px,
+        20px 20px,
+        20px 20px;
     }
   </style>
 </head>
@@ -102,12 +112,22 @@
     </div>
 
     <div class="flex items-center gap-2 shrink-0">
-      <button id="exportPng" type="button" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 sm:px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
+      <button id="printPreviewBtn" type="button"
+        class="bg-slate-600 hover:bg-slate-500 text-white text-xs font-bold px-3 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
+        <i data-lucide="printer" class="w-4 h-4"></i>
+        <span class="hidden sm:inline">印刷プレビュー</span>
+        <span class="sm:hidden">印刷</span>
+      </button>
+
+      <button id="exportPng" type="button"
+        class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 sm:px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
         <i data-lucide="image" class="w-4 h-4"></i>
         <span class="hidden sm:inline">PNG画像で保存</span>
         <span class="sm:hidden">PNG</span>
       </button>
-      <button id="exportPdf" type="button" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-3 sm:px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
+
+      <button id="exportPdf" type="button"
+        class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-3 sm:px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
         <i data-lucide="file-text" class="w-4 h-4"></i>
         <span class="hidden sm:inline">PDFで保存</span>
         <span class="sm:hidden">PDF</span>
@@ -117,7 +137,7 @@
 
   <div class="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
 
-    <!-- 左：設定フォーム -->
+    <!-- 左：デザイン・情報入力 -->
     <aside class="w-full md:w-[400px] lg:w-[440px] bg-slate-800 border-r border-slate-700 flex flex-col shrink-0 overflow-hidden max-h-[48vh] md:max-h-none">
       <div class="p-4 border-b border-slate-700 flex justify-between items-center bg-slate-800/80 shrink-0">
         <h2 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
@@ -131,11 +151,13 @@
 
       <div class="flex-1 overflow-y-auto p-4 space-y-4">
 
+        <!-- 用紙・向き -->
         <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
           <h3 class="text-xs font-bold text-rose-400 flex items-center gap-1">
             <i data-lucide="layout" class="w-3.5 h-3.5"></i>
             レイアウト・用紙設定
           </h3>
+
           <div class="grid grid-cols-2 gap-2">
             <label class="text-[11px] text-slate-400">
               用紙向き
@@ -144,10 +166,12 @@
                 <option value="PORTRAIT">縦向き</option>
               </select>
             </label>
+
             <label class="text-[11px] text-slate-400">
               用紙サイズ
               <select id="paperSizeSelect" class="form-control">
-                <option value="A3">A3 (200dpi)</option>
+                <option value="A2">A2 (200dpi)</option>
+                <option value="A3" selected>A3 (200dpi)</option>
                 <option value="A4">A4 (200dpi)</option>
               </select>
             </label>
@@ -227,6 +251,7 @@
               サークル名
               <input id="circleName" type="text" value="暁の稜線" class="form-control">
             </label>
+
             <label class="block text-[11px] text-slate-400">
               スペース番号
               <input id="spaceNo" type="text" value="東7ホール あ-01a" class="form-control">
@@ -244,6 +269,7 @@
               <input id="headerBgColor" type="color" value="#3b0a1e"
                 class="mt-1 h-9 w-full rounded border border-slate-700 bg-slate-800 p-1">
             </label>
+
             <label class="text-[10px] text-slate-400">
               アクセント色
               <input id="headerAccentColor" type="color" value="#fb7185"
@@ -391,9 +417,11 @@
         </label>
       </div>
 
-      <div id="canvasContainer" class="relative shadow-2xl border border-slate-700/50 bg-white overflow-hidden">
-        <canvas id="oshinagakiCanvas"></canvas>
-        <div id="gridOverlay" class="grid-overlay hidden" aria-hidden="true"></div>
+      <div id="canvasContainer" class="shadow-2xl border border-slate-700/50 bg-white">
+        <div id="canvasStage">
+          <canvas id="oshinagakiCanvas"></canvas>
+          <div id="gridOverlay" class="grid-overlay hidden" aria-hidden="true"></div>
+        </div>
       </div>
     </main>
   </div>
@@ -488,7 +516,14 @@
       }
     };
 
+    const PAPER_MM = {
+      A2: { width: 420, height: 594 },
+      A3: { width: 297, height: 420 },
+      A4: { width: 210, height: 297 }
+    };
+
     const SPECS = {
+      A2: { width: 4677, height: 3307 },
       A3: { width: 3307, height: 2339 },
       A4: { width: 2339, height: 1654 }
     };
@@ -511,7 +546,8 @@
         title: "新刊サンプルタイトル",
         price: "¥ 1,000",
         desc: "文庫サイズ / 120P / 全年齢\n特製ノベルティステッカー付き",
-        imageSrc: null
+        imageSrc: null,
+        noImage: false
       },
       {
         category: "既刊",
@@ -519,7 +555,8 @@
         title: "既刊イラスト集",
         price: "¥ 500",
         desc: "B5 / 24P / フルカラー\n過去イラストまとめ冊子",
-        imageSrc: null
+        imageSrc: null,
+        noImage: false
       }
     ];
 
@@ -541,6 +578,10 @@
         selection: false,
         enableRetinaScaling: true
       });
+
+      const stage = document.getElementById("canvasStage");
+      stage.style.width = `${CANVAS_WIDTH}px`;
+      stage.style.height = `${CANVAS_HEIGHT}px`;
     }
 
     function escapeHtml(value) {
@@ -633,6 +674,10 @@
         height: CANVAS_HEIGHT
       });
 
+      const stage = document.getElementById("canvasStage");
+      stage.style.width = `${CANVAS_WIDTH}px`;
+      stage.style.height = `${CANVAS_HEIGHT}px`;
+
       const orientationLabel = currentOrientation === "LANDSCAPE" ? "横" : "縦";
       const paperLabel =
         `${currentPaperSize}${orientationLabel} (${CANVAS_WIDTH} × ${CANVAS_HEIGHT}px / 200dpi)`;
@@ -723,10 +768,18 @@
               class="form-control h-14 resize-y">${escapeHtml(item.desc)}</textarea>
           </label>
 
+          <label class="flex items-center gap-2 text-[10px] text-slate-300">
+            <input type="checkbox" data-item-noimage="${index}"
+              ${item.noImage ? "checked" : ""}
+              class="accent-rose-500">
+            画像なし（テキスト欄を広く表示）
+          </label>
+
           <label class="block text-[10px] text-slate-400">
             個別に画像を選択
             <input type="file" accept="image/*" data-item-image="${index}"
-              class="mt-1 w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600 cursor-pointer">
+              ${item.noImage ? "disabled" : ""}
+              class="mt-1 w-full text-[11px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-slate-700 file:text-slate-200 hover:file:bg-slate-600 cursor-pointer disabled:opacity-50">
           </label>
         `;
 
@@ -786,6 +839,26 @@
           handleSingleImageUpload(Number(input.dataset.itemImage), input);
         });
       });
+
+      container.querySelectorAll("[data-item-noimage]").forEach((checkbox) => {
+        checkbox.addEventListener("change", () => {
+          const index = Number(checkbox.dataset.itemNoimage);
+          if (!items[index]) return;
+
+          items[index].noImage = checkbox.checked;
+
+          const imageInput = container.querySelector(
+            `[data-item-image="${index}"]`
+          );
+
+          if (imageInput) {
+            imageInput.disabled = checkbox.checked;
+            if (checkbox.checked) imageInput.value = "";
+          }
+
+          generateOshinagaki();
+        });
+      });
     }
 
     function addItem() {
@@ -795,7 +868,8 @@
         title: `頒布物 #${items.length + 1}`,
         price: "¥ 500",
         desc: "",
-        imageSrc: null
+        imageSrc: null,
+        noImage: false
       });
 
       renderFormItems();
@@ -824,6 +898,7 @@
       const reader = new FileReader();
       reader.onload = (event) => {
         items[index].imageSrc = event.target.result;
+        items[index].noImage = false;
         generateOshinagaki();
       };
       reader.readAsDataURL(file);
@@ -850,6 +925,7 @@
         imageSources.forEach((imageSrc, index) => {
           if (index < items.length) {
             items[index].imageSrc = imageSrc;
+            items[index].noImage = false;
           } else {
             items.push({
               category: "新刊",
@@ -857,7 +933,8 @@
               title: `新刊アイテム ${index + 1}`,
               price: "¥ 500",
               desc: "",
-              imageSrc
+              imageSrc,
+              noImage: false
             });
           }
         });
@@ -889,9 +966,6 @@
         context.fillStyle = colorHex;
         context.fillRect(0, 0, size / 2, size);
       } else if (patternStyle === "diagonal") {
-        /*
-          周期をタイル寸法に合わせ、隣接タイルでも斜線が続くようにします。
-        */
         const period = size / Math.sqrt(2);
         const stripeWidth = period / 3;
 
@@ -981,15 +1055,10 @@
       return CATEGORY_STYLES[category] || CATEGORY_STYLES["新刊"];
     }
 
-    /*
-      フォント倍率に応じた頒布物テキストを作り、
-      Fabric.jsのオブジェクト寸法から高さを計算します。
-    */
     function createItemTextBlock(item, textWidth, fontScale) {
       const categoryStyle = getCategoryStyle(item.category);
       const isR18 = item.ageRating === "R18";
       const entries = [];
-
       const scaled = (size) => Math.max(1, size * fontScale);
 
       entries.push({
@@ -1084,10 +1153,6 @@
       return { entries: objects, totalHeight };
     }
 
-    /*
-      テキストの折り返し後の高さを計測し、
-      カード内に収まる最大のフォントサイズを二分探索します。
-    */
     function fitItemTextBlock(item, textWidth, availableHeight) {
       let low = 0.001;
       let high = 1;
@@ -1109,7 +1174,7 @@
     }
 
     function addImageToCanvas(item, imageBox, thisGeneration, textAnchor) {
-      if (!item.imageSrc) return;
+      if (!item.imageSrc || item.noImage) return;
 
       fabric.Image.fromURL(item.imageSrc, (image) => {
         if (!image || thisGeneration !== generationId) return;
@@ -1124,14 +1189,16 @@
           top: imageBox.top + (imageBox.height - image.height * scale) / 2,
           scaleX: scale,
           scaleY: scale,
+          shadow: new fabric.Shadow({
+            color: "rgba(15, 23, 42, 0.35)",
+            blur: 24,
+            offsetX: 0,
+            offsetY: 10
+          }),
           selectable: false,
           evented: false
         });
 
-        /*
-          画像読み込みが非同期でも、テキストより手前に来ないよう
-          カテゴリラベルの直前へ挿入します。
-        */
         const anchorIndex = canvas.getObjects().indexOf(textAnchor);
         if (anchorIndex >= 0) {
           canvas.insertAt(image, anchorIndex, false);
@@ -1258,18 +1325,15 @@
         }));
       }
 
-      // 頒布物カードの段組
-      const itemCount = items.length;
       let columns = 2;
-
       if (isLandscape) {
-        if (itemCount <= 1) columns = 1;
-        else if (itemCount > 4) columns = 3;
-      } else if (itemCount <= 3) {
+        if (items.length <= 1) columns = 1;
+        else if (items.length > 4) columns = 3;
+      } else if (items.length <= 3) {
         columns = 1;
       }
 
-      const rows = Math.ceil(itemCount / columns);
+      const rows = Math.ceil(items.length / columns);
       const startY = headerHeight + 50;
       const marginX = 70;
       const marginY = 40;
@@ -1288,6 +1352,7 @@
         const posX = marginX + column * (slotWidth + gapX);
         const posY = startY + row * (slotHeight + gapY);
         const padding = 25;
+        const hasImage = Boolean(item.imageSrc) && !item.noImage;
 
         canvas.add(new fabric.Rect({
           left: posX,
@@ -1303,33 +1368,34 @@
           evented: false
         }));
 
-        const imageWidth = slotWidth * (isLandscape ? 0.38 : 0.36);
-        const imageHeight = Math.max(1, slotHeight - padding * 2);
-        const imageLeft = posX + padding;
-        const imageTop = posY + padding;
+        let imageBox = null;
+        let textX;
+        let textWidth;
 
-        canvas.add(new fabric.Rect({
-          left: imageLeft,
-          top: imageTop,
-          width: imageWidth,
-          height: imageHeight,
-          fill: "#f1f5f9",
-          rx: 12,
-          ry: 12,
-          selectable: false,
-          evented: false
-        }));
+        if (hasImage) {
+          const imageWidth = slotWidth * (isLandscape ? 0.38 : 0.36);
+          const imageHeight = Math.max(1, slotHeight - padding * 2);
 
-        const textX = imageLeft + imageWidth + 25;
-        const textWidth = Math.max(1, posX + slotWidth - padding - textX);
+          imageBox = {
+            left: posX + padding,
+            top: posY + padding,
+            width: imageWidth,
+            height: imageHeight
+          };
+
+          textX = imageBox.left + imageBox.width + 25;
+          textWidth = Math.max(
+            1,
+            posX + slotWidth - padding - textX
+          );
+        } else {
+          textX = posX + padding;
+          textWidth = Math.max(1, slotWidth - padding * 2);
+        }
+
         const textTop = posY + padding;
         const textHeight = Math.max(1, slotHeight - padding * 2);
-
-        const fittedBlock = fitItemTextBlock(
-          item,
-          textWidth,
-          textHeight
-        );
+        const fittedBlock = fitItemTextBlock(item, textWidth, textHeight);
 
         let currentY = textTop;
         let categoryAnchor = null;
@@ -1348,64 +1414,39 @@
           currentY += entry.object.getScaledHeight() + entry.gapAfter;
         });
 
-        if (item.imageSrc) {
+        if (hasImage && imageBox) {
           addImageToCanvas(
             item,
-            {
-              left: imageLeft,
-              top: imageTop,
-              width: imageWidth,
-              height: imageHeight
-            },
+            imageBox,
             thisGeneration,
             categoryAnchor
           );
-        } else {
-          canvas.add(new fabric.Text("NO IMAGE", {
-            left: imageLeft + imageWidth / 2,
-            top: imageTop + imageHeight / 2,
-            originX: "center",
-            originY: "center",
-            fontSize: 32,
-            fontFamily: "Noto Sans JP",
-            fill: "#94a3b8",
-            selectable: false,
-            evented: false
-          }));
         }
       });
 
       canvas.renderAll();
     }
 
-    /*
-      プレビューのスケールはFabricのCSSサイズとviewportTransformの両方に
-      適用します。論理キャンバス寸法は印刷・出力用として維持します。
-    */
     function applyPreviewScale(scale) {
       if (!canvas) return;
 
-      const canvasContainer = document.getElementById("canvasContainer");
-      const gridOverlay = document.getElementById("gridOverlay");
+      const container = document.getElementById("canvasContainer");
+      const stage = document.getElementById("canvasStage");
+      const overlay = document.getElementById("gridOverlay");
       const safeScale = Number.isFinite(scale) && scale > 0 ? scale : 1;
 
-      canvas.setDimensions(
-        {
-          width: CANVAS_WIDTH * safeScale,
-          height: CANVAS_HEIGHT * safeScale
-        },
-        { cssOnly: true }
-      );
+      stage.style.width = `${CANVAS_WIDTH}px`;
+      stage.style.height = `${CANVAS_HEIGHT}px`;
+      stage.style.transform = `scale(${safeScale})`;
 
-      canvas.setViewportTransform([
-        safeScale, 0,
-        0, safeScale,
-        0, 0
-      ]);
-
-      canvasContainer.style.width = `${CANVAS_WIDTH * safeScale}px`;
-      canvasContainer.style.height = `${CANVAS_HEIGHT * safeScale}px`;
-      gridOverlay.style.setProperty("--preview-scale", String(safeScale));
+      container.style.width = `${CANVAS_WIDTH * safeScale}px`;
+      container.style.height = `${CANVAS_HEIGHT * safeScale}px`;
+      overlay.style.backgroundSize = [
+        `${100 * safeScale}px ${100 * safeScale}px`,
+        `${100 * safeScale}px ${100 * safeScale}px`,
+        `${20 * safeScale}px ${20 * safeScale}px`,
+        `${20 * safeScale}px ${20 * safeScale}px`
+      ].join(", ");
 
       canvas.calcOffset();
       canvas.requestRenderAll();
@@ -1466,6 +1507,163 @@
       });
 
       requestAnimationFrame(fitCanvasToWorkspace);
+    }
+
+    function getCanvasExportDataURL() {
+      /*
+        ステージだけがCSS変換されているので、
+        Fabricキャンバス自体は原寸のままPNGに書き出されます。
+      */
+      return canvas.toDataURL({
+        format: "png",
+        multiplier: 1
+      });
+    }
+
+    function openPrintPreview() {
+      const dataURL = getCanvasExportDataURL();
+      const previewWindow = window.open("", "_blank");
+
+      if (!previewWindow) {
+        alert("印刷プレビューを開けませんでした。ポップアップを許可してください。");
+        return;
+      }
+
+      const isLandscape = currentOrientation === "LANDSCAPE";
+      const orientation = isLandscape ? "landscape" : "portrait";
+      const paper = PAPER_MM[currentPaperSize];
+      const printWidthMm = isLandscape ? paper.height : paper.width;
+      const printHeightMm = isLandscape ? paper.width : paper.height;
+
+      previewWindow.document.open();
+      previewWindow.document.write(`<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>印刷プレビュー</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: sans-serif;
+    }
+    body {
+      background: #1e293b;
+      color: #f8fafc;
+    }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 10px 14px;
+      background: #0f172a;
+      border-bottom: 1px solid #334155;
+    }
+    .toolbar button {
+      border: 0;
+      border-radius: 6px;
+      padding: 8px 12px;
+      color: white;
+      background: #334155;
+      cursor: pointer;
+    }
+    .toolbar button:hover { background: #475569; }
+    .toolbar .print-button { background: #e11d48; }
+    .preview-area {
+      height: calc(100vh - 60px);
+      overflow: auto;
+      padding: 24px;
+    }
+    .sheet {
+      width: ${CANVAS_WIDTH}px;
+      height: ${CANVAS_HEIGHT}px;
+      margin: 0 auto;
+      background: white;
+      box-shadow: 0 8px 30px rgba(0,0,0,.4);
+    }
+    .sheet img {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    body.fit .sheet {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+    }
+    body.fit .sheet img {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      max-height: calc(100vh - 120px);
+      object-fit: contain;
+    }
+    @page {
+      size: ${currentPaperSize} ${orientation};
+      margin: 0;
+    }
+    @media print {
+      html, body {
+        width: ${printWidthMm}mm;
+        height: ${printHeightMm}mm;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: white;
+      }
+      .toolbar { display: none !important; }
+      .preview-area {
+        width: ${printWidthMm}mm;
+        height: ${printHeightMm}mm;
+        overflow: hidden;
+        padding: 0;
+      }
+      .sheet {
+        width: ${printWidthMm}mm !important;
+        height: ${printHeightMm}mm !important;
+        margin: 0 !important;
+        box-shadow: none;
+      }
+      .sheet img {
+        width: ${printWidthMm}mm !important;
+        height: ${printHeightMm}mm !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <strong>印刷プレビュー</strong>
+    <button id="actualSizeButton" type="button">100%表示</button>
+    <button id="fitButton" type="button">画面に合わせる</button>
+    <button id="printButton" type="button" class="print-button">印刷</button>
+    <span>${currentPaperSize}${isLandscape ? "横" : "縦"}・${CANVAS_WIDTH} × ${CANVAS_HEIGHT}px</span>
+  </div>
+  <main class="preview-area">
+    <div class="sheet">
+      <img src="${dataURL}" alt="おしながき印刷プレビュー">
+    </div>
+  </main>
+  <script>
+    document.getElementById("actualSizeButton").addEventListener("click", () => {
+      document.body.classList.remove("fit");
+    });
+    document.getElementById("fitButton").addEventListener("click", () => {
+      document.body.classList.add("fit");
+    });
+    document.getElementById("printButton").addEventListener("click", () => {
+      window.print();
+    });
+  <\/script>
+</body>
+</html>`);
+      previewWindow.document.close();
     }
 
     function setupEventListeners() {
@@ -1558,12 +1756,11 @@
         applyPreviewScale(Number(event.target.value) / 100);
       });
 
-      document.getElementById("exportPng").addEventListener("click", () => {
-        const dataURL = canvas.toDataURL({
-          format: "png",
-          multiplier: 1
-        });
+      document.getElementById("printPreviewBtn")
+        .addEventListener("click", openPrintPreview);
 
+      document.getElementById("exportPng").addEventListener("click", () => {
+        const dataURL = getCanvasExportDataURL();
         const link = document.createElement("a");
         link.download =
           `oshinagaki_${currentPaperSize}_${currentOrientation}.png`;
@@ -1572,11 +1769,7 @@
       });
 
       document.getElementById("exportPdf").addEventListener("click", () => {
-        const dataURL = canvas.toDataURL({
-          format: "png",
-          multiplier: 1
-        });
-
+        const dataURL = getCanvasExportDataURL();
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF(
           currentOrientation === "LANDSCAPE" ? "landscape" : "portrait",
