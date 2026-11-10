@@ -51,11 +51,33 @@
     #oshinagakiCanvas {
       display: block;
     }
+
+    /*
+      プレビュー専用の方眼ガイド。
+      canvasContainer に重ねて表示するため、PNG/PDFには含まれません。
+    */
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(15, 23, 42, .24) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, .24) 1px, transparent 1px),
+        linear-gradient(to right, rgba(15, 23, 42, .12) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(15, 23, 42, .12) 1px, transparent 1px);
+      background-size:
+        100px 100px,
+        100px 100px,
+        20px 20px,
+        20px 20px;
+    }
   </style>
 </head>
 
 <body class="h-full flex flex-col bg-slate-900 text-slate-100 font-sans overflow-hidden">
 
+  <!-- ヘッダー -->
   <header class="bg-slate-800 border-b border-slate-700 px-4 py-3 flex items-center justify-between gap-3 shrink-0">
     <div class="flex items-center gap-2.5 min-w-0">
       <div class="bg-gradient-to-r from-rose-500 to-purple-600 p-2 rounded-lg shadow shrink-0">
@@ -63,17 +85,19 @@
       </div>
       <div class="min-w-0">
         <h1 class="text-sm sm:text-base font-bold leading-tight">同人おしながきジェネレーター</h1>
-        <p class="text-[10px] sm:text-[11px] text-slate-400 truncate" id="paperSpecLabel">A3横 (3307 × 2339px / 200dpi)</p>
+        <p class="text-[10px] sm:text-[11px] text-slate-400 truncate" id="paperSpecLabel">
+          A3横 (3307 × 2339px / 200dpi)
+        </p>
       </div>
     </div>
 
     <div class="flex items-center gap-2 shrink-0">
-      <button id="exportPng" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 sm:px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
+      <button id="exportPng" type="button" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3 sm:px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
         <i data-lucide="image" class="w-4 h-4"></i>
         <span class="hidden sm:inline">PNG画像で保存</span>
         <span class="sm:hidden">PNG</span>
       </button>
-      <button id="exportPdf" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-3 sm:px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
+      <button id="exportPdf" type="button" class="bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold px-3 sm:px-4 py-2 rounded-lg flex items-center gap-1.5 shadow transition">
         <i data-lucide="file-text" class="w-4 h-4"></i>
         <span class="hidden sm:inline">PDFで保存</span>
         <span class="sm:hidden">PDF</span>
@@ -81,6 +105,7 @@
     </div>
   </header>
 
+  <!-- メインコンテンツ -->
   <div class="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
 
     <!-- 左：デザイン・情報入力 -->
@@ -103,6 +128,7 @@
             <i data-lucide="layout" class="w-3.5 h-3.5"></i>
             レイアウト・用紙設定
           </h3>
+
           <div class="grid grid-cols-2 gap-2">
             <label class="text-[11px] text-slate-400">
               用紙向き
@@ -121,7 +147,7 @@
           </div>
         </section>
 
-        <!-- 背景 -->
+        <!-- 背景デザイン -->
         <section class="space-y-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
           <h3 class="text-xs font-bold text-rose-400 flex items-center gap-1">
             <i data-lucide="palette" class="w-3.5 h-3.5"></i>
@@ -172,7 +198,7 @@
           </div>
         </section>
 
-        <!-- 頒布物画像 -->
+        <!-- 頒布物画像一括アップロード -->
         <section class="space-y-2 bg-slate-900/60 p-3.5 rounded-xl border border-slate-700/60">
           <h3 class="text-xs font-bold text-rose-400 flex items-center gap-1">
             <i data-lucide="images" class="w-3.5 h-3.5"></i>
@@ -219,7 +245,7 @@
           </div>
         </section>
 
-        <!-- 頒布物一覧 -->
+        <!-- 頒布物一覧・一括入力 -->
         <section>
           <div class="flex justify-between items-center mb-2">
             <h3 class="text-xs font-bold text-rose-400 flex items-center gap-1">
@@ -231,6 +257,25 @@
               追加
             </button>
           </div>
+
+          <div class="mb-3 space-y-2 rounded-xl border border-slate-700 bg-slate-900/80 p-3">
+            <label for="bulkItemsInput" class="block text-[11px] font-bold text-slate-300">
+              頒布物情報をまとめて入力
+            </label>
+            <textarea
+              id="bulkItemsInput"
+              rows="5"
+              placeholder="新刊サンプル | 新刊 | ¥1,000 | 文庫サイズ / 120P&#10;既刊イラスト集 | 既刊 | ¥500 | B5 / 24P&#10;ペーパー | 無料配布 | | ご自由にお持ちください"
+              class="w-full resize-y rounded-lg border border-slate-700 bg-slate-800 px-2.5 py-2 text-xs text-slate-200"
+            ></textarea>
+            <p class="text-[10px] text-slate-400">
+              1行に1件。「タイトル | 新刊/既刊/無料配布 | 値段 | 説明」の順です。無料配布の値段は空欄にできます。
+            </p>
+            <button id="applyBulkItemsBtn" type="button" class="w-full rounded-lg bg-rose-600 py-2 text-xs font-bold text-white hover:bg-rose-500">
+              一括入力を反映
+            </button>
+          </div>
+
           <div id="itemsContainer" class="space-y-3"></div>
         </section>
       </div>
@@ -238,14 +283,20 @@
 
     <!-- 右：プレビュー -->
     <main id="workspace" class="flex-1 min-w-0 bg-slate-950 flex items-center justify-center p-3 sm:p-5 overflow-hidden relative">
-      <div class="absolute top-3 left-3 z-10 bg-slate-800/80 backdrop-blur border border-slate-700 rounded-full px-3 py-1 text-[11px] text-slate-300 flex items-center gap-2 shadow">
+      <div class="absolute top-3 left-3 z-20 bg-slate-800/80 backdrop-blur border border-slate-700 rounded-full px-3 py-1 text-[11px] text-slate-300 flex items-center gap-2 shadow">
         <span id="zoomDisplay">表示: --%</span>
         <span class="text-slate-600">|</span>
         <span id="dimensionDisplay" class="text-slate-400">A3横</span>
       </div>
 
+      <label class="absolute top-3 right-3 z-20 flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-800/90 px-3 py-2 text-xs text-slate-200 shadow">
+        <input id="toggleGrid" type="checkbox" class="accent-rose-500">
+        方眼ガイド
+      </label>
+
       <div id="canvasContainer" class="relative shadow-2xl border border-slate-700/50 bg-white overflow-hidden">
         <canvas id="oshinagakiCanvas"></canvas>
+        <div id="gridOverlay" class="grid-overlay hidden" aria-hidden="true"></div>
       </div>
     </main>
   </div>
@@ -253,6 +304,7 @@
   <script>
     lucide.createIcons();
 
+    // 規定カラー：赤・ピンク・オレンジ・緑・青・紫・グレー
     const PRESET_COLORS = [
       { name: "赤", hex: "#fca5a5", main: "#e11d48" },
       { name: "ピンク", hex: "#f472b6", main: "#db2777" },
@@ -280,14 +332,14 @@
 
     let items = [
       {
-        badge: "新 刊",
+        category: "新刊",
         title: "新刊サンプルタイトル",
         price: "¥ 1,000",
         desc: "文庫サイズ / 120P / 全年齢\n特製ノベルティステッカー付き",
         imageSrc: null
       },
       {
-        badge: "既 刊",
+        category: "既刊",
         title: "既刊イラスト集",
         price: "¥ 500",
         desc: "B5 / 24P / フルカラー\n過去イラストまとめ冊子",
@@ -347,9 +399,9 @@
         button.addEventListener("click", () => {
           selectedPresetColor = color;
 
-          container.querySelectorAll("button").forEach((item) => {
-            item.classList.remove("ring-2", "ring-rose-500", "border-slate-500", "bg-slate-800");
-            item.classList.add("border-slate-700", "bg-slate-900");
+          container.querySelectorAll("button").forEach((paletteButton) => {
+            paletteButton.classList.remove("ring-2", "ring-rose-500", "border-slate-500", "bg-slate-800");
+            paletteButton.classList.add("border-slate-700", "bg-slate-900");
           });
 
           button.classList.add("ring-2", "ring-rose-500", "border-slate-500", "bg-slate-800");
@@ -388,7 +440,10 @@
       document.getElementById("dimensionDisplay").textContent =
         `${currentPaperSize}${orientationLabel} (${CANVAS_WIDTH}×${CANVAS_HEIGHT}px)`;
 
-      if (resizeCanvasToFit) resizeCanvasToFit();
+      if (resizeCanvasToFit) {
+        resizeCanvasToFit();
+      }
+
       generateOshinagaki();
     }
 
@@ -411,11 +466,15 @@
           </div>
 
           <div class="grid grid-cols-3 gap-2">
-            <input type="text" data-item-index="${index}" data-item-key="badge"
-              value="${escapeHtml(item.badge)}" placeholder="新刊/既刊"
-              class="w-full bg-slate-800 border border-slate-700 rounded px-2 py-1.5 text-xs text-rose-400 font-bold">
+            <select data-item-index="${index}" data-item-key="category"
+              class="w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-xs font-bold text-rose-400">
+              <option value="新刊" ${item.category === "新刊" ? "selected" : ""}>新刊</option>
+              <option value="既刊" ${item.category === "既刊" ? "selected" : ""}>既刊</option>
+              <option value="無料配布" ${item.category === "無料配布" ? "selected" : ""}>無料配布</option>
+            </select>
             <input type="text" data-item-index="${index}" data-item-key="price"
-              value="${escapeHtml(item.price)}" placeholder="価格 (例: ¥500)"
+              value="${escapeHtml(item.price || "")}"
+              placeholder="値段（無料は空欄）"
               class="col-span-2 w-full bg-slate-800 border border-slate-700 rounded px-2 py-1.5 text-xs text-slate-200">
           </div>
 
@@ -440,12 +499,28 @@
       lucide.createIcons();
 
       container.querySelectorAll("[data-item-index]").forEach((input) => {
-        input.addEventListener("input", () => {
+        const updateItemField = () => {
           const index = Number(input.dataset.itemIndex);
           const key = input.dataset.itemKey;
+
+          if (!items[index]) return;
+
           items[index][key] = input.value;
+
+          if (key === "category" && input.value === "無料配布") {
+            items[index].price = "";
+
+            const priceInput = container.querySelector(
+              `[data-item-index="${index}"][data-item-key="price"]`
+            );
+            if (priceInput) priceInput.value = "";
+          }
+
           generateOshinagaki();
-        });
+        };
+
+        input.addEventListener("input", updateItemField);
+        input.addEventListener("change", updateItemField);
       });
 
       container.querySelectorAll("[data-remove-item]").forEach((button) => {
@@ -463,7 +538,7 @@
 
     function addItem() {
       items.push({
-        badge: "新 刊",
+        category: "新刊",
         title: `頒布物 #${items.length + 1}`,
         price: "¥ 500",
         desc: "説明テキストを入力してください",
@@ -482,47 +557,53 @@
 
     function handleSingleImageUpload(index, input) {
       const file = input.files && input.files[0];
-      if (!file) return;
+      if (!file || !items[index]) return;
 
       const reader = new FileReader();
+
       reader.onload = (event) => {
         items[index].imageSrc = event.target.result;
         generateOshinagaki();
       };
+
       reader.readAsDataURL(file);
     }
 
-    function handleBatchImageUpload(fileList) {
+    function readFileAsDataURL(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error(`画像を読み込めませんでした: ${file.name}`));
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleBatchImageUpload(fileList) {
       const files = Array.from(fileList || []);
       if (files.length === 0) return;
 
-      let loadedCount = 0;
+      try {
+        const imageSources = await Promise.all(files.map(readFileAsDataURL));
 
-      files.forEach((file, index) => {
-        const reader = new FileReader();
-
-        reader.onload = (event) => {
+        imageSources.forEach((imageSrc, index) => {
           if (index < items.length) {
-            items[index].imageSrc = event.target.result;
+            items[index].imageSrc = imageSrc;
           } else {
             items.push({
-              badge: "新 刊",
+              category: "新刊",
               title: `新刊アイテム ${index + 1}`,
               price: "¥ 500",
               desc: "スペック等の説明",
-              imageSrc: event.target.result
+              imageSrc
             });
           }
+        });
 
-          loadedCount += 1;
-          if (loadedCount === files.length) {
-            renderFormItems();
-            generateOshinagaki();
-          }
-        };
-
-        reader.readAsDataURL(file);
-      });
+        renderFormItems();
+        generateOshinagaki();
+      } catch (error) {
+        alert(error.message);
+      }
     }
 
     function createPatternCanvas(patternStyle, colorHex) {
@@ -573,6 +654,10 @@
       return patternCanvas;
     }
 
+    /*
+      パターンはFabric.jsの背景色ではなく、キャンバス全体を覆う
+      最背面の矩形として描画します。これによりプレビュー・出力に反映されます。
+    */
     function applyBackground() {
       const bgType = document.getElementById("bgTypeSelect").value;
 
@@ -581,28 +666,23 @@
 
       if (bgType === "color") {
         canvas.setBackgroundColor(document.getElementById("bgColorPicker").value);
-        return;
+        return null;
       }
 
       if (bgType === "custom" && customBgImageObj) {
-        canvas.setBackgroundImage(
-          customBgImageObj,
-          null,
-          {
-            originX: "left",
-            originY: "top",
-            left: 0,
-            top: 0,
-            scaleX: CANVAS_WIDTH / customBgImageObj.width,
-            scaleY: CANVAS_HEIGHT / customBgImageObj.height
-          }
-        );
-        return;
+        canvas.setBackgroundImage(customBgImageObj, null, {
+          originX: "left",
+          originY: "top",
+          left: 0,
+          top: 0,
+          scaleX: CANVAS_WIDTH / customBgImageObj.width,
+          scaleY: CANVAS_HEIGHT / customBgImageObj.height
+        });
+        return null;
       }
 
       if (bgType === "custom") {
-        canvas.setBackgroundColor("#ffffff");
-        return;
+        return null;
       }
 
       const patternCanvas = createPatternCanvas(
@@ -610,16 +690,10 @@
         selectedPresetColor.hex
       );
 
-      const pattern = new fabric.Pattern({
+      return new fabric.Pattern({
         source: patternCanvas,
         repeat: "repeat"
       });
-
-      canvas.setBackgroundColor(pattern);
-    }
-
-    function addText(text, options) {
-      canvas.add(new fabric.Text(text, options));
     }
 
     function generateOshinagaki() {
@@ -627,7 +701,21 @@
 
       const thisGeneration = ++generationId;
       canvas.clear();
-      applyBackground();
+
+      const patternFill = applyBackground();
+
+      if (patternFill) {
+        canvas.add(new fabric.Rect({
+          left: 0,
+          top: 0,
+          width: CANVAS_WIDTH,
+          height: CANVAS_HEIGHT,
+          fill: patternFill,
+          selectable: false,
+          evented: false,
+          excludeFromExport: false
+        }));
+      }
 
       const eventDate = document.getElementById("eventDate").value;
       const eventName = document.getElementById("eventName").value;
@@ -658,7 +746,7 @@
         evented: false
       }));
 
-      const eventText = new fabric.Textbox(`${eventDate}  |  ${eventName}`, {
+      canvas.add(new fabric.Textbox(`${eventDate}  |  ${eventName}`, {
         left: 80,
         top: isLandscape ? 55 : 60,
         width: CANVAS_WIDTH - 160,
@@ -667,10 +755,9 @@
         fill: "#cbd5e1",
         selectable: false,
         evented: false
-      });
-      canvas.add(eventText);
+      }));
 
-      const circleText = new fabric.Textbox(circleName, {
+      canvas.add(new fabric.Textbox(circleName, {
         left: 80,
         top: isLandscape ? 130 : 135,
         width: isLandscape ? CANVAS_WIDTH - 1000 : CANVAS_WIDTH - 160,
@@ -680,8 +767,7 @@
         fill: "#ffffff",
         selectable: false,
         evented: false
-      });
-      canvas.add(circleText);
+      }));
 
       if (spaceNo) {
         const badgeLeft = isLandscape ? CANVAS_WIDTH - 850 : 80;
@@ -721,7 +807,9 @@
       const gapX = 40;
       const gapY = 40;
 
-      const cardWidth = (CANVAS_WIDTH - marginX * 2 - gapX * (columns - 1)) / columns;
+      const cardWidth =
+        (CANVAS_WIDTH - marginX * 2 - gapX * (columns - 1)) / columns;
+
       const cardHeight = rows > 0
         ? (CANVAS_HEIGHT - startY - marginY - gapY * (rows - 1)) / rows
         : 0;
@@ -799,24 +887,28 @@
         }
 
         const textX = posX + innerPadding + imageWidth + 25;
-        const textWidth = Math.max(100, cardWidth - imageWidth - innerPadding * 2 - 35);
+        const textWidth = Math.max(
+          100,
+          cardWidth - imageWidth - innerPadding * 2 - 35
+        );
         let currentY = posY + innerPadding + 10;
 
-        if (item.badge) {
-          const badge = new fabric.Textbox(` ${item.badge} `, {
+        // カテゴリは赤字で目立たせる
+        if (item.category) {
+          canvas.add(new fabric.Textbox(` ${item.category} `, {
             left: textX,
             top: currentY,
             width: textWidth,
             fontSize: singleColumnPortrait ? 48 : 40,
             fontWeight: "bold",
             fontFamily: "M PLUS Rounded 1c",
-            fill: "#ffffff",
-            backgroundColor: selectedPresetColor.main,
+            fill: "#b91c1c",
+            backgroundColor: "#fee2e2",
             padding: 10,
             selectable: false,
             evented: false
-          });
-          canvas.add(badge);
+          }));
+
           currentY += singleColumnPortrait ? 85 : 75;
         }
 
@@ -831,21 +923,26 @@
           selectable: false,
           evented: false
         });
+
         canvas.add(title);
         currentY += title.height + 15;
 
-        canvas.add(new fabric.Textbox(item.price || "", {
-          left: textX,
-          top: currentY,
-          width: textWidth,
-          fontSize: singleColumnPortrait ? 80 : 68,
-          fontWeight: "bold",
-          fontFamily: "M PLUS Rounded 1c",
-          fill: selectedPresetColor.main,
-          selectable: false,
-          evented: false
-        }));
-        currentY += singleColumnPortrait ? 95 : 85;
+        // 無料配布は価格を表示しない
+        if (item.category !== "無料配布" && item.price) {
+          canvas.add(new fabric.Textbox(item.price, {
+            left: textX,
+            top: currentY,
+            width: textWidth,
+            fontSize: singleColumnPortrait ? 80 : 68,
+            fontWeight: "bold",
+            fontFamily: "M PLUS Rounded 1c",
+            fill: selectedPresetColor.main,
+            selectable: false,
+            evented: false
+          }));
+
+          currentY += singleColumnPortrait ? 95 : 85;
+        }
 
         if (item.desc) {
           canvas.add(new fabric.Textbox(item.desc, {
@@ -862,6 +959,50 @@
       });
 
       canvas.renderAll();
+    }
+
+    function applyBulkItems() {
+      const textarea = document.getElementById("bulkItemsInput");
+      const lines = textarea.value
+        .split(/\r?\n/)
+        .map((line) => line.trim())
+        .filter(Boolean);
+
+      if (lines.length === 0) {
+        alert("頒布物情報を1件以上入力してください。");
+        return;
+      }
+
+      const parsedItems = lines.map((line, index) => {
+        const fields = line.split("|").map((field) => field.trim());
+
+        if (fields.length < 2 || !fields[0]) {
+          throw new Error(
+            `${index + 1}行目: タイトルとカテゴリを入力してください。`
+          );
+        }
+
+        const category = fields[1];
+        const allowedCategories = ["新刊", "既刊", "無料配布"];
+
+        if (!allowedCategories.includes(category)) {
+          throw new Error(
+            `${index + 1}行目: カテゴリは「新刊」「既刊」「無料配布」のいずれかにしてください。`
+          );
+        }
+
+        return {
+          title: fields[0],
+          category,
+          price: category === "無料配布" ? "" : (fields[2] || ""),
+          desc: fields.slice(3).join(" | "),
+          imageSrc: null
+        };
+      });
+
+      items = parsedItems;
+      renderFormItems();
+      generateOshinagaki();
     }
 
     function setupResponsiveScaler() {
@@ -919,9 +1060,12 @@
       document.getElementById("bgTypeSelect").addEventListener("change", (event) => {
         const type = event.target.value;
 
-        document.getElementById("patternControls").classList.toggle("hidden", type !== "pattern");
-        document.getElementById("customBgControls").classList.toggle("hidden", type !== "custom");
-        document.getElementById("singleColorControls").classList.toggle("hidden", type !== "color");
+        document.getElementById("patternControls")
+          .classList.toggle("hidden", type !== "pattern");
+        document.getElementById("customBgControls")
+          .classList.toggle("hidden", type !== "custom");
+        document.getElementById("singleColorControls")
+          .classList.toggle("hidden", type !== "color");
 
         generateOshinagaki();
       });
@@ -956,6 +1100,20 @@
 
       document.getElementById("addItemBtn")
         .addEventListener("click", addItem);
+
+      document.getElementById("applyBulkItemsBtn")
+        .addEventListener("click", () => {
+          try {
+            applyBulkItems();
+          } catch (error) {
+            alert(error.message);
+          }
+        });
+
+      document.getElementById("toggleGrid").addEventListener("change", (event) => {
+        document.getElementById("gridOverlay")
+          .classList.toggle("hidden", !event.target.checked);
+      });
 
       document.getElementById("exportPng").addEventListener("click", () => {
         const dataURL = canvas.toDataURL({
